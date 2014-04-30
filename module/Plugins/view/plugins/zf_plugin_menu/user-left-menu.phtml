@@ -1,0 +1,51 @@
+<!-- Левое меню пользователя 
+    data-display="push"
+    data-display="reveal"
+    data-display="overlay"
+-->
+<div data-role="panel" id="leftmenu" class="ui-left-panel" data-animate="true" data-display="push" data-position="left" data-theme="a">
+    <div class="ui-simplesearch" data-role="header" data-theme="a">
+        <!--Форма поиска -->
+        <?php echo $this->setForm('MenuSearchForm');?>
+        <!--Форма поиска -->
+    </div>
+    <ul data-role="listview" data-inset="true">
+        <li class="ui-li-has-thumb">
+            <img class="ui-img-list icon" src="/files/images/thumb/1/dg4qm3uuyda.jpg" />
+                <h2>Станислав</h2>
+                <p>Привет привет!</p>
+
+        </li>
+    </ul>
+    <ul data-role="listview" data-autodivider="false" class="ui-leftmenu" data-inset="true" data-icon="false">
+        <?php foreach($this->items as $item): ?>
+        <li class="ui-li-has-thumb">
+            <a href="/<?php echo $item->alias;?>" title="<?php echo $item->description;?>">
+                <img class="ui-img-list" src="/images/mobile/user/<?php echo $item->icon;?>">
+                
+                <div class="ui-menu-description">
+                    <?php echo $item->title;?>
+                </div><span class="ui-li-count ui-count">1</span>
+            </a>
+        </li>
+        <?php endforeach;?>
+    </ul>
+    <div class="ui-ads-block">
+        
+    </div>
+
+</div>
+<script type="text/javascript">
+    // Смена элементов меню изображений
+    $(document).ready(function(){
+        $('.ui-leftmenu li').hover(function(){
+            var image = $(this).find('img');
+            image.attr('src', image.attr('src').replace('\.','_c\.'));
+        },
+        function(){
+            var image = $(this).find('img');
+            image.attr('src', image.attr('src').replace('_c\.','\.'));
+        });
+    });
+</script>
+<!-- Левое меню пользователя -->

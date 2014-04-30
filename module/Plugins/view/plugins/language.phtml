@@ -1,0 +1,21 @@
+<!-- Диалоговое окно с выбором языка -->
+<section id="Language" data-role="page" data-theme="a">
+    <header data-role="header" data-theme="a">
+        <h1><?=$this->translate('Choose a language','default');?></h1>
+    </header>
+    <div data-role="content">
+        <ul data-role="listview">
+            <?php foreach($lang as $short => $long):?>
+                <li data-icon="false">
+                    <a href="<?=$this->url($this->getRoute()->route['controller'], array('action'=> $this->getRoute()->route['action'],  'lang' => $short), array('force_canonical' => true));?>" rel="external">
+                        <img alt="<?=$this->translate(ucfirst($long['name']));?>" class="ui-img-list" src="/images/flags/large/<?=$short;?>.png">
+                        <h3><?=$this->translate(ucfirst($long['name']));?></h3>
+                    </a>
+                </li>
+            <?php endforeach;?>
+        </ul>
+    </div>
+    <footer data-role="footer" class="ui-bar" data-theme="a">
+    </footer>
+</section>
+<!-- Диалоговое окно с выбором языка -->

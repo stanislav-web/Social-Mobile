@@ -1,0 +1,26 @@
+<!-- Меню "Информация" панели управления -->
+<div class="ui-info-content">
+    <nav data-role="navbar">
+        <ul>
+            <li><a href="javascript:;" class="ui-tab server" data-href="server"><?php echo $this->translate('Server overview', 'admin') ?></a>
+            <li><a href="javascript:;" class="ui-tab system" data-href="system"><?= $this->translate('System overview', 'admin'); ?></a>
+        </ul>
+    </nav>    
+    <!-- Информация о сервере -->
+    <div id="server" class="inner-tabs boxshadow">
+        <p>
+            Zend Server is now up and running on this server. Once content is added this message will no longer be displayed.<br>
+            If you are this server's administrator:<br>
+            You can now add content to your Web server's document root. You can configure and control your Zend Server installation through the Zend Server Administration Interface. Please refer to the documentation or to your installation's README file for more information.<br><br>
+            If you need help getting started with Zend Server, please visit the on-line resources page.<br>
+            For more information about Zend Server you are welcome to visit us at www.zend.com.<br>         
+        </p>            
+    </div>
+    <!-- Информация о сервере -->
+    <!-- Информация о системе -->
+    <div id="system" class="inner-tabs boxshadow">
+
+    </div>
+    <!-- Информация о системе -->      
+</div>
+<!-- Меню "Информация" панели управления -->

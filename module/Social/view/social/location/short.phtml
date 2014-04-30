@@ -1,0 +1,13 @@
+<!-- Карта городов -->
+<section id="mapArea" data-role="page" data-theme="a">
+    <?php echo $this->socialPlugin('header'); // заголовок jQuery Mobile ?>
+    <div data-role="content" data-theme="a">
+
+    <?	print_r($cities); ?>
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <?php echo $this->socialPlugin('bookmarks'); // виджет соц. закладок ?>
+        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+    </footer>
+</section>
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>

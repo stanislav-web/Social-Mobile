@@ -1,0 +1,29 @@
+<!-- Заголовок -->
+<?php if($this->identity()): // Заголовок для авторизированных ?>
+        <?php echo $this->socialPlugin('menu', 'user-left-menu'); // левое меню навигации пользователя ?>
+        <header data-role="header" data-theme="a" data-position="fixed" class="ui-user-header">
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <a href="#leftmenu" class="ui-hover-btn ui-user-nav-btn" data-role="button" data-rel="dialog" title="<?=$this->translate('Menu', 'default');?>"><img src="/images/mobile/user/menu.png" alt="<?=$this->translate('Menu', 'default');?>" />
+                    </a>
+                </div>
+                <div class="ui-block-b">
+                    <h1 class="ui-username">
+                        <a href="/"><img src="/images/mobile/logo.png" alt="Logo"></a> <?php  echo isset($param->name) ? $param->name : '';?>
+                    </h1>              
+                </div>
+                <div class="ui-block-c">
+                    <a href="#Language" title="<?=$this->translate('Choose a language', 'default');?>" class="ui-hover-btn ui-user-nav-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?=$this->getLang('code');?>.png" alt="<?=$this->getLang('code');?>" />
+                    </a> 
+                    <a href="<?=$this->url('social', array('action' => 'logout'), array());?>" title="<?=$this->translate('Logout', 'default');?>" class="ui-hover-btn ui-user-nav-btn"  data-transition="pop" data-role="button"><img src="/images/mobile/user/mini_logout.png" alt="<?=$this->translate('Logout', 'default')?>" /></a>                
+                </div>
+            </div>
+        </header>
+    <?php else: ?>
+        <header data-role="header" data-theme="a" data-position="fixed" class="header">
+            <a href="#menu" data-icon="bars" class="ui-hover-btn" data-role="button"><?=$this->translate('Menu', 'default')?></a>
+            <h1 class="ui-logo"><a href="<?=$this->url('social');?>"><img src="/images/mobile/logo.png" alt="Logo"></a></h1>
+            <a href="#Language" title="<?=$this->translate('Choose a language', 'default');?>" class="ui-hover-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?=$this->getLang('code');?>.png" alt="<?=$this->getLang('code');?>" /></a>
+        </header>
+    <?php endif;?>
+<!-- Заголовок -->

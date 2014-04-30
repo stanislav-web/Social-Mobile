@@ -1,0 +1,42 @@
+<?php $format = new \SW\String\Format; ?>   
+<section data-role="page" data-theme="a">
+    <?php echo $this->socialPlugin('header'); // заголовок jQuery Mobile ?>
+    <div data-role="content" data-theme="a">
+        <div class="ui-user-body">
+            <div class="ui-hover-title">
+                <?php echo $this->socialPlugin('menu', 'user-topnav-menu', $user); // верхнее меню навигации пользователя ?>
+            </div>
+            <div class="ui-grid-b">
+                <div class="ui-block-a">
+                    <!-- Аватар -->
+                    <?php echo $this->navigation('navigation')->breadcrumbs(); ?>
+                        <?php echo $this->socialPlugin('breadcrumbs'); // виджет выбора языка ?>
+                    <!-- Аватар -->
+                </div>
+                <div class="ui-block-b">
+                    <!-- Инфо -->
+
+                    <!-- Инфо -->
+                </div>                
+                <div class="ui-block-c ui-whats-up">
+                    <!-- Форма установки статуса -->
+                    
+                    <!-- Форма установки статуса -->
+                </div>
+                <div class="ui-block-a">
+                    
+                </div>
+                <div class="ui-block-b">
+
+                </div>
+                <div class="ui-block-c">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+    </footer>
+</section>ERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>

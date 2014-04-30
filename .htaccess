@@ -1,0 +1,102 @@
+##### 03.11.2012 ###############################################
+# Конфигурационный файл Apache для ZendSocial Mobile
+# .htaccess
+# Stanislav WEB <stanislav@uplab.ru>
+################################################################
+
+# Устанавливаю кодировку отображения (по умолчанию)
+AddDefaultCharset utf-8
+
+# Исполняемые по умолчанию файлы
+DirectoryIndex index.php index.html
+
+# Закрываю пустые директории
+Options -Indexes
+
+# Enable ETag
+FileETag MTime Size
+<IfModule mod_expires.c>
+    # Устанавливаю кэш браузера на статический контент
+    ExpiresActive On
+    ExpiresDefault "access plus 1 seconds"
+    ExpiresByType text/html "access plus 1 seconds"
+    ExpiresDefault "access 7 days"
+    ExpiresByType text/javascript "access plus 1 year"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/x-icon "access 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header set X-XSS-Protection "1; mode=block"
+    # 30 дней
+    <filesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|swf)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </filesMatch>
+    # 30 дней
+    <filesMatch "\.(css|js)$">
+        Header set Cache-Control "max-age=2592000, public"
+    </filesMatch>
+    # 2 дня
+    <filesMatch "\.(xml|txt)$">
+        Header set Cache-Control "max-age=172800, public, must-revalidate"
+    </filesMatch>
+</IfModule>
+
+<FilesMatch "\.(js|css)$">
+    SetOutputFilter DEFLATE
+</FilesMatch>
+
+<FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css)$">
+    Header unset Last-Modified
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Делаю склейку www + домен = как один домен
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ http://%1%{REQUEST_URI} [L,R=301]
+	
+
+    # Редирект с псевдо поддоменов
+
+    RewriteCond %{HTTP_HOST} !^([w]{3,3}[.]{1,1}){0,1}zf.local$
+    RewriteCond %{HTTP_HOST} ^([0-9a-zA-Z-]*)[.]zf.local$
+    RewriteRule ^$ http://zf.local/user/%1 [NC,R=301,L]
+
+    # Базовый путь директории к кторой применены правила URL
+    RewriteBase /
+
+    # Ставлю защиту от различных распространенных эксплоитов
+    # Блокировка скриптов подставляемых через base64_encode в URL
+    RewriteCond %{QUERY_STRING} base64_encode[^(]*\([^)]*\) [OR]
+    # Блокировка JS подставляемых в URL
+    RewriteCond %{QUERY_STRING} (<|%3C)([^s]*s)+cript.*(>|%3E) [NC,OR]
+    # Блокировка скриптов, вызываемых как глобальные в URL
+    RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+    # Блокировка скриптов, которые модифицируют строку запроса URI
+    RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+    RewriteRule .* - [F]
+
+    # Ставлю всегда закрывающий слэш после окончания директории
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !(.+)\.php$
+    RewriteCond %{REQUEST_URI} !(.*)/$
+    RewriteRule ^(.*[^/])$ $1/ [L]
+
+    # Создаю единую точку входа,
+    # адресуя запросы с директорий и файлов на index.php
+    RewriteCond %{REQUEST_FILENAME} -s [OR]
+    RewriteCond %{REQUEST_FILENAME} -l [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^.*$ - [NC,L]
+
+    # Переадресовую со строки запроса
+    RewriteCond %{REQUEST_URI}::$1 ^(/.+)(.+)::\2$
+    RewriteRule ^(.*) - [E=BASE:%1]
+    RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]
+</IfModule>

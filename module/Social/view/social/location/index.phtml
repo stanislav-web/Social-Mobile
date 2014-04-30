@@ -1,0 +1,24 @@
+<!-- Карта городов -->
+<section id="mapArea" data-role="page" data-theme="a">
+    <?php echo $this->socialPlugin('header'); // заголовок jQuery Mobile ?>
+    <div data-role="content" data-theme="a">
+	<div class="ui-bar-a ui-shadow" style="padding:1em;">
+	    <input type="search" id="locality" data-storage="mapSearch" data-clear-btn="true" placeholder="<?=$this->translate('Looking for friends...', 'default')?>" data-mini="true" value="">
+	    <!-- Карта -->
+	    <div id="map_canvas" class="ui-map">
+		
+	    </div>
+	</div>
+       
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <?php echo $this->socialPlugin('bookmarks'); // виджет соц. закладок ?>
+        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+    </footer>
+</section>
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>
+<?=$this->inlineScript()->appendFile($this->basePath().'/js/mobile/jquery.mobile.map.min.js', 'text/javascript');?>
+<?=$this->inlineScript()->appendFile($this->basePath().'/js/jquery.ui.autocomplete.min.js', 'text/javascript');?>
+<?=$this->inlineScript()->appendFile($this->basePath().'/js/mobile/jquery.ui.map.services.js', 'text/javascript');?>
+<?=$this->inlineScript()->appendFile($this->basePath().'/js/mobile/jquery.ui.map.extensions.js', 'text/javascript');?>
+<?=$this->inlineScript()->appendFile($this->basePath().'/js/mobile/map.js', 'text/javascript');?>

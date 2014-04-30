@@ -1,0 +1,11 @@
+<!-- Социальные закладки -->
+<div class="ui-bookmarks">
+    <?php foreach($this->params as $param):?>
+        <a href="http://<?=$param['host'];?>/<?=$param['handler'];?><?php printf($param['params'], $this->serverUrl(true), urlencode(strip_tags($this->headTitle())), $this->serverUrl().'/images/mobile/logo.png');?>" rel="nofollow" title="<?=$param['description'];?>" <?=$param['target'];?>></a>
+    <?php endforeach;?>
+</div>
+<style type="text/css" media="screen">
+    <?php include 'bookmarks.css'; ?>
+</style>
+<!-- Социальные закладки -->
+

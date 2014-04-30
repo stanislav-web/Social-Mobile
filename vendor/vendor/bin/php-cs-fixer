@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+SRC_DIR="`pwd`"
+cd "`dirname "$0"`"
+cd "../fabpot/php-cs-fixer"
+BIN_TARGET="`pwd`/php-cs-fixer"
+cd "$SRC_DIR"
+"$BIN_TARGET" "$@"

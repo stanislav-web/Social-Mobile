@@ -1,0 +1,47 @@
+<section data-role="page" data-theme="a">
+    <header data-role="header" data-theme="a" data-position="fixed" class="header">
+        <a href="#menu" data-icon="bars" class="ui-hover-btn" data-role="button"><?=$this->translate('Menu', 'default')?></a>
+        <h1 class="ui-logo"><a href="/"><img src="/images/mobile/logo.png" alt="Logo"></a></h1>
+        <a href="#Language" title="<?=$this->translate('Choose a language', 'default');?>" class="ui-hover-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?=$this->getLang('code');?>.png" alt="<?=$this->getLang('code');?>" /></a>
+    </header>
+    <div data-role="content" data-theme="a">
+        <!-- Слой авторизации -->
+        <div id="auth" class="ui-admin-form">
+            <?php
+            echo $this->formElementerrors($this->authForm, array('class'=>"ui-error")).PHP_EOL; // сообщение об ошибке
+            ?>
+            <?if(!empty($this->errorMsgAuth)):?>
+            <ul class="ui-error">
+                <?php foreach($this->errorMsgAuth as $error):?>
+                <li>
+                    <?=$this->translate($error, 'errors');?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+            <?endif;?>
+            <?php
+            $this->authForm->setAttribute('action', $this->url($this->getRoute()->route['controller'], array('lang'=>$this->getLang('code'), 'action' => $this->getRoute()->route['action']), array('force_canonical'=>true)
+                    )
+            );
+            echo $this->form()->openTag($this->authForm).PHP_EOL;
+            echo '<fieldset data-role="fieldcontain" class="ui-wrapper-form">'.PHP_EOL;
+            echo '<div class="ui-login"></div>';
+            echo $this->formRow($this->authForm->get('login'), null, false).PHP_EOL;
+            echo $this->formRow($this->authForm->get('csrf'), null, false).PHP_EOL;
+            echo '<div class="ui-pass"></div>';
+            echo $this->formRow($this->authForm->get('password'), null, false).PHP_EOL;
+            echo '</fieldset>'.PHP_EOL;
+            echo '<fieldset data-role="controlgroup" data-type="horizontal">'.PHP_EOL;
+            echo $this->formRow($this->authForm->get('remember')).PHP_EOL;
+            echo $this->formRow($this->authForm->get('submit')).PHP_EOL;
+            echo '</fieldset>'.PHP_EOL;
+            echo $this->form()->closeTag().PHP_EOL;
+            ?>
+        </div>
+        <!-- Слой авторизации -->
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+    </footer>
+</section>
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>

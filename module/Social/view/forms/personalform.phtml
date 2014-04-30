@@ -1,0 +1,17 @@
+                    <?php
+                    $this->form->setAttribute('action', $this->url($this->getRoute()->route['controller'],
+                                array(
+                                'action'    =>  'personal'
+                            )
+                        )
+                    );
+                    echo $this->form()->openTag($this->form);
+                    echo '<fieldset data-role="fieldcontain">';
+                        echo $this->formRow($this->form->get('personal')->setValue($this->escapeHTML($add->personal)), null, false).PHP_EOL;
+                    echo '</fieldset>';
+                    echo '<fieldset data-role="controlgroup" data-type="horizontal">';
+                        echo $this->formRow($this->form->get('share'), null, false).PHP_EOL;
+                        echo $this->formRow($this->form->get('submit'), null, false).PHP_EOL;
+                    echo '</fieldset>';
+                    echo $this->form()->closeTag();
+                    ?>  

@@ -1,0 +1,26 @@
+<!-- Кто онлайн? -->
+<section id="MainPage" data-role="page" data-theme="a">
+    <?php echo $this->socialPlugin('header'); // заголовок jQuery Mobile ?>
+    <div data-role="content" data-theme="a">
+        <!-- Статус бар пользователя -->
+        <div class="ui-users-info">
+             <?php echo $this->socialPlugin('online'); // сколько в онлайн? ?>     
+        </div>
+        <!-- Статус бар пользователя -->
+
+        <!-- Фильтры -->
+
+        <!-- Фильтры -->
+        <ul data-role="listview" data-inset="true">
+            <li>
+                
+            </li>
+        </ul>
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <?php echo $this->socialPlugin('bookmarks'); // виджет соц. закладок ?>
+        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+    </footer>
+</section>
+<!-- Кто онлайн? -->
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>

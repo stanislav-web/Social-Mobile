@@ -1,0 +1,25 @@
+<!-- Флэш стена -->
+<?php //\Zend\Debug\Debug::dump($params);?>
+<?php if(is_array($params)): ?>
+<?php $format = new SW\String\Format(); // Вперед форматировать!?>
+<ul data-role="listview" data-inset="true">
+    <li data-role="list-divider" class="ui-first-child"><?=$this->translate('Live Wall', 'plugins')?></li>
+    <?php foreach($params as $tweet):?>
+        <?php $date = $format->getFormatTime($tweet['date'], $tweet['user_id']->timezone);?>
+        <li data-role="list-divider"><?php echo $date['d'];?> <?php echo $this->translate($date['m'], 'plugins');?></li>
+        <li class="ui-li-has-thumb">
+<img class="ui-img-list" src="/files/images/thumb/<?=$tweet['user_id']->id;?>/<?=$tweet['user_id']->photo;?>" />
+            <h2><?php echo $tweet['user_id']->name;?> <span><img src="/images/flags/small/<?=strtolower($tweet['user_id']->country_code);?>.png" alt="" /></span></h2>
+            <p><?php echo $this->bbcode($this->escapeHTML($tweet['message']));?></p>
+            <p class="ui-li-aside"><strong><?php echo $date['h'].':'.$date['i'];?></strong></p>
+        </li>    
+    <?php endforeach;?>
+</ul>
+<?php else: ?>
+    <ul data-role="listview" data-inset="true">
+        <li data-role="list-divider ui-li-has-thumb">
+            <?php echo $params;?>
+        </li>
+    </ul>
+<?php endif;?>
+<!-- Флэш стена -->

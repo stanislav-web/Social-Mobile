@@ -1,0 +1,33 @@
+<?=$this->doctype();?>
+<html lang="<?=$this->lang;?>">
+    <head>
+        <?=$this->headMeta()
+                // META информация
+                ->setCharset('UTF-8')
+                //->appendHttpEquiv('Cache-Control', 'public')
+                //->appendHttpEquiv('Cache-Control', 'max-age=99090600, must-revalidate')
+                ->appendName('keywords', '')
+                ->appendName('description', '')
+                ->appendName('viewport', 'width=device-width, initial-scale=1, maximum-scale=1')
+                ->appendName('generator', 'Zend Framework 2.1.5')
+                ->appendName('author', 'Stanislav WEB');
+        ?>
+        <?=$this->headTitle()->setSeparator(' / ');?>
+        <?=$this
+                ->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico'))
+                ->appendStylesheet($this->basePath().'/css/mobile/jquery.mobile.css')
+                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
+                ->appendStylesheet($this->basePath().'/css/mobile/admin.css')
+        ?>
+        <?=$this->headScript()
+                ->appendFile($this->basePath().'/js/jquery.min.js')
+                ->appendFile($this->basePath().'/js/languages/admin-'.$this->lang.'.js')
+                ->appendFile($this->basePath().'/js/mobile/init.js')
+                ->appendFile($this->basePath().'/js/admin.js')
+                ->appendFile($this->basePath().'/js/mobile/jquery.mobile.min.js')
+        ?>
+    </head>
+    <body>
+        <?=$this->content;?>
+    </body>
+</html>

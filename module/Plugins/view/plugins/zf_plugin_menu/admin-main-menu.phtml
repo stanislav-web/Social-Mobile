@@ -1,0 +1,15 @@
+<!-- Главное меню панели управления -->
+<ul data-role="listview" data-inset="true" class="ui-main-menu">
+    <?php foreach($this->items as $item): ?>
+    <li class="ui-li-has-thumb" data-icon="false">
+        <a data-role="button" class="ui-admin-item" href="/admin/<?php echo $item->alias;?>" title="<?php echo $item->description;?>">
+            <img class="ui-img-list" src="/images/admin/<?php echo $item->icon;?>">
+            <div class="ui-menu-description">
+                <span><?php echo $item->title;?></span>
+                <span><?php echo $item->description;?></span>
+            </div>
+        </a>
+    </li>
+    <?php endforeach;?>
+</ul>
+<!-- Главное меню панели управления -->

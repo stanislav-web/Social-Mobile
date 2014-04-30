@@ -1,0 +1,7 @@
+<!-- Сколько в онлайне? -->
+    <?php printf(
+            $this->translate('Online is %s %s', 'plugins'),
+            '<a href="'.$this->url('online', array('action'=>'index')).'">'.$params->all.'</a>',
+            '(<a href="'.$this->url('online', array('action'=>'guys')).'"><img src="/images/mobile/m.png"> '.$params->m.'</a> / <a href="'.$this->url('online', array('action'=>'girls')).'"><img src="/images/mobile/f.png"> '.$params->f.'</a>)');
+    ?> 
+<!--  Сколько в онлайне? -->

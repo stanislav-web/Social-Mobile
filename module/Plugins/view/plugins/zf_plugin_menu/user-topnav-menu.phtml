@@ -1,0 +1,17 @@
+<!-- Меню навигации пользователя -->
+<nav data-role="navbar" class="ui-usernav-menu">
+    <ul>
+        <?php foreach($this->items as $item): ?>
+        <li>
+            <a href="/<?php echo $item->alias;?>" title="<?php echo $item->description;?>">
+                <img class="ui-img-list" src="/images/mobile/user/<?php echo $item->icon;?>">
+                
+                <div class="ui-menu-description">
+                    <span><?php echo $item->title;?>&nbsp;&nbsp;<span class="ui-count">1</span></span>
+                </div>
+            </a>
+        </li>
+        <?php endforeach;?>
+</ul>
+</nav>
+<!-- Меню нНавигации пользователя -->

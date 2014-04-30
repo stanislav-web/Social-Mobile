@@ -1,0 +1,134 @@
+<?php $format = new \SW\String\Format;?>   
+<section data-role="page" data-theme="a">
+    <header data-role="header" data-theme="a" data-position="fixed" class="ui-admin-header">
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <a href="#Language" title="<?=$this->translate('Choose a language' , 'default');?>" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?=$this->getLang('code');?>.png" alt="<?=$this->getLang('code');?>" /></a>
+                <a href="#" id="login" title="Администратор" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/admin/admin.gif" alt="Администратор" />&nbsp;&nbsp;<span><?php echo $this->user->name?></span></a>                
+            </div>
+            <div class="ui-block-b">
+                <h1 class="ui-admin-logo">
+                    <a href="<?=$this->url('social' , array(
+    'lang' => $this->getLang('code')) , array(
+    'force_canonical' => true));?>"><img src="/images/mobile/logo.png" alt="Logo"></a>
+                </h1>              
+            </div>
+            <div class="ui-block-c" align="right">
+                <a href="#" class="ui-hover-btn ui-admin-nav-btn" data-role="button" onclick="return false;" id="clock" data-rel="dialog"></a>
+                <a href="<?=$this->url('admin' , array(
+    'lang' => $this->getLang('code') ,
+    'action' => 'logout') , array(
+    'force_canonical' => true));?>" title="<?=$this->translate('Logout' , 'admin');?>" class="ui-hover-btn ui-admin-nav-btn" data-transition="pop" data-role="button"><img src="/images/admin/mini_logout.png" alt="<?=$this->translate('Logout' , 'admin')?>" /></a>                
+            </div>
+        </div>
+    </header>
+    <div data-role="content" data-theme="a">
+        <div class="ui-admin-users-body">
+            <div class="ui-hover-title">
+		<?=$this->translate('Users Control' , 'admin');?>
+            </div>
+            <?if(!empty($this->errorMsg)):?>
+            <ul class="ui-error">
+                <?php foreach($this->errorMsg as $error):?>
+                <li>
+                    <?=$this->translate($error, 'admin-errors');?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+            <?endif;?>		    
+	    <!-- Таблица пользователей -->
+	    <form action="<?=$this->url('admin-post');?>" method="post">
+		<input type="hidden" name="controller" value="<?=$this->getRoute()->route['controller'];?>">
+		<input type="hidden" name="action" value="<?=$this->getRoute()->route['action'];?>">
+		<div class="ui-grid-d ui-admin-users" data-theme="a" data-inset="true">
+		    <div class="ui-admin-grid-hover">
+			<div class="ui-block-a">
+			    <label for="all"><?=$this->translate('All' , 'admin');?></label><input type="checkbox" name="all" id="all" data-mini="true" value="1">
+			</div>
+			<div class="ui-block-b"><span><?=$this->translate('User' , 'admin');?></span></div>
+			<div class="ui-block-c"><span><?=$this->translate('Photo' , 'admin');?></span></div>
+			<div class="ui-block-d"><span><?=$this->translate('Location' , 'admin');?></span></div>
+			<div class="ui-block-e"><span><?=$this->translate('Information' , 'admin');?></span></div>		    
+		    </div>
+		    <div class="ui-admin-grid-content">
+			<?$i = 0; foreach($items as $user):?>
+			    <?php 
+			    $class	=   ($i++ % 2 == 0) ? 'ui-even' : 'ui-odd';
+			    if($user['group_id'] > 0) $class = 'ui-prime';
+			    $dateReg	= $format->getFormatTime($user['registerDate'] , $user['timezone']);
+			    $dateLast	= $format->getFormatTime($user['lastvisit'] , $user['timezone']);
+			    ?>
+			    <div class="ui-block-a <?=$class?>">
+				<div class="ui-admin-userinfo">
+				    <label for="select-<?=$user['id']?>"><?=$user['id']?></label><input type="checkbox" name="select[]" id="select-<?=$user['id']?>" data-mini="true" value="1">
+				</div>
+			    </div>
+			    <div class="ui-block-b <?=$class?>">
+				<div class="ui-admin-userinfo">
+				    <a href="/user/<?=$user['id'];?>/"><span class="<?if($user['gender'] == 2):?>ui-f<?else:?>ui-m<?endif;?>"></span> <?=$user['name']?></a>
+				</div>
+			    </div>	
+			    <div class="ui-block-c <?=$class?>">
+				<?if($user['photo']):?>
+				    <img class="ui-img-list" src="/files/images/thumb/<?=$user['id'];?>/<?=$user['photo'];?>" />
+				<?else:?>
+				    <img class="ui-img-list" src="/images/mobile/<?if($user['gender'] == 2):?>female.png<?else:?>male.png<?endif;?>" />
+				<?endif;?>
+			    </div>			
+			    <div class="ui-block-d <?=$class?>">
+				<div class="ui-admin-userinfo">
+				    <span class="ui-location-string"><img class="ui-small-flag" src="/images/flags/small/<?=strtolower($user['country_code']);?>.png" alt="" /> <?=$user['country'];?> » <?=$user['region'];?>, <?=$user['city'];?></span> 
+				</div>
+			    </div>
+			    <div class="ui-block-e <?=$class?>">
+				<div class="ui-admin-userinfo">
+				    <span class="ui-admin-userid">
+					<b><?=$this->translate('ID' , 'admin');?></b>
+					<?php echo $user['id'] ;?>
+				    </span>				    
+				    <span class="ui-admin-userlogin">
+					<b><?=$this->translate('Login' , 'admin');?></b>
+					<?php echo $user['login'] ;?>
+				    </span>	
+				    <span class="ui-admin-usergroup">
+					<b><?=$this->translate('Group' , 'admin');?></b>
+					<?php echo $user['group_title'] ;?>
+				    </span>				
+				    <span class="ui-admin-userreg">
+					<b><?=$this->translate('Register date' , 'admin');?></b>
+					<?php echo $dateReg['d'] . ' ' . $this->translate($dateReg['m'] , 'plugins') . ' ' . $dateReg['y'] . ' ' . $dateReg['h'] . ':' . $dateReg['i'];?>
+				    </span>
+				    <span class="ui-admin-userlast">
+					<b><?=$this->translate('Last visit date' , 'admin');?></b>
+					<?php echo $dateLast['d'] . ' ' . $this->translate($dateLast['m'] , 'plugins') . ' ' . $dateLast['y'] . ' ' . $dateLast['h'] . ':' . $dateLast['i'];?>
+				    </span>				    
+				</div>
+			    </div>
+			<?endforeach;?>		    
+		    </div>
+		    <div class="ui-admin-grid-footer">
+			<!-- Навигация -->
+			<?php echo (count($items) > 0) ? $this->paginationControl($items, 'sliding', 'plugins/admin-pager') : '' ?>
+			<!-- Навигация -->
+			
+			<fieldset data-role="controlgroup" data-type="horizontal"> 
+			    <legend><?=$this->translate('What to do with markup ?', 'admin');?></legend>
+			    <label for="Edit">Edit</label><input id="Edit" type="radio" name="do" data-inline="true" data-mini="true" value="Edit">
+			    <label for="Block">Block</label><input id="Block" type="radio" name="do" data-inline="true" data-mini="true" value="Block">
+			    <label for="Unblock">Unblock</label><input id="Unblock" type="radio" name="do" data-inline="true" data-mini="true" value="Unblock">
+			    <label for="Status">Status</label><input id="Status" type="radio" name="do" data-inline="true" data-mini="true" value="Status">
+			    <label for="Delete">Delete</label><input id="Delete" type="radio" name="do" data-inline="true" data-mini="true" value="Delete">
+			    <input type="submit" data-inline="true" data-icon="arrow-d" data-mini="true" value="Do it!">
+			</fieldset>
+		    </div>
+		</div>
+	    </form>
+
+	    <!-- Таблица пользователей -->	    
+        </div>
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile' , 'default')?></a> <?=$this->translate('powered by' , 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.' , 'default')?></h4>
+    </footer>
+</section>
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>
