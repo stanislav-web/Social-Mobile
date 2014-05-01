@@ -95,7 +95,7 @@ class AdminModel implements ServiceLocatorAwareInterface
         // Использую лямпду как передаваемый объект для выборки
         $resultSet = $this->adapter->select(function (Select $select) use ($id) {
             $select
-                ->where('`activation` = \'1\' AND `group_id` = \'1\' AND `id` = \''.$id.'\'')
+                ->where('`activation` = \'1\' AND `role_id` = 4 AND `id` = \''.$id.'\'')
                 ->limit(1);
                //$select->getSqlString($this->_adapter->getPlatform()); // SHOW SQL
         })->current();

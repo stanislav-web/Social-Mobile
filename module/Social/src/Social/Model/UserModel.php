@@ -38,7 +38,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
      */
     protected $relationsTable = array(
         'profile'   =>  'zf_users_profile',     // профиль
-        'group'     =>  'zf_users_group',       // группы
+        'group'     =>  'zf_users_roles',       // группы
         'status'    =>  'zf_users_status',      // коммерческие статусы
         'events'    =>  'zf_users_events',      // журнал (события)
         'countries' =>  'zf_countries',		// страны
@@ -145,10 +145,10 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                 'lastvisit',
                 'timezone',                    
                 ), $select::JOIN_LEFT)
-            ->join($this->relationsTable['group'], $this->relationsTable['group'].'.group_id = '.$this->table.'.group_id', array(
+            ->join($this->relationsTable['group'], $this->relationsTable['group'].'.id = '.$this->table.'.role_id', array(
                 'group_title' => 'title_'.substr($this->_lng->getLocale(), 0,2),
             ), $select::JOIN_LEFT)
-            ->join($this->relationsTable['status'], $this->relationsTable['status'].'.status_id = '.$this->table.'.status_id', array(
+            ->join($this->relationsTable['status'], $this->relationsTable['status'].'.id = '.$this->table.'.status_id', array(
                 'status_title' => 'title',
             ), $select::JOIN_LEFT)
             ->join($this->relationsTable['countries'], $this->relationsTable['countries'].'.country_id = '.$this->relationsTable['profile'].'.country_id', array(
@@ -184,7 +184,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     ->columns(array(
                     'id'
                 ))
-                ->where('`activation` = \'1\' AND `group_id` = \'1\' AND `id` = \''.$id.'\'')
+                ->where('`activation` = \'1\' AND `role_id` = 4 AND `id` = \''.$id.'\'')
                 ->limit(1);
                //$select->getSqlString($this->_adapter->getPlatform()); // SHOW SQL
         })->current();
@@ -211,7 +211,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         })->current();
         return $resultSet;
     }    
-    
     
     /**
      * getID($login) Выбираю ID пользователя по логину
@@ -341,8 +340,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     ->columns(array(
                     'id',
                     'block',
-                    'group_id',
-                    'status_id',
                     'registerDate',
                     'ip',
                     'agent',
@@ -373,10 +370,10 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     'lastvisit',
                     'timezone',                    
                 ), $select::JOIN_LEFT)
-                ->join($this->relationsTable['group'], $this->relationsTable['group'].'.group_id = '.$this->table.'.group_id', array(
+                ->join($this->relationsTable['group'], $this->relationsTable['group'].'.id = '.$this->table.'.role_id', array(
                     'qroup_title' => 'title_'.substr($this->_lng->getLocale(), 0,2),
                 ), $select::JOIN_LEFT)
-                ->join($this->relationsTable['status'], $this->relationsTable['status'].'.status_id = '.$this->table.'.status_id', array(
+                ->join($this->relationsTable['status'], $this->relationsTable['status'].'.id = '.$this->table.'.status_id', array(
                     'status_title' => 'title',
                 ), $select::JOIN_LEFT)
                 ->join($this->relationsTable['events'], $this->relationsTable['events'].'.user_id = '.$this->table.'.id', array(

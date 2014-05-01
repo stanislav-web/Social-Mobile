@@ -147,7 +147,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
             $select
                 ->columns(array(
                     'csrf',
-                    'group_id',
+                    'role_id',
                 ))
                 ->where('`activation` = \'1\' AND `login` = \''.$login.'\'')
                 ->order('id ASC')
@@ -374,7 +374,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
         // Использую лямпду как передаваемый объект для выборки
         $resultSet = $this->select(function (Select $select) use ($id) {
             $select
-                ->where('`activation` = \'1\' AND `group_id` = \'1\' AND `id` = \''.$id.'\'')
+                ->where('`activation` = \'1\' AND `role_id` = 4 AND `id` = \''.$id.'\'')
                 ->limit(1);
                //$select->getSqlString($this->_adapter->getPlatform()); // SHOW SQL
         })->current();

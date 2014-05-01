@@ -54,7 +54,7 @@
 			<?$i = 0; foreach($items as $user):?>
 			    <?php 
 			    $class	=   ($i++ % 2 == 0) ? 'ui-even' : 'ui-odd';
-			    if($user['group_id'] > 0) $class = 'ui-prime';
+			    if($user['role_id'] > 0) $class = 'ui-prime';
 			    $dateReg	= $format->getFormatTime($user['registerDate'] , $user['timezone']);
 			    $dateLast	= $format->getFormatTime($user['lastvisit'] , $user['timezone']);
 			    ?>
