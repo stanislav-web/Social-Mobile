@@ -39,7 +39,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
     protected $relationsTable = array(
         'profile'   =>  'zf_users_profile',     // профиль
         'group'     =>  'zf_users_roles',       // группы
-        'status'    =>  'zf_users_status',      // коммерческие статусы
+        'status'    =>  'zf_users_statuses',    // коммерческие статусы
         'events'    =>  'zf_users_events',      // журнал (события)
         'countries' =>  'zf_countries',		// страны
         'regions'   =>  'zf_regions',		// регионы
@@ -126,11 +126,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
 		'photo',
 		'birthday',
 		'phone',
-		'skype',
-		'icq',
-		'vk',
-		'facebook',                    
-                'odnoklassniki',                    
                 'country_id',                    
                 'region_id',                    
                 'city_id',                    
@@ -351,11 +346,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     'photo',
                     'birthday',
                     'phone',
-                    'skype',
-                    'icq',
-                    'vk',
-                    'facebook',                    
-                    'odnoklassniki',                    
                     'country_id',                    
                     'region_id',                    
                     'city_id',                    

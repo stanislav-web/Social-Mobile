@@ -27,7 +27,7 @@
             <div class="ui-hover-title">
 		<?=$this->translate('Users Control' , 'admin');?>
             </div>
-            <?if(!empty($this->errorMsg)):?>
+            <?php if(!empty($this->errorMsg)):?>
             <ul class="ui-error">
                 <?php foreach($this->errorMsg as $error):?>
                 <li>
@@ -35,7 +35,7 @@
                 </li>
                 <?php endforeach; ?>
             </ul>
-            <?endif;?>		    
+            <?php endif;?>		    
 	    <!-- Таблица пользователей -->
 	    <form action="<?=$this->url('admin-post');?>" method="post">
 		<input type="hidden" name="controller" value="<?=$this->getRoute()->route['controller'];?>">
@@ -65,15 +65,15 @@
 			    </div>
 			    <div class="ui-block-b <?=$class?>">
 				<div class="ui-admin-userinfo">
-				    <a href="/user/<?=$user['id'];?>/"><span class="<?if($user['gender'] == 2):?>ui-f<?else:?>ui-m<?endif;?>"></span> <?=$user['name']?></a>
+				    <a href="/user/<?=$user['id'];?>/"><span class="<?php if($user['gender'] == 2):?>ui-f<?php else:?>ui-m<?php endif;?>"></span> <?=$user['name']?></a>
 				</div>
 			    </div>	
 			    <div class="ui-block-c <?=$class?>">
-				<?if($user['photo']):?>
+				<?php if($user['photo']):?>
 				    <img class="ui-img-list" src="/files/images/thumb/<?=$user['id'];?>/<?=$user['photo'];?>" />
-				<?else:?>
-				    <img class="ui-img-list" src="/images/mobile/<?if($user['gender'] == 2):?>female.png<?else:?>male.png<?endif;?>" />
-				<?endif;?>
+				<?php else:?>
+				    <img class="ui-img-list" src="/images/mobile/<?php if($user['gender'] == 2):?>female.png<?php else:?>male.png<?php endif;?>" />
+				<?php endif;?>
 			    </div>			
 			    <div class="ui-block-d <?=$class?>">
 				<div class="ui-admin-userinfo">

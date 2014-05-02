@@ -184,7 +184,6 @@ class StatisticsModel extends AbstractTableGateway implements ServiceLocatorAwar
                 $insert = $sql->insert($this->table);
                 $data = array(
                     'ip'            => new \Zend\Db\Sql\Expression("INET_ATON('".$REMOTE_ADDR."')"),
-                    'date'          => new \Zend\Db\Sql\Expression("NOW()"),
                     'page'          => (isset($REQUEST_URI)) ? $REQUEST_URI : '',
                     'agent'         => (isset($HTTP_USER_AGENT)) ? $HTTP_USER_AGENT : '',
                     'referer'       => (isset($HTTP_REFERER)) ? $HTTP_REFERER : '',

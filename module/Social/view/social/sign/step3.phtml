@@ -4,14 +4,14 @@
     <div data-role="content" data-theme="a">
         <fieldset data-role="controlgroup" data-type="horizontal">
 	<?php $i = 0; foreach($letters as $l): // вывожу первые буквы городов?>
-	    <?if($i !=7):?>
+	    <?php if($i !=7):?>
 		<a href="<?=\SW\String\Translit::asURLSegment($l['city']);?>" data-role="button" data-mini="true"><?=$l['city'];?></a>
-	    <?else:?>
+	    <?php else:?>
 	    </fieldset>
 	    <fieldset data-role="controlgroup" data-type="horizontal">
 		<a href="<?=\SW\String\Translit::asURLSegment($l['city']);?>" data-role="button" data-mini="true"><?=$l['city'];?></a>
 		<?$i = 0;?>
-	    <?endif;?>
+	    <?php endif;?>
 	<?php $i++; endforeach;?>
 	</fieldset>
     <?php

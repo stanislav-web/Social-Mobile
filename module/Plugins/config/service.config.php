@@ -34,12 +34,6 @@ return array(
             $table = new \Plugins\Model\MenuModel($dbAdapter);
             return $table;
         },
-                
-        'filesystem.Model' => function($serviceManager) { // Модель конфигурации файловой системы
-            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
-            $table = new \Plugins\Model\FilesystemConfigModel($dbAdapter);
-            return $table;
-        },
 
         'mailtemplates.Model' => function($serviceManager) { // Модель конфигурации почтовых шаблонов
             $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');

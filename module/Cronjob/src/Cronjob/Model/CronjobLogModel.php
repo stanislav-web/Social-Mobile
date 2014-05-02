@@ -80,7 +80,6 @@ class CronjobLogModel extends AbstractTableGateway implements ServiceLocatorAwar
         $sql = new Sql($Adapter);
         $insert = $sql->insert($this->table);
         $data = array(
-            'date'              => new \Zend\Db\Sql\Expression("NOW()"),
             'message'           => $data['message'],
             'command'           => $data['command'],
             'sheduler'          => $data['sheduler'],

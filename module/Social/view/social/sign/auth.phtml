@@ -3,13 +3,13 @@
     <?php
     echo $this->formElementerrors($this->authForm, array('class' => "ui-error")).PHP_EOL; // сообщение об ошибке
     ?>
-    <?if(!empty($this->errorMsgAuth)):?>
+    <?php if(!empty($this->errorMsgAuth)):?>
         <ul class="ui-error">
             <li>
                 <?=$this->translate($this->errorMsgAuth, 'errors');?>
             </li>
         </ul>
-    <?endif;?>
+    <?php endif;?>
     <?php
     $this->authForm->setAttribute('action', $this->url($this->getRoute()->route['controller'],
                                                 array('lang'=>$this->getLang('code')),

@@ -25,7 +25,7 @@
                         <?php if($user['photo']):?>
                             <img class="ui-img-list" src="/files/images/thumb/<?=$user['id'];?>/<?=$user['photo'];?>" />
                         <?php else:?>
-                            <img class="ui-img-list" src="/images/mobile/<?if($user['gender'] == 2):?>female.png<?else:?>male.png<?endif;?>" />
+                            <img class="ui-img-list" src="/images/mobile/<?php if($user['gender'] == 2):?>female.png<?php else:?>male.png<?php endif;?>" />
                         <?php endif;?>
                             <h3><span class="<?php if($user['gender'] == 2):?>ui-f<?php else: ?>ui-m<?php endif;?>"></span> <?=$user['name'];?><?=$format->getYears($user['birthday'], $user['timezone'], ', ');?> </h3>
 			<p>

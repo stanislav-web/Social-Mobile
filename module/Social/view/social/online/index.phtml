@@ -24,13 +24,13 @@
             </li>
             <?php foreach($items['online'] as $user):?>
                 <li class="ui-li-has-thumb">
-                        <?if($user['photo']):?>
+                        <?php if($user['photo']):?>
                             <img class="ui-img-list" src="/files/images/thumb/<?=$user['user_id'];?>/<?=$user['photo'];?>" />
-                        <?else:?>
-                            <img class="ui-img-list" src="/images/mobile/<?if($user['gender'] == 2):?>female.png<?else:?>male.png<?endif;?>" />
-                        <?endif;?>
+                        <?php else:?>
+                            <img class="ui-img-list" src="/images/mobile/<?php if($user['gender'] == 2):?>female.png<?php else:?>male.png<?php endif;?>" />
+                        <?php endif;?>
                             <h3>
-                                <span class="<?if($user['gender'] == 2):?>ui-f<?else:?>ui-m<?endif;?>"></span>
+                                <span class="<?php if($user['gender'] == 2):?>ui-f<?php else:?>ui-m<?php endif;?>"></span>
                                 <a href="<?=$this->url('user/slug-user', array('slug' => $user['user_id']), array(), true);?>"><?=$user['name'];?></a>
                                 <?=$format->getYears($user['birthday'], $user['timezone'], ', ');?> » 
                                 <a class="ui-li-user-notice" href="<?=$user['page'];?>"><?=$user['title'];?></a>

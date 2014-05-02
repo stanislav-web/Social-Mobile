@@ -3,20 +3,20 @@
     <?php
     echo $this->formElementerrors($this->restoreForm, array('class' => "ui-error")).PHP_EOL; // сообщение об ошибке
     ?>
-    <?if(!empty($this->successMsgRestore)):?>
+    <?php if(!empty($this->successMsgRestore)):?>
         <ul class="ui-success">
             <li>
                 <?=$this->translate($this->successMsgRestore, 'success');?>
             </li>
         </ul>
-    <?endif;?>
-    <?if(!empty($this->errorMsgRestore)):?>
+    <?php endif;?>
+    <?php if(!empty($this->errorMsgRestore)):?>
         <ul class="ui-error">
             <li>
                 <?php (isset($this->floodTime) && $this->floodTime > 0) ? printf($this->translate($this->errorMsgRestore, 'errors'), $this->setString('secondsformat', $this->floodTime)) : $this->translate($this->errorMsgRestore, 'errors'); ?>
             </li>
         </ul>
-    <?endif;?>
+    <?php endif;?>
     <?php
     $this->restoreForm->setAttribute('action', $this->url($this->getRoute()->route['controller'],
                                                 array('lang'=>$this->getLang('code')),

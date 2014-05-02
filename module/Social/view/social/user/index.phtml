@@ -30,7 +30,7 @@
                     <!-- Инфо -->
                         <?=$this->translate('Register date', 'default')?> : <?php echo $dateReg['d'].' '.$this->translate($dateReg['m'], 'plugins').' '.$dateReg['y'];?><br>
                         <?=$this->translate('My last visit', 'default')?> : <?php echo $dateLast['d'].' '.$this->translate($dateLast['m'], 'plugins').' '.$dateLast['y'].' '.$dateLast['h'].':'.$dateLast['i'];?><br>
-                        <?if($user->onlinetime > 60):?><?=$this->translate('I stayed online', 'default')?> : <?php echo $this->setString('secondsformat', $user->onlinetime);?><?endif;?>
+                        <?php if($user->onlinetime > 60):?><?=$this->translate('I stayed online', 'default')?> : <?php echo $this->setString('secondsformat', $user->onlinetime);?><?php endif;?>
                     <!-- Инфо -->
                 </div>                
                 <div class="ui-block-c ui-whats-up">

@@ -10,7 +10,7 @@
             <?php
             echo $this->formElementerrors($this->authForm, array('class'=>"ui-error")).PHP_EOL; // сообщение об ошибке
             ?>
-            <?if(!empty($this->errorMsgAuth)):?>
+            <?php if(!empty($this->errorMsgAuth)):?>
             <ul class="ui-error">
                 <?php foreach($this->errorMsgAuth as $error):?>
                 <li>
@@ -18,7 +18,7 @@
                 </li>
                 <?php endforeach; ?>
             </ul>
-            <?endif;?>
+            <?php endif;?>
             <?php
             $this->authForm->setAttribute('action', $this->url($this->getRoute()->route['controller'], array('lang'=>$this->getLang('code'), 'action' => $this->getRoute()->route['action']), array('force_canonical'=>true)
                     )

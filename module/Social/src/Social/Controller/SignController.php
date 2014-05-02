@@ -89,9 +89,9 @@ class SignController extends AbstractActionController
                     $result = $registerStep1Form->getData(); // для хранения результата
                     if(isset($data['file']) && $data['file'] !='')
                     {
-
-                       $plugContent = $this->zfService()->get('plugContent.Service'); // Подключаю сервис плагинов
-                       $dbConfig = $plugContent('filesystem'); // настройки директорий из БД
+                        // Вызываю конфиг для чтения из JSON
+                        $reader = new \Zend\Config\Reader\Json();
+                        $pathConfig = (object)$reader->fromFile(DS.'config'.DS.'paths.json'); // настройки директорий
 
                         // Начинаю обработку загружаемого файла
                         $s = array('min' => '3kb','max' => '2mb');
@@ -128,7 +128,7 @@ class SignController extends AbstractActionController
                             // Рандомизирую имя файла
                             $validFile->addFilter('File\Rename',
                                 array(
-                                    'target' => $dbConfig->tmp_original_images_dir.DS.Translit::transliterate($fileinfo['filename']['name'], '', true),
+                                    'target' => $pathConfig->tmp_original_images_dir.DS.Translit::transliterate($fileinfo['filename']['name'], '', true),
                                     'overwrite' => true,
                                     //'randomize' => true,
                                 )
@@ -147,20 +147,20 @@ class SignController extends AbstractActionController
                                 // Создаю превью и профильное изображение из оригинала
                                 
                                 $thumbnailer($fullname);
-                                $thumbnailer->createThumb($dbConfig->tmp_thumb_images_dir.DS.$basename, 65, 65);    // сохраняю в превью
-                                $thumbnailer->createThumb($dbConfig->tmp_profile_images_dir.DS.$basename, 320, 240); // сохраняю в профиль
+                                $thumbnailer->createThumb($pathConfig->tmp_thumb_images_dir.DS.$basename, 65, 65);    // сохраняю в превью
+                                $thumbnailer->createThumb($pathConfig->tmp_profile_images_dir.DS.$basename, 320, 240); // сохраняю в профиль
                                 
                                 // Ставлю водяной знак
                                 
-                                $thumbnailer->setWatermark($dbConfig->tmp_profile_images_dir.DS.$basename, $dbConfig->watermark_dir.DS.'watermark.png');
+                                $thumbnailer->setWatermark($pathConfig->tmp_profile_images_dir.DS.$basename, $pathConfig->watermark_dir.DS.'watermark.png');
                                 $thumbnailer->close();
 
 
                                 // Сохраняю результат обработки файла
                                 
                                 $result['photo']    = $fullname;
-                                $result['profile']  = $dbConfig->tmp_profile_images_dir.DS.$basename;
-                                $result['thumb']    = $dbConfig->tmp_thumb_images_dir.DS.$basename;
+                                $result['profile']  = $pathConfig->tmp_profile_images_dir.DS.$basename;
+                                $result['thumb']    = $pathConfig->tmp_thumb_images_dir.DS.$basename;
                             }
                         }
                     }
@@ -349,22 +349,23 @@ class SignController extends AbstractActionController
 
                             if($this->_register->offsetExists('photo'))
                             {
-                                $plugContent = $this->zfService()->get('plugContent.Service'); // Подключаю сервис плагинов
-                                $dbConfig = $plugContent('filesystem'); // настройки директорий из БД
+                                // Вызываю конфиг для чтения из JSON
+                                $reader = new \Zend\Config\Reader\Json();
+                                $pathConfig = (object)$reader->fromFile(DS.'config'.DS.'paths.json'); // настройки директорий
 
                                 // Если были зарегистрированы файлы
 
                                 
                                 if($this->_register->original)
                                 {   // Перемещаю оригинал
-                                    $removeOrig      = new \SW\FileSystem\FileSys($this->_register->original, $dbConfig->original_images_dir.DS.$this->_register->user_id.DS.$this->_register->photo, '0777');
+                                    $removeOrig      = new \SW\FileSystem\FileSys($this->_register->original, $pathConfig->original_images_dir.DS.$this->_register->user_id.DS.$this->_register->photo, '0777');
                                     $removeOrig->move();
                                     $removeOrig->access('0755');
                                 }
                                 
                                 if($this->_register->profile)
                                 {   // Перемещаю профиль
-                                    $removeProfile    = new \SW\FileSystem\FileSys($this->_register->profile, $dbConfig->profile_images_dir.DS.$this->_register->user_id.DS.$this->_register->photo, '0777');
+                                    $removeProfile    = new \SW\FileSystem\FileSys($this->_register->profile, $pathConfig->profile_images_dir.DS.$this->_register->user_id.DS.$this->_register->photo, '0777');
                                     $removeProfile->move();
                                     $removeProfile->access('0755');
                                 }
@@ -372,7 +373,7 @@ class SignController extends AbstractActionController
                                 if($this->_register->thumb)
                                 {
                                     // Перемещаю thumb
-                                    $removeThumb    = new \SW\FileSystem\FileSys($this->_register->thumb, $dbConfig->thumb_images_dir.DS.$this->_register->user_id.DS.$this->_register->photo, '0777');
+                                    $removeThumb    = new \SW\FileSystem\FileSys($this->_register->thumb, $pathConfig->thumb_images_dir.DS.$this->_register->user_id.DS.$this->_register->photo, '0777');
                                     $removeThumb->move();
                                     $removeThumb->access('0755');
                                 }
