@@ -4,3 +4,4 @@ README.txt
 nbproject
 backups
 logs
+/config/autoload/social.local.php

@@ -147,22 +147,7 @@ return array(
                         ),
                     ),
                 ),                
-            ), 	    
-	    
-            'users' => array( // Все пользователи
-                'type'    => 'Segment',
-                'options' => array(
-                    'route'    => '[/:lang]/users[/]',
-                    'constraints'   => array(
-                        'lang'          =>  '(en|ru|ua)',
-                    ),
-                    'defaults' => array(
-                        'controller'    => 'user.Controller',
-                        'action'        => 'users',
-                    ),
-                ),
-                'may_terminate' => true,
-            ),            
+            ),           
             
             'user' => array( // Страница пользователя
                 'type'    => 'Segment',

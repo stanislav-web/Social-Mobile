@@ -16,7 +16,7 @@ use Zend\View\View;
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
  * @filesource /module/Admin/Module.php

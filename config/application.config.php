@@ -13,6 +13,7 @@ return array(
         'ZFTool',               // Модуль диагностики
         'Decoda',               // Сервис BB кодов и эмотиконов
         'Social',               // Социальная сеть с управлением юзерами
+        'SwebSocialAuth',       // Мой модуль авторизации в соц сетях
         'Admin',                // Админ панель
         'Plugins',              // Плагины
         'ZF2NetteDebug',        // Интегрируемый сервис отладки исключений и ошибок
@@ -62,6 +63,9 @@ return array(
 
    // Инициализация Сервис Менеджера может быть и сдесь
    'service_manager' => array(
+        'invokables' => array(
+            'Zend\Session\SessionManager' => 'Zend\Session\SessionManager',
+        ),       
         'use_defaults' => true,
          'factories' => array(
             'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',

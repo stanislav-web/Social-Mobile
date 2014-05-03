@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'Zend\\' => array($vendorDir . '/zendframework/zendframework/library'),
     'ZendTest\\' => array($vendorDir . '/zendframework/zendframework/tests'),
+    'Hybrid' => $vendorDir . '/hybridauth/hybridauth/hybridauth/'
 );

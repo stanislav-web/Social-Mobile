@@ -1,0 +1,5 @@
+<?php
+foreach ($adapters as $title => $adapter) 
+{
+    echo '<p><a href="'.$adapter->getAuthUrl() . '">Аутентификация через ' . ucfirst($title) . '</a></p>';
+}
