@@ -178,7 +178,7 @@ class RegisterStep1Validator implements InputFilterAwareInterface
                     array(
                         'name'    => 'Regex',
                         'options'   => array(
-                            'pattern'  => '/^([A-Z]){2,3}$/',
+                            'pattern'  => '/^(\d+)$/',
                             'messages' => array(
                                 'regexNotMatch' => $this->translator->translate("Please choose your country", 'errors'), // сообщение об ошибке
                             )
@@ -189,7 +189,7 @@ class RegisterStep1Validator implements InputFilterAwareInterface
                         'name'                  => 'Db\RecordExists', // валидатор
                         'options'   => array(
                             'table'     => 'zf_countries', // таблица, где проверяю запись
-                            'field'     => 'country_code', // имя поля
+                            'field'     => 'country_id', // имя поля
                             'messages' => array(
                                 'noRecordFound' => $this->translator->translate("Country not found. Do not attempt to crack registration form", 'errors'), // сообщение об ошибке
                             ),

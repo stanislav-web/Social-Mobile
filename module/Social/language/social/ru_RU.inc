@@ -16,6 +16,7 @@ return array(
         'Photos'                =>  'Фото',
         'Online'                =>  'Онлайн',
         'Search'                =>  'Поиск',
+        'Gender'                =>  'Пол',
         'Choose gender'         =>  'Выберите пол',
         'Male'                  =>  'Мужской',
         'Female'                =>  'Женский',

@@ -16,6 +16,7 @@ return array(
         'SwebSocialAuth',       // Мой модуль авторизации в соц сетях
         'Admin',                // Админ панель
         'Plugins',              // Плагины
+        'WebinoImageThumb',     // GD2 Thumbnailer
         'ZF2NetteDebug',        // Интегрируемый сервис отладки исключений и ошибок
     ),
 

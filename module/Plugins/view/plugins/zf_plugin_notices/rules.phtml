@@ -1,7 +1,7 @@
 <!-- Правила пользования социальной сетью -->
-<section id="<?=$params['system'];?>" data-role="page" data-theme="a">
+<section id="<?php echo $params['system'];?>" data-role="page" data-theme="a">
     <header data-role="header" data-theme="a">
-        <h1><?printf($params['title'], $this->translate('Social Mobile', 'default'));?></h3>
+        <h1><?php printf($params['title'], $this->translate('Social Mobile', 'default'));?></h3>
     </header>
     <div data-role="content" data-theme="b">
             <?=$params['description'];?>

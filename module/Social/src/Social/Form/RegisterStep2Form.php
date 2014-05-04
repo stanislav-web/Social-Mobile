@@ -19,15 +19,14 @@ class RegisterStep2Form extends Form
     /**
      * Конструктор формы Выбора локации
      * @access public
-     * @param string $name Имя формы при вызове в шаблоне
      * @return object Form
      */
-    public function __construct($selectStorage, $country_code, $translator = null)
+    public function __construct($selectStorage, $country_id, $translator = null)
     {
         /*
          *  Создаю форму продолжения регистрации
          */
-        $regions = $selectStorage->getRegionsToSelect($country_code); // достаю регионы из БД
+        $regions = $selectStorage->getRegionsToSelect($country_id); // достаю регионы из БД
 
         parent::__construct('regstep2'); // имя формы
 
@@ -55,7 +54,7 @@ class RegisterStep2Form extends Form
                 'title'             =>  $translator->translate('Setup your realy region. This is will easy way to found you here'),
             ),
             'options'   => array(
-                    'label' =>  _('&nbsp;'),
+                    'label' =>  _(''),
                     ),
                 )
         );

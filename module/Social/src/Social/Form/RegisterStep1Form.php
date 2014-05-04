@@ -73,7 +73,7 @@ class RegisterStep1Form extends Form
                 'title'             =>  $translator->translate('Choose is required'),
             ),
             'options'   => array(
-                    'label' =>  _('&nbsp;'),
+                    'label' =>  _('Gender'),
                     'value_options' => array(
                         '0'  => _('Choose gender'),
                         '1' => _('Male'),

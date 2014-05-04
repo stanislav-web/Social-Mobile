@@ -1,0 +1,42 @@
+{
+    "name": "webino/webino-image-thumb",
+    "description": "Image Thumbnailer for Zend Framework 2",
+    "type": "library",
+    "keywords": [
+        "webino", "image", "thumb", "zf2", "zend", "framework"
+    ],
+    "homepage": "https://github.com/webino/WebinoImageThumb",
+    "license": "New BSD License",
+    "authors": [
+        {
+            "name": "Peter Bačinský",
+            "email": "peter@bacinsky.sk",
+            "homepage": "http://www.bacinsky.sk/",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.3",
+        "masterexploder/PHPThumb": "2.*"
+    },
+    "suggest": {
+        "zendframework/zend-modulemanager": "To use it as Zend Framework module"
+    },
+    "require-dev": {
+        "apigen/apigen": "2.*",
+        "mayflower/php-codebrowser": "*",
+        "pdepend/pdepend": "1.*",
+        "phploc/phploc": "*",
+        "phpmd/phpmd": "1.*",
+        "phpunit/phpunit": "3.7.*",
+        "sebastian/phpcpd": "*",
+        "squizlabs/php_codesniffer": "1.*",
+        "zendframework/zendframework": "2.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "WebinoImageThumb": "src/"
+        }
+    }
+}

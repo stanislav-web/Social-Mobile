@@ -91,7 +91,7 @@ class SignController extends AbstractActionController
                     {
                         // Вызываю конфиг для чтения из JSON
                         $reader = new \Zend\Config\Reader\Json();
-                        $pathConfig = (object)$reader->fromFile(DS.'config'.DS.'paths.json'); // настройки директорий
+                        $pathConfig = (object)$reader->fromFile(DOCUMENT_ROOT.DS.'config'.DS.'paths.json'); // настройки директорий
 
                         // Начинаю обработку загружаемого файла
                         $s = array('min' => '3kb','max' => '2mb');
@@ -137,7 +137,8 @@ class SignController extends AbstractActionController
                             {
                                 // Если загружаемый файл полностью валидный
                                 // Подключаю сервисы для обработки изображений
-                                $thumbnailer =  $this->zfService()->get('thumbnail.Service'); // сервис Imagic
+                                if(extension_loaded('imagemagic')) $thumbnailer =  $this->zfService()->get('ImageMagic.Service'); 
+                                else  $thumbnailer =  $this->zfService()->get('GD2.Service'); 
                                 
                                 // Достаю информацию о загруженном файле
 
@@ -177,7 +178,7 @@ class SignController extends AbstractActionController
                         }
                         $this->_register->name          = $result['name'];
                         $this->_register->gender        = $result['gender'];
-                        $this->_register->country_code  = $result['country'];
+                        $this->_register->country_id    = $result['country'];
                         $this->_register->birthday      = $result['birthday'];
                         return $this->redirect()->toUrl('/sign/step2');
                     }
@@ -190,7 +191,7 @@ class SignController extends AbstractActionController
                         if($this->_register->offsetExists('profile'))       $this->_register->offsetUnset('profile');
                         if($this->_register->offsetExists('name'))          $this->_register->offsetUnset('name');
                         if($this->_register->offsetExists('gender'))        $this->_register->offsetUnset('gender');
-                        if($this->_register->offsetExists('country_code'))  $this->_register->offsetUnset('country_code');
+                        if($this->_register->offsetExists('country_id'))  $this->_register->offsetUnset('country_id');
                         if($this->_register->offsetExists('birthday'))      $this->_register->offsetUnset('birthday');
                     }
                 }
@@ -220,13 +221,13 @@ class SignController extends AbstractActionController
         $this->_register        = new Container('register'); // достаю контейнер сессии с регистрацией
 
         if($this->_register->offsetExists('login') && $this->_register->offsetExists('password') && $this->_register->offsetExists('csrf')
-           && $this->_register->offsetExists('name') && $this->_register->offsetExists('gender') && $this->_register->offsetExists('country_code')
+           && $this->_register->offsetExists('name') && $this->_register->offsetExists('gender') && $this->_register->offsetExists('country_id')
            && $this->_register->offsetExists('birthday'))
         {
             // Если прошли все обязательные параметры в сессию, продолжаю регистрацию
             $this->_lng         = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
             $regions = $this->zfService()->get('regions.Service'); // достаю регионы
-            $registerStep2Form   = new Form\RegisterStep2Form($regions, $this->_register->offsetGet('country_code'), $this->_lng); // Форма регистрации. Шаг 2
+            $registerStep2Form   = new Form\RegisterStep2Form($regions, $this->_register->offsetGet('country_id'), $this->_lng); // Форма регистрации. Шаг 2
             /*
              *  Если сессия существует
              */
@@ -244,7 +245,7 @@ class SignController extends AbstractActionController
                     if($this->_register->offsetExists('profile'))       $this->_register->offsetUnset('profile');
                     if($this->_register->offsetExists('name'))          $this->_register->offsetUnset('name');
                     if($this->_register->offsetExists('gender'))        $this->_register->offsetUnset('gender');
-                    if($this->_register->offsetExists('country_code'))  $this->_register->offsetUnset('country_code');
+                    if($this->_register->offsetExists('country_id'))  $this->_register->offsetUnset('country_id');
                     if($this->_register->offsetExists('birthday'))      $this->_register->offsetUnset('birthday');
                     return $this->redirect()->toUrl('/sign/step1');
                 }
@@ -294,16 +295,16 @@ class SignController extends AbstractActionController
 
         $this->_register        = new Container('register'); // достаю контейнер сессии с регистрацией
         if($this->_register->offsetExists('login') && $this->_register->offsetExists('password') && $this->_register->offsetExists('csrf')
-           && $this->_register->offsetExists('name') && $this->_register->offsetExists('gender') && $this->_register->offsetExists('country_code')
+           && $this->_register->offsetExists('name') && $this->_register->offsetExists('gender') && $this->_register->offsetExists('country_id')
            && $this->_register->offsetExists('birthday') && $this->_register->offsetExists('region_code'))
         {
             // Если прошли все обязательные параметры в сессию, продолжаю регистрацию
             $this->_lng         = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
 	    
             $cities = $this->zfService()->get('cities.Service'); // достаю города
-            $letters = $cities->getFirstLetter($this->_register->offsetGet('country_code'), $this->_register->offsetGet('region_code')); // достаю первые буквы
+            $letters = $cities->getFirstLetter($this->_register->offsetGet('country_id'), $this->_register->offsetGet('region_code')); // достаю первые буквы
 	    
-            $registerStep3Form   = new Form\RegisterStep3Form($cities, $this->_register->offsetGet('country_code'), $this->_register->offsetGet('region_code'),$this->_lng); // Форма регистрации. Шаг 3
+            $registerStep3Form   = new Form\RegisterStep3Form($cities, $this->_register->offsetGet('country_id'), $this->_register->offsetGet('region_code'),$this->_lng); // Форма регистрации. Шаг 3
             /*
              *  Если сессия существует
              */

@@ -2,7 +2,7 @@
 <section data-role="page" data-theme="a">
     <?php echo $this->socialPlugin('header'); // заголовок jQuery Mobile ?>
     <div data-role="content" data-theme="a">
-    <?
+    <?php
     echo $this->formElementerrors($this->registerProfileForm, array('class' => "ui-error")).PHP_EOL; // сообщение об ошибке
 
     $this->registerProfileForm->setAttribute('action', $this->url($this->getRoute()->route['controller'],

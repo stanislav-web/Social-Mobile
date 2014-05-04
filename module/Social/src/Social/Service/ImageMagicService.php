@@ -1,18 +1,17 @@
 <?php
 namespace Social\Service;
 /**
- * QRCodeService сервис генерации QR кодов
- * $sm->get('QRCode.Service');
+ * ImageMagicService работа с Image через ImageMagic
  * @package Zend Framework 2
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
- * @filesource /module/Social/src/Social/Service/ThumbnailService.php
+ * @filesource /module/Social/src/Social/Service/ImageMagicService.php
  */
-class ThumbnailService extends \Imagick
+class ImageMagicService extends \Imagick
 {
     /**
      * Полный путь к изображению для обработки
@@ -61,7 +60,7 @@ class ThumbnailService extends \Imagick
      * setWatermark($path, $width, $height) Создаю накладку watermark
      * @access public
      * @param string $original полный путь к изображению
-     * @param string $additional полный путь к watermark
+     * @param string $sprite полный путь к watermark
      * @throws \Exception
      * @return null;
      */

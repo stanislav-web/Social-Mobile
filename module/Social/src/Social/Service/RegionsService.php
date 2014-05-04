@@ -69,23 +69,23 @@ class RegionsService extends AbstractTableGateway implements ServiceLocatorAware
     }
 
     /**
-     * getDBRegions($country_code = null) метод выборки регионов из БД
-     * @param string $country_code код страны, не обязательный параметр
+     * getDBRegions($country_id = null) метод выборки регионов из БД
+     * @param int $country_id код страны, не обязательный параметр
      * @access public
      * @return object Базы данных
      */
-    public function getDBRegions($country_code = null)
+    public function getDBRegions($country_id = null)
     {
         // Использую лямпду как передаваемый объект для выборки
-        if($country_code) $country_code = 'AND `country_code` = \''.$country_code.'\'';
-        $resultSet = $this->select(function (Select $select) use ($country_code) {
+        if($country_id) $country_id = 'AND `country_id` = '.(int)$country_id;
+        $resultSet = $this->select(function (Select $select) use ($country_id) {
             $select
                 ->columns(array(
                         'id'        =>  'region_id',
                         'code'      =>  'region_code',
                         'name'      =>  'region_'.$this->getLocaleCode().'',
                 ))
-                ->where('`activation` = \'1\' '.$country_code.'')
+                ->where('`activation` = \'1\' '.$country_id.'')
                 ->order('region_'.$this->getLocaleCode().' ASC');
         });
         $resultSet = $resultSet->toArray();
@@ -114,21 +114,21 @@ class RegionsService extends AbstractTableGateway implements ServiceLocatorAware
     }    
 
     /**
-     * getRegionsToSelect() метод составляет список регионов в форму
+     * getRegionsToSelect($country_id = '') метод составляет список регионов по Стране
      * @access public
      * @return object Базы данных
      */
-    public function getRegionsToSelect($country_code = '')
+    public function getRegionsToSelect($country_id = '')
     {
         $rows[0] = array(
             'value' =>   '',
             'label' =>   _('Choose region'),
 
         );
-        foreach($this->getDBRegions($country_code) as $row)
+        foreach($this->getDBRegions($country_id) as $row)
         {
-            $rows[$row['id']] = array (
-                'value' => $row['code'],
+            $rows[] = array (
+                'value' => $row['id'],
                 'label' => $row['name'],
             );
         }

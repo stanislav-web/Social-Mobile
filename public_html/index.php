@@ -7,8 +7,8 @@
 
 // Для ZendDeveloperTools
 define('DS', DIRECTORY_SEPARATOR); // разделитель директорий по умолчанию
+define('DOCUMENT_ROOT', getcwd()); // корневой путь сайта
 define('REQUEST_MICROTIME', microtime(true));
-
 date_default_timezone_set('Europe/Berlin');
 // Определяю текущую директорию как корневую
 chdir(dirname(__DIR__));

@@ -85,6 +85,7 @@ class CountriesService extends AbstractTableGateway implements ServiceLocatorAwa
                     )
                 )
                 ->where('`activation` = \'1\'')
+                // сортировка по Алфавиту в зависимости от языка
                 ->order('country_'.$this->getLocaleCode().' ASC');
         });
         $resultSet = $resultSet->toArray();
@@ -125,8 +126,8 @@ class CountriesService extends AbstractTableGateway implements ServiceLocatorAwa
         );
         foreach($this->getDBCountries() as $row)
         {
-            $rows[$row['id']] = array (
-                'value' => $row['code'],
+            $rows[] = array (
+                'value' => $row['id'],
                 'label' => $row['name'],
             );
         }

@@ -170,7 +170,8 @@ return array(
     'invokables'    =>  array(
         'auth.Service'      => '\Social\Service\AuthService',       // сервис авторизации
         'mail.Service'      => '\Social\Service\MailService',       // сервис отправки почты
-        'thumbnail.Service' => '\Social\Service\ThumbnailService',  // сервис нарезки изображений
-        'auth.Helper'   => 'Zend\Authentication\AuthenticationService',        
+        'ImageMagic.Service' => '\Social\Service\ImageMagicService',  // сервис операций над изображениями Imagemagic
+        'GD2.Service'       => '\Social\Service\GD2Service',  // сервис операций над изображениями GD2
+        'auth.Helper'       => 'Zend\Authentication\AuthenticationService',        
     ),
 );
