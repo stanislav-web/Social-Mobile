@@ -70,22 +70,22 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
     }
 
     /**
-     * getDBCities($country_code = null, $region_code = null) метод выборки городов из БД
-     * @param string $country_code код страны, не обязательный параметр
-     * @param string $region_code  код региона, не обязательный параметр
+     * getDBCities($country_code = null, $region_id = null) метод выборки городов из БД
+     * @param int $country_id код страны, не обязательный параметр
+     * @param int $region_id  код региона, не обязательный параметр
      * @access public
      * @return object Базы данных
      */
-    public function getDBCities($country_code, $region_code)
+    public function getDBCities($country_id, $region_id)
     {
         // Использую лямпду как передаваемый объект для выборки
-        if($country_code) $ccode = 'AND `country_code` = \''.$country_code.'\'';
-        if($region_code)  $rcode  = 'AND `region_code` = \''.$region_code.'\'';
+        if($country_id) $ccode = 'AND `country_id` = '.(int)$country_id;
+        if($region_id)  $rcode  = 'AND `region_id` = '.(int)$region_id;
         $resultSet = $this->select(function (Select $select) use ($ccode, $rcode) {
             $select
                 ->columns(array(
-                        'code'          =>  'city_id',
-                        'name'          =>  'city_'.$this->getLocaleCode().'',
+                        'city_id'          =>  'city_id',
+                        'name'             =>  'city_'.$this->getLocaleCode().'',
                 ))
                 ->where('`activation` = \'1\' '.$ccode.' '.$rcode.'')
                 ->order('order, city_'.$this->getLocaleCode().' ASC');
@@ -106,7 +106,7 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
         // Использую лямпду как передаваемый объект для выборки
         if($country_code) $ccode = 'AND `country_code` = \''.$country_code.'\'';
         if($region_code)  $rcode  = 'AND `region_code` = \''.$region_code.'\'';
-        $resultSet = $this->select(function (Select $select) use ($city, $ccode, $rcode) {
+        $resultSet = $this->select(function (Select $select) use ($city) {
             $select
                 ->columns(array(
                         'city_id',
@@ -121,17 +121,17 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
     }    
 
     /**
-     * getFirstLetter($country_code = null, $region_code = null) Выборка первых букв в алфавитном порядке
+     * getFirstLetter($country_id = null, $region_id = null) Выборка первых букв в алфавитном порядке
      * по коду страны и региону
-     * @param string $country_code код страны, не обязательный параметр
-     * @param string $region_code  код региона, не обязательный параметр
+     * @param int $country_id код страны, не обязательный параметр
+     * @param int $region_id  код региона, не обязательный параметр
      * @access public
      * @return object Базы данных
      */
-    public function getFirstLetter($country_code, $region_code)
+    public function getFirstLetter($country_id, $region_id)
     {
-        if($country_code)   $ccode  =	'AND `country_code` = \''.$country_code.'\'';
-        if($region_code)    $rcode  = 'AND `region_code` = \''.$region_code.'\'';
+        if($country_id) $ccode = 'AND `country_id` = '.(int)$country_id;
+        if($region_id)  $rcode  = 'AND `region_id` = '.(int)$region_id;
 	
         $resultSet = $this->select(function (Select $select) use ($ccode, $rcode) {
             $select
@@ -149,43 +149,23 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
     }    
     
     /**
-     * getCityID($country_code, $region_code) Достать ID города
-     * @param string $country_code код страны
-     * @param string $region_code код регыиона стран
+     * getCitiesToSelect($country_id = null, $region_id = null) метод составляет список городов по стране и региону в форму
+     * @param int $country_id код страны
+     * @param int $region_id код региона стран
      * @access public
      * @return object Базы данных
      */
-    public function getCityID($country_code, $region_code)
-    {
-        // Использую лямпду как передаваемый объект для выборки
-        $resultSet = $this->select(function (Select $select) use ($country_code, $region_code) {
-            $select
-                ->columns(array(
-                        'id'        =>  'city_id',
-                ))
-                ->where('`country_code` = \''.$country_code.'\' AND `region_code` = \''.$region_code.'\'');
-        })->current();
-
-        if(!$resultSet)  throw new \Exception('`'.$this->table.'` No records found');
-        return $resultSet;
-    }     
-    
-    /**
-     * getRegionsToSelect() метод составляет список регионов в форму
-     * @access public
-     * @return object Базы данных
-     */
-    public function getCitiesToSelect($country_code = null, $region_code = null)
+    public function getCitiesToSelect($country_id = null, $region_id = null)
     {
         $rows[0] = array(
             'value' =>   '0',
             'label' =>   _('Choose city'),
 
         );
-        foreach($this->getDBCities($country_code, $region_code) as $row)
+        foreach($this->getDBCities($country_id, $region_id) as $row)
         {
             $rows[] = array (
-                'value' => $row['code'],
+                'value' => $row['city_id'],
                 'label' => $row['name'],
             );
         }

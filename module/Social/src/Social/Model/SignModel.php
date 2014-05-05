@@ -391,9 +391,6 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
     public function signRegister()
     {
         $this->_lng = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
-        $countries  = $this->zfService()->get('countries.Service'); // загружаю переводчик
-        $regions    = $this->zfService()->get('regions.Service'); // загружаю переводчик
-        //$cities     = $this->zfService()->get('cities.Service'); // загружаю переводчик
         $register   = new Container('register'); // достаю контейнер сессии с регистрацией
         
         if(!isset($register->init)) throw new \Exception($this->_lng->translate('Ivalid register parameter. Session continer could not exist', 'exceptions'));
@@ -424,8 +421,8 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 $dataProfile = array(
                     'name'          => $register->name,
                     'gender'        => $register->gender,
-                    'country_id'    => $countries->getCountryID($register->country_code)->id,
-                    'region_id'     => $regions->getRegionID($register->country_code, $register->region_code)->id,
+                    'country_id'    => $register->country_id,
+                    'region_id'     => $register->region_id,
                     'city_id'       => $register->city_id,
                     'online'        => 1,
                     'user_id'       => $lastId,

@@ -90,7 +90,7 @@ class RegisterStep2Validator implements InputFilterAwareInterface
                     array(
                         'name'    => 'Regex',
                         'options'   => array(
-                            'pattern'  => '/^([A-Z]){2,3}$/',
+                            'pattern'  => '/^(\d+)$/',
                             'messages' => array(
                                 'regexNotMatch' => $this->translator->translate("Please choose your region", 'errors'), // сообщение об ошибке
                             )
@@ -101,7 +101,7 @@ class RegisterStep2Validator implements InputFilterAwareInterface
                         'name'                  => 'Db\RecordExists', // валидатор
                         'options'   => array(
                             'table'     => 'zf_regions', // таблица, где проверяю запись
-                            'field'     => 'region_code', // имя поля
+                            'field'     => 'region_id', // имя поля
                             'messages' => array(
                                 'noRecordFound' => $this->translator->translate("Region not found. Do not attempt to crack registration form", 'errors'), // сообщение об ошибке
                             ),

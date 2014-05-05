@@ -91,27 +91,6 @@ class RegionsService extends AbstractTableGateway implements ServiceLocatorAware
         $resultSet = $resultSet->toArray();
         return $resultSet;
     }
-    
-    /**
-     * getRegionsID($country_code, $region_code) Достать ID региона
-     * @param string $country_code код страны
-     * @param string $region_code код регыиона стран
-     * @access public
-     * @return object Базы данных
-     */
-    public function getRegionID($country_code, $region_code)
-    {
-        // Использую лямпду как передаваемый объект для выборки
-        $resultSet = $this->select(function (Select $select) use ($country_code, $region_code) {
-            $select
-                ->columns(array(
-                        'id'        =>  'region_id',
-                ))
-                ->where('`country_code` = \''.$country_code.'\' AND `region_code` = \''.$region_code.'\'');
-        })->current();
-        if(!$resultSet)  throw new \Exception('`'.$this->table.'` No records found');
-        return $resultSet;
-    }    
 
     /**
      * getRegionsToSelect($country_id = '') метод составляет список регионов по Стране

@@ -14,7 +14,7 @@ use SW\String\Translit;
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
  * @filesource /module/Social/src/Social/Controller/SignController.php
@@ -260,13 +260,13 @@ class SignController extends AbstractActionController
                     {
                         // С формой все впорядке , сохраняю и перебрасываю на третий шаг
                         $result = $registerStep2Form->getData(); // для хранения результата
-                        $this->_register->region_code          = $result['region'];
+                        $this->_register->region_id          = $result['region'];
                         return $this->redirect()->toUrl('/sign/step3');
                     }
                     else
                     {
                         // Чищу запись
-                        if($this->_register->offsetExists('region_code')) $this->_register->offsetUnset('region_code');
+                        if($this->_register->offsetExists('region_id')) $this->_register->offsetUnset('region_id');
                     }
                 }
             }
@@ -296,15 +296,15 @@ class SignController extends AbstractActionController
         $this->_register        = new Container('register'); // достаю контейнер сессии с регистрацией
         if($this->_register->offsetExists('login') && $this->_register->offsetExists('password') && $this->_register->offsetExists('csrf')
            && $this->_register->offsetExists('name') && $this->_register->offsetExists('gender') && $this->_register->offsetExists('country_id')
-           && $this->_register->offsetExists('birthday') && $this->_register->offsetExists('region_code'))
+           && $this->_register->offsetExists('birthday') && $this->_register->offsetExists('region_id'))
         {
             // Если прошли все обязательные параметры в сессию, продолжаю регистрацию
             $this->_lng         = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
 	    
             $cities = $this->zfService()->get('cities.Service'); // достаю города
-            $letters = $cities->getFirstLetter($this->_register->offsetGet('country_id'), $this->_register->offsetGet('region_code')); // достаю первые буквы
+            $letters = $cities->getFirstLetter($this->_register->offsetGet('country_id'), $this->_register->offsetGet('region_id')); // достаю первые буквы
 	    
-            $registerStep3Form   = new Form\RegisterStep3Form($cities, $this->_register->offsetGet('country_id'), $this->_register->offsetGet('region_code'),$this->_lng); // Форма регистрации. Шаг 3
+            $registerStep3Form   = new Form\RegisterStep3Form($cities, $this->_register->offsetGet('country_id'), $this->_register->offsetGet('region_id'),$this->_lng); // Форма регистрации. Шаг 3
             /*
              *  Если сессия существует
              */
@@ -315,7 +315,7 @@ class SignController extends AbstractActionController
                 if(isset($request->getPost()->back))
                 {
                     // Возвращию на шаг назад. Уничтожаю сессию с форм
-                    if($this->_register->offsetExists('region_code'))  $this->_register->offsetUnset('region_code');
+                    if($this->_register->offsetExists('region_id'))  $this->_register->offsetUnset('region_id');
                     return $this->redirect()->toUrl('/sign/step2');
                 }
                 else
