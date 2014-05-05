@@ -292,7 +292,6 @@ class SignController extends AbstractActionController
      */
     public function step3Action()
     {
-
         $this->_register        = new Container('register'); // достаю контейнер сессии с регистрацией
         if($this->_register->offsetExists('login') && $this->_register->offsetExists('password') && $this->_register->offsetExists('csrf')
            && $this->_register->offsetExists('name') && $this->_register->offsetExists('gender') && $this->_register->offsetExists('country_id')

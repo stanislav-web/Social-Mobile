@@ -91,7 +91,7 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
         if($region_id)  $region  = 'AND `region_id` = '.(int)$region_id;
         
         // Использую кэширование (подключаю адаптер)
-        $this->cache    =   $this->__setCacheStorage(2629743);
+        $this->cache = $this->getServiceLocator()->get('memcache.Service');
 
         // Проверяю ключ в кэше
         $result = $this->cache->getItem('zf_cities_'.$country_id.'-'.$region_id);
@@ -153,22 +153,37 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
      */
     public function getFirstLetter($country_id, $region_id)
     {
-        if($country_id) $ccode = 'AND `country_id` = '.(int)$country_id;
-        if($region_id)  $rcode  = 'AND `region_id` = '.(int)$region_id;
-	
-        $resultSet = $this->select(function (Select $select) use ($ccode, $rcode) {
+        if($country_id) $country = 'AND `country_id` = '.(int)$country_id;
+        if($region_id)  $region  = 'AND `region_id` = '.(int)$region_id;
+        
+        // Использую кэширование (подключаю адаптер)
+        
+        $this->cache = $this->getServiceLocator()->get('memcache.Service');
+
+        // Проверяю ключ в кэше
+        $result = $this->cache->getItem('zf_cities-'.$this->getLocaleCode().'-'.$country_id.'-'.$region_id);
+
+        if(!$result)
+        {   
+            // Делаю выборку и кэширую результат запроса
+            $resultSet = $this->select(function (Select $select) use ($country, $region) {
             $select
                 ->columns(array(
                         'city'    =>  new \Zend\Db\Sql\Expression('DISTINCT LEFT( city_'.$this->getLocaleCode().', 1 )'),
                 ))
-                ->where('`activation` = \'1\' '.$ccode.' '.$rcode.'')
+                ->where('`activation` = \'1\' '.$country.' '.$region.'')
                 ->order('city_'.$this->getLocaleCode().' ASC');
-	        //print $select->getSqlString(); exit();// SHOW SQL
+                //print $select->getSqlString(); exit();// SHOW SQL
 
-        });
-	
-        $resultSet = $resultSet->toArray();
-        return $resultSet;
+            });
+
+            // кэширую выборку
+            $resultSet->buffer();
+    
+            $result = $resultSet->toArray();
+            $this->cache->setItem('zf_cities-'.$this->getLocaleCode().'-'.$country_id.'-'.$region_id, $result);
+        }
+        return $result;
     }    
     
     /**
@@ -206,28 +221,4 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
         $locale = substr($locale->getLocale(), 0,2);
         return $locale;
     } 
-    
-    private function __setCacheStorage($sec)
-    {
-        return StorageFactory::factory(array(
-            'adapter' => array(
-            'name' => 'filesystem',
-            'options' => array(
-                'cache_dir' => __DIR__ . '/../../../../../data/cache/locations/',
-                'ttl' => $sec
-            ),
-        ),
-        'plugins' => array(
-            array(
-                    'name' => 'serializer',
-                    'options' => array(
-                    )
-                ),
-            // Don't throw exceptions on cache errors
-                'exception_handler' => array(
-                    'throw_exceptions' => false
-                ),
-            )
-        ));
-    }
 }
