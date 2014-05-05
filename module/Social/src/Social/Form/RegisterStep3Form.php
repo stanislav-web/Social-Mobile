@@ -22,12 +22,12 @@ class RegisterStep3Form extends Form
      * @param string $name Имя формы при вызове в шаблоне
      * @return object Form
      */
-    public function __construct($selectStorage, $country_code, $region_id, $translator = null)
+    public function __construct($selectStorage, $country_id, $region_id, $translator = null)
     {
         /*
          *  Создаю форму продолжения регистрации
          */
-        $cities = $selectStorage->getCitiesToSelect($country_code, $region_id); // достаю регионы из БД
+        $cities = $selectStorage->getCitiesToSelect($country_id, $region_id); // достаю регионы из БД
         parent::__construct('regstep3'); // имя формы
 
         $this->setAttributes( // аттрибуты

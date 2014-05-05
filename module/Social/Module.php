@@ -16,7 +16,7 @@ use Zend\View\View;
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
  * @filesource /module/Social/Module.php
@@ -44,8 +44,8 @@ class Module
     }
 
     /**
-     * setCacheStorage() возвращает параметры адаптера сессионного хранилища
-     * @param int $sec секунды
+     * setCacheStorage($sec) возвращает параметры адаптера сессионного хранилища
+     * @param int $sec секунды на сохранение
      * @access private
      * return object \Zend\Cache\StorageFactory::factory()
      */

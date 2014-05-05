@@ -99,23 +99,6 @@ return array(
             return $authService;
         },
 
-        'countries.Service' => function($serviceManager) { // сервис выбора стран
-            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
-            //$cacheAdapter = $serviceManager->get('sqlquery.cache');
-
-            $table     = new \Social\Service\CountriesService($dbAdapter);
-            //$table->setCache($cacheAdapter);
-            return $table;
-        },
-        'regions.Service' => function($serviceManager) { // сервис выбора стран
-            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
-            return new \Social\Service\RegionsService($dbAdapter);
-        },
-        'cities.Service' => function($serviceManager) { // сервис выбора стран
-            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
-            $table     = new \Social\Service\CitiesService($dbAdapter);
-            return $table;
-        },
         'menuItems.Service' => function($serviceManager) { // Модель для сервисов авторизации итп
             $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
             $table = new \Social\Service\MenuItemsService($dbAdapter);

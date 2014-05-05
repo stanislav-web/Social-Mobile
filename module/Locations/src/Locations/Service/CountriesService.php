@@ -1,5 +1,5 @@
 <?php
-namespace Social\Service;
+namespace Locations\Service;
 
 // подключаю адаптеры Бд
 use Zend\Db\TableGateway\AbstractTableGateway;
@@ -12,13 +12,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * CountriesService сервис выдачи стран и различными операциями со странами
  * $sm->get('сountries.Service');
  * @package Zend Framework 2
- * @subpackage Social
+ * @subpackage Locations
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
- * @filesource /module/Social/src/Social/Service/CountriesService.php
+ * @filesource /module/Locations/src/Locations/Service/CountriesService.php
  */
 class CountriesService extends AbstractTableGateway implements ServiceLocatorAwareInterface
 {

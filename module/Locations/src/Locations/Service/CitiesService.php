@@ -1,10 +1,11 @@
 <?php
-namespace Social\Service;
+namespace Locations\Service;
 
 // подключаю адаптеры Бд
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Sql\Select;
-
+// подключаю фабрику кэширования
+use Zend\Cache\StorageFactory;
 // подключаю интерфейсы ServiceLocator
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -13,13 +14,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * CitiesService сервис выдачи городов
  * $sm->get('cities.Service');
  * @package Zend Framework 2
- * @subpackage Social
+ * @subpackage Locations
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
- * @filesource /module/Social/src/Social/Service/CitiesService.php
+ * @filesource /module/Locations/src/Locations/Service/CitiesService.php
  */
 class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareInterface
 {
@@ -29,7 +30,7 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
      * @var type object
      */
     protected $_serviceLocator;
-
+    
     /**
      * setServiceLocator(ServiceLocatorInterface $_serviceLocator) Метод реализующий интерфейс установки сервис локатора
      * @access public
@@ -58,10 +59,17 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
     protected $table = 'zf_cities';
 
     /**
-     * Конструктор адаптера БД
+     * Объект кэширования
+     * @access protected
+     * @var object $cache;
+     */
+    protected $cache = null;
+
+    /**
+     * Конструктор адаптера БД + объект кэширования
      * @access public
-     * @param \Zend\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
-     * @return object DB initialize
+     * @param object Zend\Db\Adapter\Adapter $dbAdapter
+     * @return mixed
      */
     public function __construct($dbAdapter)
     {
@@ -79,19 +87,34 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
     public function getDBCities($country_id, $region_id)
     {
         // Использую лямпду как передаваемый объект для выборки
-        if($country_id) $ccode = 'AND `country_id` = '.(int)$country_id;
-        if($region_id)  $rcode  = 'AND `region_id` = '.(int)$region_id;
-        $resultSet = $this->select(function (Select $select) use ($ccode, $rcode) {
-            $select
-                ->columns(array(
+        if($country_id) $country = 'AND `country_id` = '.(int)$country_id;
+        if($region_id)  $region  = 'AND `region_id` = '.(int)$region_id;
+        
+        // Использую кэширование (подключаю адаптер)
+        $this->cache    =   $this->__setCacheStorage(2629743);
+
+        // Проверяю ключ в кэше
+        $result = $this->cache->getItem('zf_cities_'.$country_id.'-'.$region_id);
+
+        if(!$result)
+        {   
+            // Делаю выборку и кэширую результат запроса
+            $resultSet = $this->select(function (Select $select) use ($country, $region) {
+                $select
+                    ->columns(array(
                         'city_id'          =>  'city_id',
                         'name'             =>  'city_'.$this->getLocaleCode().'',
-                ))
-                ->where('`activation` = \'1\' '.$ccode.' '.$rcode.'')
-                ->order('order, city_'.$this->getLocaleCode().' ASC');
-        });
-        $resultSet = $resultSet->toArray();
-        return $resultSet;
+                    ))
+                    ->where('`activation` = \'1\' '.$country.' '.$region.'')
+                    ->order('order, city_'.$this->getLocaleCode().' ASC');
+                });
+            // кэширую выборку
+            $resultSet->buffer();
+    
+            $result = $resultSet->toArray();
+            $this->cache->setItem('zf_cities_'.$country_id.'-'.$region_id, $result);
+        }
+        return $result;
     }
     
     /**
@@ -183,4 +206,28 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
         $locale = substr($locale->getLocale(), 0,2);
         return $locale;
     } 
+    
+    private function __setCacheStorage($sec)
+    {
+        return StorageFactory::factory(array(
+            'adapter' => array(
+            'name' => 'filesystem',
+            'options' => array(
+                'cache_dir' => __DIR__ . '/../../../../../data/cache/locations/',
+                'ttl' => $sec
+            ),
+        ),
+        'plugins' => array(
+            array(
+                    'name' => 'serializer',
+                    'options' => array(
+                    )
+                ),
+            // Don't throw exceptions on cache errors
+                'exception_handler' => array(
+                    'throw_exceptions' => false
+                ),
+            )
+        ));
+    }
 }

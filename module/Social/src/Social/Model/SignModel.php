@@ -21,10 +21,10 @@ use Zend\Crypt\Password\Bcrypt;
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
- * @filesource /module/Social/src/Social/Model/IndexModel.php
+ * @filesource /module/Social/src/Social/Model/SignModel.php
  */
 class signModel extends AbstractTableGateway implements ServiceLocatorAwareInterface
 {

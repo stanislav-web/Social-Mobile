@@ -15,7 +15,6 @@ return array(
             'online.Controller'     => 'Social\Controller\OnlineController',    // контроллер просмотра страниц "онлайн"
             'sign.Controller'       => 'Social\Controller\SignController',      // авторизация, регистрация, восстановление пароля
             'user.Controller'       => 'Social\Controller\UserController',      // контроллер над пользователями и все что с ними связано
-            'location.Controller'   => 'Social\Controller\locationController',  // контроллер обслуживания локаций
         ),
     ),
     
@@ -103,52 +102,7 @@ return array(
                 ),
                 'may_terminate' => true,
             ),            
-            
-            'cities' => array( // Города
-                'type'    => 'Segment',
-                'options' => array(
-                    'route'    => '[/:lang]/cities',
-                    'constraints'   => array(
-                        'lang'          =>  '(en|ru|ua)',
-                    ),
-                    'defaults' => array(
-                        'controller'    => 'location.Controller',
-                        'action'        => 'index',
-                    ),
-                ),
-                'may_terminate' => true,
-                'child_routes' => array(
-                    'short-city' => array(
-                        'type'      => 'Segment',
-                        'options'   => array(
-                            'route' => '/short[/:country][/:region][/:city][/]',
-                                'constraints' => array(
-                                    'country'	=> '[a-zA-Z]*',
-                                    'region'	=> '[a-zA-Z]*',
-                                    'city'	=> '[a-zA-Z0-9_-]{1,3}',
-                                ),
-                                'defaults' => array(
-                                    'controller'    => 'location.Controller',
-                                    'action'        => 'short',
-                                )
-                        ),
-                    ),
-                    'long-city' => array(
-                        'type'      => 'Segment',
-                        'options'   => array(
-                            'route' => '/long[/:long][/]',
-                                'constraints' => array(
-                                    'long' => '[a-zA-Z0-9_-]*',
-                                ),
-                                'defaults' => array(
-                                    'controller'    => 'location.Controller',
-                                    'action'        => 'long',
-                                )
-                        ),
-                    ),
-                ),                
-            ),           
-            
+          
             'user' => array( // Страница пользователя
                 'type'    => 'Segment',
                 'options' => array(
