@@ -1,6 +1,6 @@
 <?php $format = new \SW\String\Format; ?>   
-<?php $dateReg  = $format->getFormatTime($user->registerDate, $user->timezone); // формат даты регистрации?>
-<?php $dateLast = $format->getFormatTime($user->lastvisit, $user->timezone);    // формат даты последнего визита ?>
+<?php $dateReg  = $format->getFormatTime($user->date_registration, $user->timezone); // формат даты регистрации?>
+<?php $dateLast = $format->getFormatTime($user->date_lastvisit, $user->timezone);    // формат даты последнего визита ?>
 <section data-role="page" data-theme="a">
     <?php echo $this->socialPlugin('header', $user); // заголовок jQuery Mobile ?>
     <!-- Меню -->
@@ -30,7 +30,7 @@
                     <!-- Инфо -->
                         <?=$this->translate('Register date', 'default')?> : <?php echo $dateReg['d'].' '.$this->translate($dateReg['m'], 'plugins').' '.$dateReg['y'];?><br>
                         <?=$this->translate('My last visit', 'default')?> : <?php echo $dateLast['d'].' '.$this->translate($dateLast['m'], 'plugins').' '.$dateLast['y'].' '.$dateLast['h'].':'.$dateLast['i'];?><br>
-                        <?php if($user->onlinetime > 60):?><?=$this->translate('I stayed online', 'default')?> : <?php echo $this->setString('secondsformat', $user->onlinetime);?><?php endif;?>
+                        <?php if($user->time_online > 60):?><?=$this->translate('I stayed online', 'default')?> : <?php echo $this->setString('secondsformat', $user->time_online);?><?php endif;?>
                     <!-- Инфо -->
                 </div>                
                 <div class="ui-block-c ui-whats-up">

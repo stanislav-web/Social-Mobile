@@ -8,7 +8,8 @@
                 printf( $this->translate('Here are %s users!', 'default'),
                         '<a href="'.$this->url('social', array('action'=>'users')).'">'.$users['all']->count.'</a>'
                       );
-            ?> <?php echo $this->socialPlugin('usersonline'); // сколько в онлайн? ?>     
+            ?> 
+            <?php echo $this->socialPlugin('user'); // сколько в онлайн? ?>     
         </div>
         <!-- Статус бар пользователя -->
 
@@ -46,7 +47,6 @@
     </div>
     <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
         <?php echo $this->socialPlugin('bookmarks'); // виджет соц. закладок ?>
-            <script type="text/javascript" src="http://mobiclick.local/js/82"></script>
         <?php if(!$this->identity()): // не авторизирован ?>
             <?php echo $this->socialPlugin('qrcode', $this->serverUrl()); // qr код ?>
         <?php endif;?>

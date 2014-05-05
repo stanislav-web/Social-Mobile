@@ -5,6 +5,8 @@ namespace Social\Model; // инициализирую текущее прост�
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql; // для запросов
+use Zend\Db\Sql\Expression;
+
 // подключаю интерфейсы ServiceLocator
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -16,20 +18,26 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
  * @filesource /module/Social/src/Social/Model/UserModel.php
  */
 class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInterface
 {
-
     /**
      * Таблица, к которой обращаюсь
      * @access protected
      * @var string $table;
      */
     protected $table = 'zf_users';
+    
+    /**
+     * Сколько секунд считать user в онлайне
+     * @access protected
+     * @var string $table;
+     */
+    protected $timeon = 300;   
     
     /**
      * Зависимые таблицы
@@ -103,7 +111,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         return $this->getServiceLocator();
     }
     
-    
     /**
      * getUsers($page, $perpage, $filter = null) Все пользователи (с фильтром)
      * @param int $page - страница текущая
@@ -135,9 +142,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                 'about',                    
                 'alias',                    
                 'personal',
-                'online',
-                'onlinetime',
-                'lastvisit',
                 'timezone',                    
                 ), $select::JOIN_LEFT)
             ->join($this->relationsTable['group'], $this->relationsTable['group'].'.id = '.$this->table.'.role_id', array(
@@ -163,6 +167,48 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         
         if($result) return $result;
         else return null;
+    }    
+    
+    /**
+     * get() Метод выдает уведомления по коду (для сервиса Плагинов)
+     * @access public
+     * @param \Zend\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
+     * @return object DB initialize
+     */
+    public function get()
+    {
+        $service    = $this->getServiceLocator()->get('plugins.Service');   // Мой менеджер плагинов
+        foreach($service->getPlugins() as $value)
+        {
+            if($this->table == $value['system'])
+            {
+                /**
+                 * Необходимо реализовать такое
+                 *  SELECT 
+                 *  (SELECT COUNT('id') FROM zf_users_profile WHERE online = '1') AS `all`,
+                 *  (SELECT COUNT('id') FROM zf_users_profile WHERE online = '1' AND gender = '1') AS `m`,
+	         *  (SELECT COUNT('id') FROM zf_users_profile WHERE online = '1' AND gender = '2') AS `f`
+                 *  FROM zf_users_profile LIMIT 1;
+                 */
+                
+                $sql = "SELECT 
+                        (SELECT COUNT('id') FROM `{$this->table}` WHERE online = '1' AND {$this->relationsTable["profile"]}.gender = '1') AS `m`,
+                        (SELECT COUNT('id') FROM `{$this->table}` WHERE online = '1' AND {$this->relationsTable["profile"]}.gender = '2') AS `f`
+                        FROM `{$this->table}` 
+                        INNER JOIN `{$this->relationsTable["profile"]}` ON ({$this->relationsTable["profile"]}.user_id = {$this->table}.id)
+                        LIMIT 1;";
+
+                $Adapter = $this->adapter;
+                $result = $Adapter->query($sql, $Adapter::QUERY_MODE_EXECUTE);
+                if(!empty($result)) 
+                {
+                    $result = $result->current();
+                    $result->all = $result->f + $result->m;
+                }
+                break;
+            }
+        } 
+        return (!isset($result)) ? '' : $result;
     }    
     
     /**
@@ -240,10 +286,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     ->columns(array(
                     'id',
                 ))
-                ->join($this->relationsTable['profile'], $this->relationsTable['profile'].'.user_id = '.$this->table.'.id', array(
-                    'onlinetime',
-                    'lastvisit' 
-                ))
                 ->where($this->table.'.`id` = \''.$id.'\'')
                 ->limit(1);
             //print $select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
@@ -258,7 +300,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
      */
     public function countUsers($gender = null)
     {
-        
         //$resultSet = $this->select()->count();
         if($gender) $gender = 'AND `gender` = \''.$gender.'\'';
         $resultSet = $this->select(function (Select $select) use ($gender) {
@@ -276,7 +317,70 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         return $resultSet;
     }
  
-     /**
+    /**
+     * setOnlineStatus($status, $user = null) Обновление статуса в сети (не в сети)
+     * @param enum $status статус (1 - в сети, 0 - не в сети)
+     * @param object $user ID пользователя если есть
+     * @access public
+     * @return object Базы данных
+     */
+    public function setOnlineStatus($status, $user = null)
+    {
+        $Adapter = $this->adapter; // Загружаю адаптер БД
+        $sql = new Sql($Adapter);
+        $update     = $sql->update($this->table);
+        
+        if(null != $user)
+        {
+            // Обновляю пользователя в онлайне
+            $time           = time();
+            $updateArray    = array();
+            $convert        = new \SW\String\Format();
+
+            $date_lastvisit   = $convert->datetimeToTimestamp($user->date_lastvisit);
+            
+            // Делаю подсчет веремени в онлайне в сек.
+            if($time < $date_lastvisit+$this->timeon) // если текущее время меньше установленного значения в сумме с датой посл. визита
+            {
+                // считаю разницу от текущего времени до последнего визита            
+                $useronline = ($time - $date_lastvisit); 
+                // если эта разница меньше допустимого в онлайн, то он еще на сайте
+                if($useronline < $this->timeon) $updateArray['time_online'] = $user->time_online+$useronline;
+            }
+            $updateArray['online']          = $status;
+            $updateArray['date_lastvisit']  = $convert->timestampToDatetime($time);
+        
+            $update->set($updateArray);
+            $update->where(array('user_id' => $user->id));
+            $statement = $sql->prepareStatementForSqlObject($update);
+            //print $update->getSqlString($this->adapter->getPlatform()); // SHOW SQL
+        }
+        else
+        {
+            // Просто обновляю статус "в сети" / "не в сети"
+            $update->set(array(
+                'online' => $status
+                )
+            );
+        
+            $statement = $sql->prepareStatementForSqlObject($update);
+            //print $update->getSqlString($this->adapter->getPlatform()); // SHOW SQL            
+        }
+        
+        $rows = 0;
+        try {
+            $result = $statement->execute();
+            $rows = $result->getAffectedRows();
+            return $rows;
+        } catch (\Exception $e) {
+            die(
+                    'Error: '.$e->getMessage().'<br>
+                     Query: '.$update->getSqlString($this->adapter->getPlatform())
+               );
+        } 
+    }    
+
+    /**
      * lastUsers($limit = 5) метод выборки последних активных
      * а также зарегистрированных пользователей
      * @param int $limit количество пользователей по умолчанию
@@ -297,7 +401,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     'name',
                     'gender',
                     'photo',
-                    'online',
                     'timezone',
                     'birthday'
                 ))
@@ -335,7 +438,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     ->columns(array(
                     'id',
                     'block',
-                    'registerDate',
+                    'date_registration',
                     'ip',
                     'agent',
                 ))
@@ -355,9 +458,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     'about',                    
                     'alias',                    
                     'personal',
-                    'online',
-                    'onlinetime',
-                    'lastvisit',
                     'timezone',                    
                 ), $select::JOIN_LEFT)
                 ->join($this->relationsTable['group'], $this->relationsTable['group'].'.id = '.$this->table.'.role_id', array(

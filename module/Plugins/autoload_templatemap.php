@@ -15,5 +15,5 @@ return array(
     'plugins/zf_plugin_menu/user-left-menu'    => __DIR__ . '/view/plugins/zf_plugin_menu/user-left-menu.phtml',
     'plugins/zf_plugin_menu/user-topnav-menu'  => __DIR__ . '/view/plugins/zf_plugin_menu/user-topnav-menu.phtml',
     'plugins/zf_plugin_notices/rules'          => __DIR__ . '/view/plugins/zf_plugin_notices/rules.phtml',
-    'plugins/zf_users_profile/usersonline'     => __DIR__ . '/view/plugins/zf_users_profile/usersonline.phtml',
+    'plugins/zf_users/user'                    => __DIR__ . '/view/plugins/zf_users/user.phtml',
 );

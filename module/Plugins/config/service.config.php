@@ -58,12 +58,6 @@ return array(
             $table = new \Plugins\Model\FlashWallModel($dbAdapter);
             return $table;
         },
-                
-        'usersonline.Model' => function($serviceManager) { // Модель подсчета онлайн пользователей
-            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
-            $table = new \Plugins\Model\UsersOnlineModel($dbAdapter);
-            return $table;
-        },
     ),
 
     // Для вызова плагинов через модели, контроллеры итп

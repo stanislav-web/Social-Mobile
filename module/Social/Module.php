@@ -90,7 +90,7 @@ class Module
         $shortLang = $e->getRouteMatch()->getParam('lang'); // ищу в url &lang=??
         $config =  $app->getServiceManager()->get('Config'); // достаю настройки
         //@TODO Кэширование локалей
-        //$translator->setCache($this->__setCacheStorage(1)); // кэширую локаль
+        $translator->setCache($this->__setCacheStorage(300)); // кэширую локаль
         if(isset($shortLang) && preg_match("/[a-z]{2}?/i", $shortLang)) // если нашли в URL
         {
             if(isset($config['languages'][$shortLang]))
@@ -134,13 +134,16 @@ class Module
         $application   = $e->getApplication();
         $sm            = $application->getServiceManager();
         
-        // Проверяю авторизацию
+        // Удаляю тех кто уже отмотал срок в онлайне :-)
         
+        $sm->get('online.Model')->deleteItems();        
+        
+        // Проверяю авторизацию
+                    
         $auth = $sm->get('authentification.Service');
         if($auth->hasIdentity() == true)
         {
             // подключаю необходимые модели
-            $online     = $sm->get('online.Model');
             $user       = $sm->get('user.Model');
             
             // получаю авторизованного пользователя
@@ -150,14 +153,14 @@ class Module
             $viewHelperManager = $sm->get('viewHelperManager');
             $title = strip_tags($viewHelperManager->get('headTitle'));            
             // удаляем всех, кто уже пробыл $_timeon секунд или у кого ИП текущий
-            $online->updateItems(0);
-            $online->deleteItems();
+            $user->setOnlineStatus(0);
+
             // вставляем свою запись
             $insert = $online->insertItem($userFetch->id, $title);
             if($insert)
             {       
-                // удачно записал, обновляю в пользователях статус онлайн и время на этот id $user_id
-                $online->updateItem($userFetch, '1');
+                // удачно записал, обновляю в пользователях статус онлайн и время на этого юзера
+                $user->setOnlineStatus(1, $userFetch);
             }          
         }
     }

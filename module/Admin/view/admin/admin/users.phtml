@@ -55,12 +55,13 @@
 			    <?php 
 			    $class	=   ($i++ % 2 == 0) ? 'ui-even' : 'ui-odd';
 			    if($user['role_id'] > 0) $class = 'ui-prime';
-			    $dateReg	= $format->getFormatTime($user['registerDate'] , $user['timezone']);
-			    $dateLast	= $format->getFormatTime($user['lastvisit'] , $user['timezone']);
+			    $dateReg	= $format->getFormatTime($user['date_registration'] , $user['timezone']);
+			    $dateLast	= $format->getFormatTime($user['date_lastvisit'] , $user['timezone']);
 			    ?>
 			    <div class="ui-block-a <?=$class?>">
 				<div class="ui-admin-userinfo">
-				    <label for="select-<?=$user['id']?>"><?=$user['id']?></label><input type="checkbox" name="select[]" id="select-<?=$user['id']?>" data-mini="true" value="1">
+				    <label for="select-<?=$user['id']?>"><?=$user['id']?></label>
+                                    <input type="checkbox" name="select[]" id="select-<?=$user['id']?>" data-mini="true" value="1">
 				</div>
 			    </div>
 			    <div class="ui-block-b <?=$class?>">

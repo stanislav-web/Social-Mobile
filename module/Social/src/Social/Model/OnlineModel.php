@@ -6,6 +6,7 @@ use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql; // для запросов
 use Zend\Db\Sql\Predicate;
+
 // подключаю интерфейсы ServiceLocator
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -32,6 +33,12 @@ class OnlineModel extends AbstractTableGateway implements ServiceLocatorAwareInt
      */
     protected $table = 'zf_users_online';
     
+    /**
+     * Сколько секунд считать объект в онлайне
+     * @access protected
+     * @var int $timeon;
+     */
+    protected $timeon = 300;
     
     /**
      * Зависимые таблицы
@@ -44,14 +51,7 @@ class OnlineModel extends AbstractTableGateway implements ServiceLocatorAwareInt
         'regions'       =>  'zf_regions',           // регионы
         'cities'        =>  'zf_cities',            // города
     );
-    
-    /**
-     * Сколько секунд считать объект в онлайне
-     * @access protected
-     * @var string $table;
-     */
-    private $_timeon = 300;
-    
+
     /**
      * $_serviceLocator Свойство для хрения сервис менеджера
      * @access protected
@@ -107,58 +107,7 @@ class OnlineModel extends AbstractTableGateway implements ServiceLocatorAwareInt
     {
         return $this->getServiceLocator();
     }
-    
-    /**
-     * deleteItems() Удаление устаревших записей онлайн
-     * или удаление уже с текущим IP
-     * @access public
-     * @return object Базы данных
-     */
-    public function deleteItems()
-    {
         
-        // Записую в БД
-        $request        = $this->getServiceLocator()->get('request');
-        $REMOTE_ADDR    = $request->getServer('REMOTE_ADDR');       
-
-        $sql = new Sql($this->adapter); // Загружаю адаптер БД
-        $delete = $sql->delete();
-        $delete->from($this->table);
-        
-        $delete->where(
-                array(
-                    new Predicate\PredicateSet(
-                        array(
-                            new Predicate\Operator(
-                                'timestamp',                                                // первое поле
-                                Predicate\Operator::OPERATOR_LESS_THAN,                     // меньше чем
-                                new \Zend\Db\Sql\Expression("`timestamp`+".$this->_timeon)  // сумма первого поля + значение
-                            ),
-                            new \Zend\Db\Sql\Predicate\Operator(
-                                'ip',                                                       // второе поле
-                                Predicate\Operator::OPERATOR_EQUAL_TO,                      // эквивалентно
-                                new \Zend\Db\Sql\Expression("INET_NTOA('".$REMOTE_ADDR."')")// этому выражению
-                            ),
-                         ),
-                     Predicate\PredicateSet::COMBINED_BY_OR                                  //  комбинирую условием OR
-                     )
-                )
-        );
-        
-        $statement = $sql->prepareStatementForSqlObject($delete);
-        //print $delete->getSqlString($this->adapter->getPlatform()); exit();// SHOW SQL
-
-        try 
-        {
-            $result = $statement->execute();
-            return true;
-        }
-        catch (\Exception $e) 
-        {
-            die('Error: ' . $e->getMessage());
-        }
-    }
-    
     /**
      * insertItem() Установка записи в бд
      * @param int $user_id ID пользователя
@@ -201,6 +150,56 @@ class OnlineModel extends AbstractTableGateway implements ServiceLocatorAwareInt
             die('Error: ' . $e->getMessage());
         }         
     }    
+    
+    /**
+     * deleteItems() Удаление устаревших записей онлайн
+     * или удаление уже с текущим IP
+     * @access public
+     * @return object Базы данных
+     */
+    public function deleteItems()
+    {
+        // Записую в БД
+        $request        = $this->getServiceLocator()->get('request');
+        $REMOTE_ADDR    = $request->getServer('REMOTE_ADDR');       
+
+        $sql = new Sql($this->adapter); // Загружаю адаптер БД
+        $delete = $sql->delete();
+        $delete->from($this->table);
+        
+        $delete->where(
+                array(
+                    new Predicate\PredicateSet(
+                        array(
+                            new Predicate\Operator(
+                                'timestamp',                                                // первое поле
+                                Predicate\Operator::OPERATOR_LESS_THAN,                     // меньше чем
+                                new \Zend\Db\Sql\Expression("`timestamp`+".$this->timeon)  // сумма первого поля + значение
+                            ),
+                            new \Zend\Db\Sql\Predicate\Operator(
+                                'ip',                                                       // второе поле
+                                Predicate\Operator::OPERATOR_EQUAL_TO,                      // эквивалентно
+                                new \Zend\Db\Sql\Expression("INET_NTOA('".$REMOTE_ADDR."')")// этому выражению
+                            ),
+                         ),
+                     Predicate\PredicateSet::COMBINED_BY_OR                                  //  комбинирую условием OR
+                     )
+                )
+        );
+        
+        $statement = $sql->prepareStatementForSqlObject($delete);
+        //print $delete->getSqlString($this->adapter->getPlatform()); exit();// SHOW SQL
+
+        try 
+        {
+            $result = $statement->execute();
+            return true;
+        }
+        catch (\Exception $e) 
+        {
+            die('Error: ' . $e->getMessage());
+        }
+    }     
     
     /**
      * getAll(Select $select = null)  Выборка всех записей из таблицы
@@ -299,81 +298,5 @@ class OnlineModel extends AbstractTableGateway implements ServiceLocatorAwareInt
             );
         }
         else return null;
-    }    
-    
-    /**
-     * updateItems($status) Обновление статуса в сети (не в сети)
-     * @param enum $status статус (1 - в сети, 0 - не в сети)
-     * @access public
-     * @return object Базы данных
-     */
-    public function updateItems($status)
-    {
-        $Adapter = $this->adapter; // Загружаю адаптер БД
-        $sql = new Sql($Adapter);
-        $update = $sql->update($this->relationsTable['profile']);
-        $update->set(array(
-            'online' => $status
-            )
-        );
-        
-        $statement = $sql->prepareStatementForSqlObject($update);
-        //print $update->getSqlString($this->adapter->getPlatform()); // SHOW SQL
-
-        $rows = 0;
-        try {
-            $result = $statement->execute();
-            $rows = $result->getAffectedRows();
-            return $rows;
-        } catch (\Exception $e) {
-            die(
-                    'Error: '.$e->getMessage().'<br>
-                     Query: '.$update->getSqlString($this->adapter->getPlatform())
-               );
-        } 
-    }
-    
-    /**
-     * updateItem($user, $status) Обновление статуса в сети (не в сети)
-     * @param object $user Данные пользователя
-     * @param enum $status статус (1 - в сети, 0 - не в сети)
-     * @access public
-     * @return object Базы данных
-     */
-    public function updateItem($user, $status)
-    {
-        $time       = time(); // объявляю сдесь, чтобы зафиксировать изменения секунду в секунду
-        $onArr      = array();
-        $convert    = new \SW\String\Format();
-        $Adapter    = $this->adapter; // Загружаю адаптер БД
-        $sql        = new Sql($Adapter);
-        $update     = $sql->update($this->relationsTable['profile']);
-        $lstvisit   = $convert->datetimeToTimestamp($user->lastvisit);
-        // Делаю подсчет веремени в онлайне в сек.
-        if($time < $lstvisit+$this->_timeon) // если текущее время меньше установленного значения в сумме с датой посл. визита
-        {
-            // считаю разницу от текущего времени до последнего визита            
-            $useronline = ($time - $lstvisit); 
-            // если эта разница меньше допустимого в онлайн, то он еще на сайте
-            if($useronline < $this->_timeon) $onArr['onlinetime'] = $user->onlinetime+$useronline;
-        }
-        $onArr['online']    = $status;
-        $onArr['lastvisit'] = $convert->timestampToDatetime($time);
-        
-        $update->set($onArr);
-        $update->where(array('user_id' => $user->id));
-        $statement = $sql->prepareStatementForSqlObject($update);
-        //print $update->getSqlString($this->adapter->getPlatform()); // SHOW SQL
-        $rows = 0;
-        try {
-            $result = $statement->execute();
-            $rows = $result->getAffectedRows();
-            return $rows;
-        } catch (\Exception $e) {
-            die(
-                    'Error: '.$e->getMessage().'<br>
-                     Query: '.$update->getSqlString($this->adapter->getPlatform())
-               );
-        } 
     }    
 }

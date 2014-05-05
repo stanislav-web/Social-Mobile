@@ -529,7 +529,7 @@ class SignController extends AbstractActionController
             $setPassView = new ViewModel(array(
                                         'SetPasswordFormEmail'   => $SetPasswordFormEmail,
                                         'email'         => (isset($emailString)) ? $emailString : $request->getPost()->login,
-                                        'keyString'     => (isset($keyString)) ? $keyString : $request->getPost()->restoreEmailCode,
+                                        'keyString'     => (isset($keyString)) ? $keyString : $request->getPost()->mail_code,
                                         'restore'       => (isset($restoreStringGet)) ? $restoreStringGet : 'email',
                                         'errorMsg'      => $errorMsg['restore'], // сообщения об ошибках
                                         'successMsg'    => $successMsg['restore'], // успешно

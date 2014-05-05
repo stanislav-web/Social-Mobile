@@ -129,9 +129,10 @@ class PluginsConstructor extends AbstractHelper implements ServiceLocatorAwareIn
                 return $this->zfService()->get($plugin.'.Model')->set();
             break;
         
-            case 'usersonline':
+            case 'user':
                 $params = $this->zfService()->get($plugin.'.Model')->get();
-                if(!empty($params)) return $this->getView()->partial('plugins/zf_users_profile/'.$plugin, array('params' => $params));  // устанавливаю шаблон виджета
+
+                if(!empty($params)) return $this->getView()->partial('plugins/zf_users/'.$plugin, array('params' => $params));  // устанавливаю шаблон виджета
             break;
         
             default:

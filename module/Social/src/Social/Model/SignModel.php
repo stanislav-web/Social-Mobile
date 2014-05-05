@@ -189,7 +189,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
 
             $update = $sql->update($this->table);
             $update->set(array(
-                        'restoreEmailCode' => ''
+                        'mail_code' => ''
                     )
             );
             $update->where(array('id' => $id));
@@ -224,7 +224,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 ->join($this->table_profile, $this->table_profile.'.user_id = '.$this->table.'.id', array(
                     'name',
                 ))
-                ->where('`'.$this->table.'`.`activation` = \'1\' AND `restoreEmailCode` !=\'\' AND `login` = \''.$login.'\'')
+                ->where('`'.$this->table.'`.`activation` = \'1\' AND `mail_code` !=\'\' AND `login` = \''.$login.'\'')
                 ->limit(1);
         })->current();
         return $resultSet;
@@ -246,7 +246,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 $restoreArr['code'] = $this->getRestoreCode($type);
                 $sql = new Sql($Adapter);
                 $update = $sql->update($this->table);
-                $update->set(array('restoreMobileCode' => $restoreArr['code']));
+                $update->set(array('sms_code' => $restoreArr['code']));
                 $update->where(array('login' => $login, 'activation' => '1'));
             }
             else
@@ -254,10 +254,10 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 // Код восстановления для email
                 $restoreArr['code'] = $this->getRestoreCode($type);
                 $bcrypt = new Bcrypt();
-                $restoreEmailCode = $bcrypt->create($restoreArr['code']); // шифрую код
+                $mail_code = $bcrypt->create($restoreArr['code']); // шифрую код
                 $sql = new Sql($Adapter);
                 $update = $sql->update($this->table);
-                $update->set(array('restoreEmailCode' => $restoreEmailCode));
+                $update->set(array('mail_code' => $mail_code));
                 $update->where(array('login' => $login, 'activation' => '1'));
                 $updateString = $sql->getSqlStringForSqlObject($update);
                 $results = $this->adapter->query($updateString, $Adapter::QUERY_MODE_EXECUTE);
@@ -293,7 +293,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
             // Беру пользователя с подходящим логином
             // Обновляю пароль, если форма была для Email кода
             $resultSet = $this->select(function (Select $select) use ($formResult) {
-            $select->columns(array('id', 'restoreEmailCode'))
+            $select->columns(array('id', 'mail_code'))
                     ->where('`login` = \''.$formResult['login'].'\' AND `activation` = \'1\'')
                     ->limit(1);
                     //print $select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
@@ -301,16 +301,16 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
 
             // Проверяю ключи
             $bcrypt = new Bcrypt();
-            if($bcrypt->verify($formResult['restoreEmailCode'], $resultSet->restoreEmailCode))
+            if($bcrypt->verify($formResult['mail_code'], $resultSet->mail_code))
             {
                 // Все верно! Шифрую пароль
                 $password = md5($formResult['password']).$formResult['csrf'];
 
-                // Перезаписываю у юзера csrf, restoreEmailCode, password
+                // Перезаписываю у юзера csrf, mail_code, password
                 $sql = new Sql($Adapter);
                 $update = $sql->update($this->table);
                 $update->set(array(
-                        'restoreEmailCode' => '',
+                        'mail_code' => '',
                         'csrf' => $formResult['csrf'],
                         'password' => new \Zend\Db\Sql\Expression("MD5('".$password."')")
                     )
@@ -405,13 +405,13 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
             $sql = new Sql($Adapter);
             $insert = $sql->insert($this->table);
             $dataUsers = array(
-                'login'         => $register->login,
-                'password'      => $register->password,
-                'csrf'          => $register->csrf,
-                'activation'    => 1,
-                'registerDate'  => new \Zend\Db\Sql\Expression("NOW()"),
-                'ip'            => new \Zend\Db\Sql\Expression("INET_ATON('{$register->ip}')"),
-                'agent'         => $register->agent,
+                'login'             => $register->login,
+                'password'          => $register->password,
+                'csrf'              => $register->csrf,
+                'activation'        => 1,
+                'date_registration' => new \Zend\Db\Sql\Expression("NOW()"),
+                'ip'                => new \Zend\Db\Sql\Expression("INET_ATON('{$register->ip}')"),
+                'agent'             => $register->agent,
             );
             $insert->values($dataUsers);
             $selectString = $sql->getSqlStringForSqlObject($insert);

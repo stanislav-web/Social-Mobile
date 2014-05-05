@@ -113,7 +113,7 @@ input#password {
 input#resign {
     padding-left:   25px;
 }
-input#restoreEmailCode {
+input#mail_code {
     padding-left:   25px;    
 }
 .ui-login {

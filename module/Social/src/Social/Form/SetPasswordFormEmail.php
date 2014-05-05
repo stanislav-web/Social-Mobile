@@ -99,9 +99,9 @@ class SetPasswordFormEmail extends Form
 
         $this->add(array( // Код со строки
             'type'  =>  'Zend\Form\Element\Text',
-            'name'  =>  'restoreEmailCode',
+            'name'  =>  'mail_code',
             'attributes' => array(
-                'id'                =>  'restoreEmailCode',
+                'id'                =>  'mail_code',
                 'required'          =>  true,
                 'data-clear-btn'    =>  'true',
                 'data-storage'      =>  'restoreCode',
