@@ -23,37 +23,6 @@ use Zend\View\View;
  */
 class Module
 {
-
-    /**
-     * setCacheStorage($sec) возвращает параметры адаптера сессионного хранилища
-     * @param int $sec секунды на сохранение
-     * @access private
-     * return object \Zend\Cache\StorageFactory::factory()
-     */
-    private function __setCacheStorage($sec)
-    {
-        return \Zend\Cache\StorageFactory::factory(array(
-            'adapter' => array(
-            'name' => 'filesystem',
-            'options' => array(
-                'cache_dir' => __DIR__ . '/../../data/cache/locations/',
-                'ttl' => $sec
-            ),
-        ),
-        'plugins' => array(
-            array(
-                    'name' => 'serializer',
-                    'options' => array(
-                    )
-                ),
-            // Don't throw exceptions on cache errors
-                'exception_handler' => array(
-                    'throw_exceptions' => false
-                ),
-            )
-        ));
-    }
-
     /**
      * getConfig() метод загрузки конфигуратора приложения
      * @access public
