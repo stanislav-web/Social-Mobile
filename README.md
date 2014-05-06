@@ -1,6 +1,20 @@
-Social-Mobile
+Social Mobile
 =============
 
-Социальная сеть для мобильных устройств на ZendFramework 2 и jQuery Mobile
+Social Network for mobile devices 
 
-Ведется разработка
+--------------------------------------------
+REQUIREMENTS
+
+PHP5.4 >
+
+MySQL Databases
+
+Memcache Server
+
+Any Sheduler for CLI
+
+-------------------------------------------
+Most useful technologies and Frameworks: ZendFramework 2.x, jQuery, jQuery Mobile 1.3, MVC Modules layout development
+
+.....Under development
