@@ -5,3 +5,4 @@ nbproject
 backups
 logs
 /config/autoload/local.php
+/data/cache/

@@ -88,7 +88,7 @@ return array(
             $dbTableAuthAdapter     = new \Zend\Authentication\Adapter\DbTable(
                                         $dbAdapter,
                                         'zf_users',
-                                        'login',
+                                        'id',
                                         'password',
                                         'MD5(?) AND activation = \'1\'' // хэширую пароль и csrf код (УЖЕ ДОЛЖЕН ПЕРЕДАВАТЬСЯ СЮДА)
             );

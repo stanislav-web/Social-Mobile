@@ -4,8 +4,7 @@ namespace Locations\Service;
 // подключаю адаптеры Бд
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Sql\Select;
-// подключаю фабрику кэширования
-use Zend\Cache\StorageFactory;
+
 // подключаю интерфейсы ServiceLocator
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

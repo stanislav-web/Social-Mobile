@@ -111,6 +111,8 @@ class UserController extends AbstractActionController
     public function profileAction()
     {
         $this->_authUser = $this->zfService()->get('authentification.Service');
+        
+ 
         if($this->_authUser->hasIdentity() == false) return $this->redirect()->toUrl('/'); // главную сразу
         else
         {   

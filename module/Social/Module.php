@@ -136,7 +136,8 @@ class Module
         
         // Удаляю тех кто уже отмотал срок в онлайне :-)
         
-        $sm->get('online.Model')->deleteItems();        
+        $online = $sm->get('online.Model');        
+        $online->deleteItems();
         
         // Проверяю авторизацию
                     
@@ -147,20 +148,20 @@ class Module
             $user       = $sm->get('user.Model');
             
             // получаю авторизованного пользователя
-            $userFetch = $user->getCounters($auth->getIdentity());
+
+            $userFetch =  $user->getUser($auth->getIdentity());
             
             // получаю заголовок страницы
             $viewHelperManager = $sm->get('viewHelperManager');
             $title = strip_tags($viewHelperManager->get('headTitle'));            
             // удаляем всех, кто уже пробыл $_timeon секунд или у кого ИП текущий
-            $user->setOnlineStatus(0);
 
             // вставляем свою запись
             $insert = $online->insertItem($userFetch->id, $title);
             if($insert)
             {       
                 // удачно записал, обновляю в пользователях статус онлайн и время на этого юзера
-                $user->setOnlineStatus(1, $userFetch);
+                $user->setTimeOnline($userFetch);
             }          
         }
     }

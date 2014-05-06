@@ -52,6 +52,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         'countries' =>  'zf_countries',		// страны
         'regions'   =>  'zf_regions',		// регионы
         'cities'    =>  'zf_cities',		// города
+        'online'    =>  'zf_users_online',	// кто где в онлайн?
     );
     
     /**
@@ -177,6 +178,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
      */
     public function get()
     {
+        // Необходимо получить количество пользователей в онлайне по половой принадлежгости
         $service    = $this->getServiceLocator()->get('plugins.Service');   // Мой менеджер плагинов
         foreach($service->getPlugins() as $value)
         {
@@ -191,12 +193,13 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                  *  FROM zf_users_profile LIMIT 1;
                  */
                 
-                $sql = "SELECT 
-                        (SELECT COUNT('id') FROM `{$this->table}` WHERE online = '1' AND {$this->relationsTable["profile"]}.gender = '1') AS `m`,
-                        (SELECT COUNT('id') FROM `{$this->table}` WHERE online = '1' AND {$this->relationsTable["profile"]}.gender = '2') AS `f`
-                        FROM `{$this->table}` 
-                        INNER JOIN `{$this->relationsTable["profile"]}` ON ({$this->relationsTable["profile"]}.user_id = {$this->table}.id)
-                        LIMIT 1;";
+                $sql = "
+                    SELECT 
+                    SUM(IF({$this->relationsTable["profile"]}.gender =  '1', 1, 0)) as `m`,
+                    SUM(IF({$this->relationsTable["profile"]}.gender =  '2', 1, 0)) as `f`
+                    FROM {$this->relationsTable["online"]} 
+                    INNER JOIN {$this->relationsTable["profile"]}
+                    WHERE {$this->relationsTable["profile"]}.user_id = {$this->relationsTable["online"]}.user_id LIMIT 1";
 
                 $Adapter = $this->adapter;
                 $result = $Adapter->query($sql, $Adapter::QUERY_MODE_EXECUTE);
@@ -225,7 +228,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     ->columns(array(
                     'id'
                 ))
-                ->where('`activation` = \'1\' AND `role_id` = 4 AND `id` = \''.$id.'\'')
+                ->where('`activation` = \'1\' AND `role_id` = 4 AND `id` = '.(int)$id)
                 ->limit(1);
                //$select->getSqlString($this->_adapter->getPlatform()); // SHOW SQL
         })->current();
@@ -246,7 +249,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     ->columns(array(
                     'group_id'
                 ))
-                ->where('`'.$this->table.'`.`id` = \''.$id.'\' AND `activation` = \'1\'')
+                ->where('`'.$this->table.'`.`id` = '.(int)$id.' AND `activation` = \'1\'')
                 ->limit(1);
             //print $select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
         })->current();
@@ -270,28 +273,27 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                 ->limit(1);
             //print $select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
         })->current();
-        return $resultSet;
+
+        return $resultSet->id;
     }
     
     /**
-     * getCounters($id) Возвращает набор временных данных пользователя
-     * @param int $id ID пользователя
+     * getUser($id) Выбираю пользователя по ID
+     * @param int $id ID в БД
      * @access public
-     * @return array
+     * @return int ID пользователя 
      */
-    public function getCounters($id)
+    public function getUser($id)
     {
         $resultSet = $this->select(function (Select $select) use ($id) {
-            $select
-                    ->columns(array(
-                    'id',
-                ))
-                ->where($this->table.'.`id` = \''.$id.'\'')
+            $select->where('`'.$this->table.'`.`id` = '.(int)$id)
                 ->limit(1);
             //print $select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
         })->current();
+
         return $resultSet;
     }    
+    
     
      /**
      * countAll() подсчет всех зарегистрированных пользователей
@@ -318,55 +320,40 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
     }
  
     /**
-     * setOnlineStatus($status, $user = null) Обновление статуса в сети (не в сети)
+     * setTimeOnline($status, $user) Обновление статуса в сети (не в сети)
      * @param enum $status статус (1 - в сети, 0 - не в сети)
-     * @param object $user ID пользователя если есть
+     * @param object $user пользователь если есть
      * @access public
      * @return object Базы данных
      */
-    public function setOnlineStatus($status, $user = null)
+    public function setTimeOnline($user)
     {
         $Adapter = $this->adapter; // Загружаю адаптер БД
         $sql = new Sql($Adapter);
         $update     = $sql->update($this->table);
-        
-        if(null != $user)
-        {
-            // Обновляю пользователя в онлайне
-            $time           = time();
-            $updateArray    = array();
-            $convert        = new \SW\String\Format();
 
-            $date_lastvisit   = $convert->datetimeToTimestamp($user->date_lastvisit);
+        // Обновляю пользователя в онлайне
+        $time           = time();
+        $updateArray    = array();
+        $convert        = new \SW\String\Format();
+
+        $date_lastvisit   = $convert->datetimeToTimestamp($user->date_lastvisit);
             
-            // Делаю подсчет веремени в онлайне в сек.
-            if($time < $date_lastvisit+$this->timeon) // если текущее время меньше установленного значения в сумме с датой посл. визита
-            {
-                // считаю разницу от текущего времени до последнего визита            
-                $useronline = ($time - $date_lastvisit); 
-                // если эта разница меньше допустимого в онлайн, то он еще на сайте
-                if($useronline < $this->timeon) $updateArray['time_online'] = $user->time_online+$useronline;
-            }
-            $updateArray['online']          = $status;
-            $updateArray['date_lastvisit']  = $convert->timestampToDatetime($time);
-        
-            $update->set($updateArray);
-            $update->where(array('user_id' => $user->id));
-            $statement = $sql->prepareStatementForSqlObject($update);
-            //print $update->getSqlString($this->adapter->getPlatform()); // SHOW SQL
-        }
-        else
+        // Делаю подсчет веремени в онлайне в сек.
+        if($time < $date_lastvisit+$this->timeon) // если текущее время меньше установленного значения в сумме с датой посл. визита
         {
-            // Просто обновляю статус "в сети" / "не в сети"
-            $update->set(array(
-                'online' => $status
-                )
-            );
-        
-            $statement = $sql->prepareStatementForSqlObject($update);
-            //print $update->getSqlString($this->adapter->getPlatform()); // SHOW SQL            
+            // считаю разницу от текущего времени до последнего визита            
+            $useronline = ($time - $date_lastvisit); 
+            // если эта разница меньше допустимого в онлайн, то он еще на сайте
+            if($useronline < $this->timeon) $updateArray['time_online'] = $user->time_online+$useronline;
         }
+        $updateArray['date_lastvisit']  = $convert->timestampToDatetime($time);
         
+        $update->set($updateArray);
+        $update->where(array('id' => $user->id));
+        $statement = $sql->prepareStatementForSqlObject($update);
+        //print $update->getSqlString($this->adapter->getPlatform()); // SHOW SQL
+
         $rows = 0;
         try {
             $result = $statement->execute();

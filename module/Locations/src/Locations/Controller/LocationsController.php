@@ -1,5 +1,5 @@
 <?php
-namespace Social\Controller; // пространтво имен текущего контроллера
+namespace Locations\Controller; // пространтво имен текущего контроллера
 
 // объявляю зависимости от главных Zend ActionConroller , Zend ViewModel
 use Zend\Mvc\Controller\AbstractActionController;
@@ -16,9 +16,9 @@ use SW\String\Translit;
  * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
- * @filesource /module/Social/src/Social/Controller/LocationController.php
+ * @filesource /module/Social/src/Social/Controller/LocationsController.php
  */
-class LocationController extends AbstractActionController
+class LocationsController extends AbstractActionController
 {
     
     /**

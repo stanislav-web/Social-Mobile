@@ -113,7 +113,7 @@ class EventsUserModel extends AbstractTableGateway implements ServiceLocatorAwar
              'message_ru'    => sprintf($config->message_ru, $user['name'], $user['title']['ru']),
              'message_en'    => sprintf($config->message_en, $user['name'], $user['title']['en']),
              'message_ua'    => sprintf($config->message_ua, $user['name'], $user['title']['ua']),
-             'user_id'       => $user['id'],
+             'user_id'       => $user['user_id'],
              'date'          => new \Zend\Db\Sql\Expression("NOW()"),
          );
          $insert->values($dataEvent);
@@ -145,7 +145,7 @@ class EventsUserModel extends AbstractTableGateway implements ServiceLocatorAwar
                         'date',
                         'read',
                     ))
-                    ->where('`user_id` = \''.$user_id.'\'')
+                    ->where('`user_id` = '.(int)$user_id)
                     ->order('id DESC')
                     ->limit($perpage)
                     ->offset(($page - 1) * $perpage);                     

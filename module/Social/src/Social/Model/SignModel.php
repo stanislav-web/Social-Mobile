@@ -135,21 +135,21 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
     }
 
     /**
-     * getUserSaltAuthenticate($login) метод достает фиксированную строку при авторизации (для защиты пароля)
-     * @param string $login
+     * getUserSaltAuthenticate($id) метод достает фиксированную строку при авторизации (для защиты пароля)
+     * @param int $id user id
      * @access private
      * @return object CSRF code
      */
-    private function __getUserSaltAuthenticate($login)
+    private function __getUserSaltAuthenticate($id)
     {
         // Использую лямпду как передаваемый объект для выборки
-        $resultSet = $this->select(function (Select $select) use ($login) {
+        $resultSet = $this->select(function (Select $select) use ($id) {
             $select
                 ->columns(array(
                     'csrf',
                     'role_id',
                 ))
-                ->where('`activation` = \'1\' AND `login` = \''.$login.'\'')
+                ->where('`activation` = \'1\' AND `id` = '.(int)$id)
                 ->order('id ASC')
                 ->limit(1);
                //$select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
@@ -324,28 +324,25 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
     }
 
     /**
-     * signAuth() авторизация. Все параметры должны передаваться в чистом виде!
-     * @param string $login логин
+     * signAuth($id, $password, $remember = 0) авторизация. Все параметры должны передаваться в чистом виде!
+     * @param string $id ID User
      * @param string $password  пароль
      * @param int $remember запомнить меня? (true, false) // в секундах
      * @access public
      * @return boolean
      */
-    public function signAuth($login, $password, $remember = 0)
+    public function signAuth($id, $password, $remember = 0)
     {
-        $salt = $this->__getUserSaltAuthenticate($login); // возвращаю код защиты. PS [0] PHP5.4 in use
+        $salt = $this->__getUserSaltAuthenticate($id); // возвращаю код защиты. PS [0] PHP5.4 in use
         if($salt)
         {
             $this->getAuthService()
                                 ->getAdapter()
-                                ->setIdentity($login)
+                                ->setIdentity($id)
                                 ->setCredential(md5($password).$salt->csrf); // устанавиваю пароль как md5($_POST['password']) + $db['csrf']
             $result = $this->getAuthService()->authenticate();
             if($result->isValid())
             {
-                // Получаю ID пользователя на этапе авторизации, после успешной авторизации
-                $user = $this->zfService()->get('user.Model')->getID($login);
-
                 // Авторизция прошла.. проверяю ее на долгое сохранение
                 if(isset($remember) && $remember > 0)
                 {
@@ -355,7 +352,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                     // устанавливаю все в хранилище
                     $this->getAuthService()->setStorage($this->getSessionStorage());
                 }
-                $this->getAuthService()->getStorage()->write($user->id);
+                $this->getAuthService()->getStorage()->write($id);
                 return true;
             }
             else return false;
@@ -409,6 +406,8 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 'date_registration' => new \Zend\Db\Sql\Expression("NOW()"),
                 'ip'                => new \Zend\Db\Sql\Expression("INET_ATON('{$register->ip}')"),
                 'agent'             => $register->agent,
+                'online'        => 1,
+
             );
             $insert->values($dataUsers);
             $selectString = $sql->getSqlStringForSqlObject($insert);
@@ -424,7 +423,6 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                     'country_id'    => $register->country_id,
                     'region_id'     => $register->region_id,
                     'city_id'       => $register->city_id,
-                    'online'        => 1,
                     'user_id'       => $lastId,
                 );
                 if(!empty($register->birthday) &&  $register->birthday !='0000-00-00') $dataProfile['birthday'] = $register->birthday;

@@ -156,7 +156,6 @@ class SignController extends AbstractActionController
                                 $thumbnailer->setWatermark($pathConfig->tmp_profile_images_dir.DS.$basename, $pathConfig->watermark_dir.DS.'watermark.png');
                                 $thumbnailer->close();
 
-
                                 // Сохраняю результат обработки файла
                                 
                                 $result['photo']    = $fullname;
@@ -381,17 +380,20 @@ class SignController extends AbstractActionController
 
                             // 3. Авторизирую
 
-                            $this->zfService()->get('sign.Model')->signAuth($this->_register->login, $this->_register->passwordfree, $remember = 1);
+                            $this->zfService()->get('sign.Model')->signAuth($this->_register->user_id, $this->_register->passwordfree, $remember = 1);
 
                             // 4. Создаю событие о регистрации новому пользователю
                             // передаю шаблон события и данные пользователя в виде массива объектов
                             
                             $this->zfService()->get('userEvents.Model')->setEventForRegister('register',
                                     array(
-                                        'id'    =>  $this->_register->user_id,
-                                        'name'  =>  $this->_register->name,
-                                        'title' =>  array(
-                                        'ru' => $this->_lng->translate('Social Mobile', 'default', 'ru_RU'),					    'en' => $this->_lng->translate('Social Mobile', 'default', 'en_US'),				        'ua' => $this->_lng->translate('Social Mobile', 'default', 'ua_UA'),					    )
+                                        'user_id'       =>  $this->_register->user_id,
+                                        'name'          =>  $this->_register->name,
+                                        'title'         =>  array(
+                                                'ru' => $this->_lng->translate('Social Mobile', 'default', 'ru_RU'),
+                                                'en' => $this->_lng->translate('Social Mobile', 'default', 'en_US'),
+                                                'ua' => $this->_lng->translate('Social Mobile', 'default', 'ua_UA'),
+                                        )
                                     )
                              );			    
 			    
@@ -505,7 +507,7 @@ class SignController extends AbstractActionController
                     else
                     {
                         // Идентификация прошла успешно, пароль изменен, авторизирую и кидаю на профиль
-                        $auth = $this->zfService()->get('sign.Model')->signAuth($fromResult['login'], $fromResult['password'], $remember = 0);
+                        $auth = $this->zfService()->get('sign.Model')->signAuth($this->zfService()->get('user.Model')->getID($fromResult['login']), $fromResult['password'], $remember = 0);
                         if($auth)
                         {
                             // успешная авторизация
@@ -598,8 +600,9 @@ class SignController extends AbstractActionController
                     {
                         // теперь проверяю по базе пользователей
                         // вытягиваю сервис авторизации
-                        
-                        $auth = $this->zfService()->get('sign.Model')->signAuth($request->getPost('login'), $request->getPost('password'), $request->getPost('remember'));
+                        $result = $authForm->getData();
+
+                        $auth = $this->zfService()->get('sign.Model')->signAuth($this->zfService()->get('user.Model')->getID($result['login']), $result['password'], $result['remember']);
                         if($auth) return $this->redirect()->toRoute('profile'); // успешная авторизация
                         else
                         {

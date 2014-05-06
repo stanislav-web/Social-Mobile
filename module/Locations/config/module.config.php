@@ -11,7 +11,7 @@ return array(
       */
     'controllers' => array(
         'invokables' => array(
-            'location.Controller'   => 'Social\Controller\LocationController',  // контроллер обслуживания локаций
+            'locations.Controller'   => 'Locations\Controller\LocationsController',  // контроллер обслуживания локаций
         ),
     ),
     
@@ -29,7 +29,7 @@ return array(
                         'lang'          =>  '(en|ru|ua)',
                     ),
                     'defaults' => array(
-                        'controller'    => 'location.Controller',
+                        'controller'    => 'locations.Controller',
                         'action'        => 'index',
                     ),
                 ),
@@ -45,7 +45,7 @@ return array(
                                     'city'	=> '[a-zA-Z0-9_-]{1,3}',
                                 ),
                                 'defaults' => array(
-                                    'controller'    => 'location.Controller',
+                                    'controller'    => 'locations.Controller',
                                     'action'        => 'short',
                                 )
                         ),
@@ -58,7 +58,7 @@ return array(
                                     'long' => '[a-zA-Z0-9_-]*',
                                 ),
                                 'defaults' => array(
-                                    'controller'    => 'location.Controller',
+                                    'controller'    => 'locations.Controller',
                                     'action'        => 'long',
                                 )
                         ),
