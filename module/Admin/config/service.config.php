@@ -15,12 +15,6 @@ return array(
 
         /* Модели */
 
-        'admin.Model' => function($serviceManager) { // Модель для сервисов авторизации итп
-            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
-            $table = new \Admin\Model\AdminModel($dbAdapter);
-            return $table;
-         },
-
         'MenuItemsModel' => function($serviceManager) { // Модель для сервисов авторизации итп
             $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
             $table = new \Admin\Model\MenuItemsModel($dbAdapter);
@@ -35,8 +29,5 @@ return array(
             return new \Admin\Validator\AuthValidator($dbAdapter, $translator);
         },
 
-    ),
-
-    'invokables'    =>  array(
     ),
 );

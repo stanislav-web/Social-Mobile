@@ -361,25 +361,6 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
     }
     
     /**
-     * isAdmin($id) Проверка админа
-     * @param string $login
-     * @access public
-     * @return object DB `zf_users`
-     */
-    public function isAdmin($id)
-    {
-        // Использую лямпду как передаваемый объект для выборки
-        $resultSet = $this->select(function (Select $select) use ($id) {
-            $select
-                ->where('`activation` = \'1\' AND `role_id` = 4 AND `id` = \''.$id.'\'')
-                ->limit(1);
-               //$select->getSqlString($this->_adapter->getPlatform()); // SHOW SQL
-        })->current();
-        if($resultSet) return true;
-        else return false;
-    }
-    
-    /**
      * signRegister() регистрация и запись в базу. Внутри должна быть сессия
      * @param array $array массив с полями
      * @access public

@@ -61,7 +61,7 @@ class AdminController extends AbstractActionController
         $this->_authAdmin = $this->zfService()->get('authentification.Service');
         $user       = $this->zfService()->get('user.Model');
         $adminFetch  = $user->getProfile($this->_authAdmin->getIdentity());
-        if($this->_authAdmin->hasIdentity() && $user->isAdmin($adminFetch->id))
+        if($this->_authAdmin->hasIdentity() && $user->checkRole($adminFetch->id, 4))
         {
             // если уже авторизирован
             // Устанавливаю заголовок со страницы
@@ -112,7 +112,7 @@ class AdminController extends AbstractActionController
         $this->_authAdmin = $this->zfService()->get('authentification.Service');
         $user       = $this->zfService()->get('user.Model');
         $userFetch  = $user->getProfile($this->_authAdmin->getIdentity());
-        if($this->_authAdmin->hasIdentity() && $user->isAdmin($userFetch->id))
+        if($this->_authAdmin->hasIdentity() && $user->checkRole($userFetch->id, 4))
         {
             // если уже авторизирован
             // Устанавливаю заголовок со страницы
@@ -158,13 +158,19 @@ class AdminController extends AbstractActionController
             $authForm->setData($request->getPost());
             if($authForm->isValid())
             {
+                // Все отлично! Форма валидна
+                $fromResult = $authForm->getData();
+                
                 // теперь проверяю по базе пользователей
                 // вытягиваю сервис авторизации
-                $admin  =   $this->zfService()->get('sign.Model');
-                $auth   =   $admin->signAuth($request->getPost('login'), $request->getPost('password'), $remember = 1);
+                
+                $signModel = $this->zfService()->get('sign.Model');
+                $userModel = $this->zfService()->get('user.Model');
+                
+                $auth   =   $signModel->signAuth($userModel->getID($fromResult['login']), $fromResult['password'], $remember = 0);
                 $id     =   $this->_authAdmin->getIdentity();
 
-                if($auth && $admin->isAdmin($id)) return $this->redirect()->toRoute('admin'); // успешная авторизация
+                if($auth && $userModel->checkRole($id, 4)) return $this->redirect()->toRoute('admin'); // успешная авторизация
                 else
                 {
                     // ошибка при авторизации
@@ -178,7 +184,7 @@ class AdminController extends AbstractActionController
             * Делаю проверку на авторизацию
             */
             $id     =   $this->_authAdmin->getIdentity();
-            if($this->_authAdmin->hasIdentity()&& $admin->isAdmin($id))
+            if($this->_authAdmin->hasIdentity()&& $user->checkRole($id, 4))
             {
                 // если уже авторизирован, выносим его отсюда
                 $this->flashMessenger()->addErrorMessage("You are already authorized. If need to do sign with another account please re-authorize");

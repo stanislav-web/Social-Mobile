@@ -215,20 +215,21 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
     }    
     
     /**
-     * isAdmin($id) Проверка админа
-     * @param string $login
+     * checkRole($user_id, $role_id) Проверка ролей
+     * @param int $user_id ID пользователя
+     * @param int $role_id ID роли
      * @access public
      * @return object DB `zf_users`
      */
-    public function isAdmin($id)
+    public function checkRole($user_id, $role_id)
     {
         // Использую лямпду как передаваемый объект для выборки
-        $resultSet = $this->select(function (Select $select) use ($id) {
+        $resultSet = $this->select(function (Select $select) use ($user_id, $role_id) {
             $select
                     ->columns(array(
                     'id'
                 ))
-                ->where('`activation` = \'1\' AND `role_id` = 4 AND `id` = '.(int)$id)
+                ->where('`id` = '.(int)$user_id.' AND `role_id` = '.(int)$role_id.' AND `activation` = \'1\'')
                 ->limit(1);
                //$select->getSqlString($this->_adapter->getPlatform()); // SHOW SQL
         })->current();
