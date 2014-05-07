@@ -324,15 +324,16 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
     }
 
     /**
-     * signAuth($id, $password, $remember = 0) авторизация. Все параметры должны передаваться в чистом виде!
+     * signAuth($id = null, $password, $remember = 0) авторизация. Все параметры должны передаваться в чистом виде!
      * @param string $id ID User
      * @param string $password  пароль
      * @param int $remember запомнить меня? (true, false) // в секундах
      * @access public
      * @return boolean
      */
-    public function signAuth($id, $password, $remember = 0)
+    public function signAuth($id = null, $password, $remember = 0)
     {
+        if(!$id) return false;
         $salt = $this->__getUserSaltAuthenticate($id); // возвращаю код защиты. PS [0] PHP5.4 in use
         if($salt)
         {

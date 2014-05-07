@@ -9,11 +9,13 @@ return array(
      /*
       * Пространство имен для всех контроллеров Admin
       */
-    'controllers' => array(
-        'invokables' => array(
-            'admin.Controller'      => 'Admin\Controller\AdminController',     // администрирование соц сети
-        ),
-    ),
+    'controllers' => [
+        'invokables' => [
+            'admin.Controller'      => 'Admin\Controller\AdminController',      // Контроллер администратора
+            'sign.Controller'       => 'Admin\Controller\SignController',       // Контроллер авторизации
+            'plugins.Controller'    => 'Admin\Controller\PluginsController',    // Контроллер управления плагинами
+        ],
+    ],
 
     /*
      * Настройки маршрутизатора
@@ -22,23 +24,67 @@ return array(
     'router' => array(
         'routes' => array(
 
+            'admin-auth' => array( // Авторизация
+                'type'          => 'Segment',
+                'options'       => array(
+                'route'         => '/admin[/:lang]/sign',
+                'constraints'   => array(
+                    'controller'    => '[a-zA-Z]*',
+                    'lang'          => '(en|ru|ua)',
+                    'action'        => '[a-zA-Z]*',
+                ),
+                'defaults' => array(
+		    'controller'    => 'sign.Controller',
+		    'action'        => 'login',
+                    ),
+                ),
+            ),     
+            
+            'admin-logout' => array( // Выход
+                'type'          => 'Segment',
+                'options'       => array(
+                'route'         => '/admin/logout',
+                'constraints'   => array(
+                    'controller'    => '[a-zA-Z]*',
+                ),
+                'defaults' => array(
+		    'controller'    => 'sign.Controller',
+		    'action'        => 'logout',
+                    ),
+                ),
+            ),              
+            
+            
             'admin' => array( // Главная страница Админки
                 'type'          => 'Segment',
                 'options'       => array(
-                'route'         => '/admin[/:lang][/:action][/status/:status][/page/:page][/perPage/:perPage][/sortBy/:sortBy][/sortDir/:sortDir][/filterLetter/:filterLetter]',
+                'route'         => '/admin[/:lang]',
                 'constraints'   => array(
                     'controller'    => '[a-zA-Z]*',
+                    'lang'          => '(en|ru|ua)',
                     'action'        => '[a-zA-Z]*',
+                ),
+                'defaults' => array(
+		    'controller'    => 'admin.Controller',
+		    'action'    => 'index',
+                    ),
+                ),
+            ),
+            
+            'plugins' => array( // Управление плагинами
+                'type'          => 'Segment',
+                'options'       => array(
+                'route'         => '/admin[/:lang]/plugins[/page/:page][/perPage/:perPage][/sortBy/:sortBy][/sortDir/:sortDir][/filterLetter/:filterLetter]',
+                'constraints'   => array(
+                    'controller'    => '[a-zA-Z]*',
                     'lang'          => '(en|ru|ua)',
                     'action'        => '[a-zA-Z]*',
                     'page'	    => '[0-9]*',
                     'perPage'       => '[0-9]*',
                 ),
                 'defaults' => array(
-		    '__NAMESPACE__' => 'Social\Admin',
-		    'controller'    => 'admin.Controller',
+		    'controller'    => 'plugins.Controller',
 		    'action'    => 'index',
-		    'status'	=> 'all',
 		    'page'	=> 1,
 		    'perPage'	=> 10,
 		    'sortBy'	=> "id",
@@ -46,7 +92,8 @@ return array(
 		    'filterLetter'	=> "",
                     ),
                 ),
-            ),
+            ),            
+            
 	    
             'admin-post' => array( // Post обработчик форм (всегда редирект на контроллер)
                 'type'          => 'Segment',

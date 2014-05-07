@@ -51,7 +51,7 @@
 			<div class="ui-block-e"><span><?=$this->translate('Information' , 'admin');?></span></div>		    
 		    </div>
 		    <div class="ui-admin-grid-content">
-			<?$i = 0; foreach($items as $user):?>
+			<?php $i = 0; foreach($items as $user):?>
 			    <?php 
 			    $class	=   ($i++ % 2 == 0) ? 'ui-even' : 'ui-odd';
 			    if($user['role_id'] > 0) $class = 'ui-prime';
@@ -60,8 +60,8 @@
 			    ?>
 			    <div class="ui-block-a <?=$class?>">
 				<div class="ui-admin-userinfo">
-				    <label for="select-<?=$user['id']?>"><?=$user['id']?></label>
-                                    <input type="checkbox" name="select[]" id="select-<?=$user['id']?>" data-mini="true" value="1">
+				    <label for="select-<?php echo $user['id']?>"><?php echo $user['id']?></label>
+                                    <input type="checkbox" name="select[]" id="select-<?php echo $user['id']?>" data-mini="true" value="1">
 				</div>
 			    </div>
 			    <div class="ui-block-b <?=$class?>">
@@ -105,7 +105,7 @@
 				    </span>				    
 				</div>
 			    </div>
-			<?endforeach;?>		    
+			<?php endforeach;?>		    
 		    </div>
 		    <div class="ui-admin-grid-footer">
 			<!-- Навигация -->

@@ -275,7 +275,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
             //print $select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
         })->current();
 
-        return $resultSet->id;
+        return (!empty($resultSet)) ? $resultSet->id : null;
     }
     
     /**

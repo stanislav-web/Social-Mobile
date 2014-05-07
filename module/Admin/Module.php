@@ -23,7 +23,6 @@ use Zend\View\View;
  */
 class Module
 {
-
     /**
      * getConfig() метод загрузки конфигуратора приложения
      * @access public
@@ -76,5 +75,5 @@ class Module
     public function getViewHelperConfig()
     {
         return array();
-    }
+    }    
 }

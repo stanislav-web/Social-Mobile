@@ -7,11 +7,11 @@
  * Validator
  */
 
-return array(
+return [
 
     /* Сервисы */
 
-    'factories'     =>  array(
+    'factories'     =>  [
 
         /* Модели */
 
@@ -29,5 +29,5 @@ return array(
             return new \Admin\Validator\AuthValidator($dbAdapter, $translator);
         },
 
-    ),
-);
+    ]
+];
