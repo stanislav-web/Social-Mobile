@@ -1,6 +1,6 @@
 <?php
 
-namespace Locations; // объявяю пространство имен для текущего модуля "Locations"
+namespace DBTranslations; // объявяю пространство имен для текущего модуля "DBTranslations"
 
 use Zend\Mvc\MvcEvent; //событийная модель MVC
 use Zend\View\Model\ViewModel; // модель вида

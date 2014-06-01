@@ -84,7 +84,7 @@ class MenuModel implements ServiceLocatorAwareInterface
     public function get($system)
     {
         $service = $this->getServiceLocator()->get('plugins.Service');
-        foreach($service->getPlugins() as $value)
+        foreach($service->getActivePlugins() as $value)
         {
             // Тут немного иначе, чем в других плагинах
             // Я не использую базу данных для выборки меню

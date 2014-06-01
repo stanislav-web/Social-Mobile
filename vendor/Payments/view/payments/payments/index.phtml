@@ -1,0 +1,38 @@
+<style>
+    .none {
+        display: none;
+    }
+    .alert {
+        display: block;
+        border: 1px solid whitesmoke;
+        padding: 5px;
+    }
+    .alert-error {
+        background: #c22;
+        color: white;
+    }
+    .alert-success {
+        background: #2ca02c;
+        color: white;
+    }
+</style>
+
+<?php if(count($flashMessages)) : ?>
+<ul>
+    <?php foreach ($flashMessages as $k => $msg) : ?>
+    <li><?php echo($msg); ?></li>
+    <?php endforeach; ?>
+</ul>
+<?php endif; ?>
+<fieldset>
+    <?php
+    $this->selectForm->setAttribute('action', $this->url('payments', []));
+    echo $this->form()->openTag($this->selectForm);
+        echo $this->formRow($this->selectForm->get('id'));
+        echo '<hr>';
+        //echo $this->formRow($this->selectForm->get('captcha'));
+        echo $this->formRow($this->selectForm->get('submit'));
+    echo $this->form()->closeTag();
+    ?>
+</fieldset>
+

@@ -67,7 +67,7 @@ class BreadcrumbsModel extends DefaultNavigationFactory implements ServiceLocato
     public function get()
     {
         $service    = $this->getServiceLocator()->get('plugins.Service');   // Мой менеджер плагинов
-        foreach($service->getPlugins() as $value)
+        foreach($service->getActivePlugins() as $value)
         {
             if($this->table == $value['system'])
             {   

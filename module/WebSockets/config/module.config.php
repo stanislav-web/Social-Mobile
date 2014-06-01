@@ -1,36 +1,68 @@
 <?php
-/**
- * Конфигуратор маршрутизатора текущего модуля (Social)
- * Тут задаются настройки алиасов, а также шаблон обработки URL
- * Записываются все контроллеры в процессе создания приложения
- * Устанавливается путь к приложению по умолчанию
- */
+/** 
+  * Configurator router current module (Websocket) 
+  * Here are set settings aliases and URL template processing 
+  * Recorded all controllers in the process of creating an application 
+  * Set the path to the application by default 
+  */
 return array(
+    
+    // The parameters of the compound (WS)
+    
+    'websockets'    => array(
+        'server'    => array( // коннект к серверу
+            'host'          =>  '127.0.0.1',  
+            'port'          =>  9000
+        ),
+    ),
+    
      /**
-      * Пространство имен для всех Cron консольных контроллеров
+      * Namespace for all controllers
       */
     'controllers' => array(
         'invokables' => array(
-            'Cronjob\Controller\CronjobUsers'    => 'Cronjob\Controller\CronjobUsersController',   // вызов контоллера управления пользователями
+            'websocket.Controller'      => 'WebSockets\Controller\WebsocketController',         // call controller connection management
+            'websocket.CLI'             => 'WebSockets\Controller\WebsocketCLIController',      // controller to run through the CLI
         ),
     ),
 
     /**
-     * Настройка консольного вывода
+     * Configure the router module
      */
+
+    'router' => array(
+        'routes' => array(
+
+            // Rout for socket server
+                
+            'websocket' => array( // opening a connection through a browser (not recomended)
+                'type'          => 'Segment',
+                'options'       => array(
+                    'route'         => '/websocket[/:action]',
+                    'constraints'   => array(
+                        'action'        => 'open',
+                    ),
+                    'defaults' => array(
+                        'controller'    => 'websocket.Controller',
+                        'action'        => 'open',
+                    ),
+                ),
+            ),
+        ),
+    ), 
+    
     'console' => array(
         'router' => array(
             'routes' => array(
-                // Запись консольных маршрутов
-                'user-update-online' => array(
+                'websocket-console' => array( // opening a connection through a CLI
                     'options'   => array(
-                        'route' => 'console-user updateonline [--verbose|-v] <type>',
+                        'route' => 'websocket open [--verbose|-v]',
                         'defaults' => array(
-                            'controller'    => 'Cronjob\Controller\CronjobUsers',
-                            'action'        => 'online',
+                            'controller'    => 'websocket.CLI',
+                            'action'        => 'open',
                         ),
                     ),
-                ),
+                ),            
             ),
         ),
     ),

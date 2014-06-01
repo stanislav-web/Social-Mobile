@@ -51,21 +51,36 @@ class PluginsService
     {
         $this->tableGateway = new TableGateway($this->table, $dbAdapter);
     }
-
+    
     /**
-     * getPlugins() метод выборки всех плагинов
+     * getPlugins(Select $select = null) метод выборки всех плагинов
+     * @param Select $select description
      * @access public
      * @return object Базы данных
      */
-    public function getPlugins()
+    public function getPlugins(Select $select = null)
+    {
+        if(null === $select) $select = new Select();
+        $select->from($this->table);
+        $resultSet = $this->tableGateway->selectWith($select);
+        $resultSet->buffer();
+        return $resultSet;
+    }
+   
+    /**
+     * getActivePlugins() метод выборки всех активных плагинов
+     * @param boolean $flag true
+     * @access public
+     * @return object Базы данных
+     */
+    public function getActivePlugins()
     {
         $this->resultSet = $this->tableGateway->select(function (Select $select) {
             $select
                 ->columns(array(
                         'system'
                     )
-                )
-                ->where('`activation` = \'1\'');
+                )->where('`status` = \'1\'');
         });
         return $this->resultSet->toArray();
     }

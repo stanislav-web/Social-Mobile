@@ -16,7 +16,7 @@ return array(
     'Server overview'       =>  'Серверна інформація',
     'System overview'       =>  'Системна інформація',
     'Users Control'         =>  'Управління користувачами',
-    
+    'Plugins control'       =>  'Управління плагінами',
     
     // Элементы
     

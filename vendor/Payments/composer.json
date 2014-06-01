@@ -1,0 +1,30 @@
+{
+    "name": "stanislav-web/ZF2-QIWI",
+    "description": "ZF2 QIWI v1.0",
+    "type": "library",
+    "keywords": [
+        "zf2",
+        "qiwi",
+        "qiwi payments"
+    ],
+    "homepage": "https://github.com/stanislav-web/ZF2-QIWI",
+    "authors": [
+        {
+            "name": "Stanislav WEB",
+            "email": "stanisov@gmail.com",
+            "homepage": "https://github.com/stanislav-web/"
+        }
+    ],
+    "require": {
+        "php": ">=5.4",
+        "zendframework/zendframework": ">=2.0.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "QIWI": "src/"
+        },
+        "classmap": [
+            "./"
+        ]
+    }
+}

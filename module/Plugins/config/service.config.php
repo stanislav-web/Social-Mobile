@@ -15,6 +15,11 @@ return array(
             return new \Plugins\Service\PluginsService($dbAdapter);
         },
 
+        'plugintypes.Service' => function($serviceManager) { // сервис типов плагинов
+            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
+            return new \Plugins\Service\PluginsService($dbAdapter);
+        },                
+                
         /* Модели */
 
         'bookmarks.Model' => function($serviceManager) { // Модель соц. закладок

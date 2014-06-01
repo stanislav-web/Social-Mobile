@@ -1,0 +1,30 @@
+<!-- Слой регистрационной части -->
+<div id="register" class="inner-tabs boxshadow">
+    <?php
+    echo $this->formElementerrors($this->regForm, array('class' => "ui-error")).PHP_EOL; // сообщение об ошибке
+
+    $this->regForm->setAttribute('action', $this->url($this->getRoute()->route['controller'],
+                                                array('lang'=>$this->getLang('code')),
+                                                array('force_canonical'=>true)
+                                )
+    );
+    echo $this->form()->openTag($this->regForm).PHP_EOL;
+        echo '<fieldset data-role="fieldcontain" class="ui-wrapper-form">'.PHP_EOL;
+            echo '<div class="ui-login"></div>';
+            echo $this->formRow($this->regForm->get('login'), null, false).PHP_EOL;
+            echo $this->formRow($this->regForm->get('type')).PHP_EOL;
+            echo '<div class="ui-pass"></div>';
+            echo $this->formRow($this->regForm->get('password'), null, false).PHP_EOL;
+            echo '<a data-icon="info" data-mini="true" data-role="button" href="#rules" data-rel="dialog">';
+            printf($this->translate('Rules and terms of use "%s"', 'default'), $this->translate('Social Mobile', 'default'));
+            echo '</a>'.PHP_EOL;
+        echo '</fieldset>'.PHP_EOL;
+        echo '<fieldset data-role="controlgroup" data-type="horizontal">'.PHP_EOL;
+                echo $this->formRow($this->regForm->get('agree'), null, false).PHP_EOL;
+                echo $this->formRow($this->regForm->get('csrf')).PHP_EOL;
+                echo $this->formRow($this->regForm->get('submit')).PHP_EOL;
+        echo '</fieldset>'.PHP_EOL;
+    echo $this->form()->closeTag().PHP_EOL;
+    ?>
+</div>
+<!-- Слой регистрационной части -->

@@ -1,0 +1,22 @@
+<div>
+    <form action="<?php echo $this->url('payments/process');?>" method="<?php echo $params['form']['method'];?>">
+        <fieldset>
+            <legend><?php echo $provider; ?></legend>
+            <!-- Required input fields -->
+            <?php foreach($params['fields'] as $name => $param): ?>
+            <div>
+                <label><?php echo (isset($param['label'])) ? $param['label'] : ''; ?>
+                    <input name="<?php echo $name;?>" id="<?php echo $name;?>" type="<?php echo $param['type']; ?>" <?php echo (array_key_exists('pattern', $param) == true) ? 'pattern="'.$param['pattern'].'"' : ''; ?> placeholder="<?php echo $param['placeholder']; ?>" required="<?php echo (array_key_exists('required', $param) == true) ? 'true' : 'false'; ?>">
+                </label>
+            </div>
+            <?php endforeach; ?>
+            <input type="hidden" name="provider" value="<?php echo $provider; ?>">
+            <!-- Required input fields -->
+            <div>
+                <label>
+                    <input type="submit" value="Confirm action">
+                </label>
+            </div>
+        </fieldset>
+    </form>
+</div>

@@ -1,66 +1,50 @@
 <?php
-namespace Cronjob\Controller; // пространтво имен текущего контроллера
+namespace WebSockets\Controller; // Namespaces of current controller
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Console\Request as ConsoleRequest;
+use WebSockets\Service\WebsocketServer as Server;
+use WebSockets\Exception;
 
 /**
- * Контроллер планировщика  управления пользователями (Консольный вывод)
+ * Controller to run through a browser
  * @package Zend Framework 2
- * @subpackage Cronjob
- * @since PHP >=5.3.xx
- * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @subpackage WebSockets
+ * @since PHP >=5.4
+ * @version 1.0
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
- * @filesource /module/Cronjob/src/Cronjob/Controller/CronjobUsersController.php
+ * @filesource /module/Websocket/src/Websocket/Controller/WebsocketController.php
  */
-class CronjobUsersController extends AbstractActionController
+class WebsocketController extends AbstractActionController
 {
+
     /**
-     * $_log Модель логирования
+     * $_server Object server connection
      * @access private
-     * @var object
+     * @var resource
      */    
-    private $_log = null;
+    private $_server = null;    
     
     /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->getServiceLocator();
-    } 
-    
-    /**
-     * onlineAction() Обновление тех кто онлайн
+     * openAction() Running socket - server
      * @access public
      * @return console
      */    
-    public function onlineAction()
+    public function openAction()
     {   
-        $request    = $this->getRequest();
-        if(!$request instanceof ConsoleRequest) {
-            throw new \RuntimeException('Use only for Cronjob console command!');
+        // include config's
+        $config = $this->getServiceLocator()->get('Config')['websockets']; 
+
+        // Try to start server
+        
+        try {
+            if($this->_server == null) $this->_server   = new Server($config['server']);
+            $this->_server->start();
+        } 
+        catch (Exception\ExceptionStrategy $e) 
+        {
+            echo $e->getMessage();
         }
-        
-        $type       = $request->getParam('type', 'all');    // параметр для определения действия
-        
-        // подключаю необходимые модели
-        $online     = $this->zfService()->get('online.Model');
-        $user       = $this->zfService()->get('user.Model');
-        $profile    = $this->zfService()->get('userProfile.Model');        
-        
-        
-        // Достаю модель для логировния планировщика
-        if($this->_log == null) $this->_log = $this->zfService()->get('cronjobLog.Model');
-        
-        $this->_log->write(array(
-            'message'   => 'Обновление времени в онлайн',
-            'command'   => implode(" ",$request->getContent()),
-            'sheduler'  => 'CronjobUsers'
-        ));
-    }      
+    } 
 }

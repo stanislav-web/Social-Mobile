@@ -6,3 +6,5 @@ backups
 logs
 /config/autoload/local.php
 /data/cache/
+/vendor/ZF2-QIWI/
+/vendor/Privat24/

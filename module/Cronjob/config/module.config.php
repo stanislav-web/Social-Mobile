@@ -21,7 +21,8 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
-                // Запись консольных маршрутов
+                
+                // Обновление пользователей онлайна
                 'user-update-online' => array(
                     'options'   => array(
                         'route' => 'console-user updateonline [--verbose|-v] <type>',

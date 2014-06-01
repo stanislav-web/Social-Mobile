@@ -170,7 +170,6 @@ class Socket implements HttpAdapter, StreamInterface
         if (! $this->context) {
             $this->context = stream_context_create();
         }
-
         return $this->context;
     }
 

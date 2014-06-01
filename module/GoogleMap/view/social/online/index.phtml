@@ -1,0 +1,63 @@
+<!-- Кто онлайн? -->
+<section id="MainPage" data-role="page" data-theme="a">
+    <?php echo $this->socialPlugin('header'); // заголовок jQuery Mobile ?>
+    <div data-role="content" data-theme="a">
+        <!-- Статус бар пользователя -->
+        <div class="ui-users-info">
+             <?php echo $this->socialPlugin('online'); // сколько в онлайн? ?>     
+        </div>
+        <!-- Статус бар пользователя -->
+
+        <?php
+        //\Zend\Debug\Debug::dump($items) ;
+        $format = new SW\String\Format(); // Вперед форматировать!
+        ?>
+        <?php if($items['total'] > 0): ?>
+        <ul data-role="listview" data-inset="true">
+            <li data-role="list-divider" class="ui-first-child">
+            <!-- Фильтры -->
+            <fieldset data-role="controlgroup" data-type="horizontal">
+                <a data-role="button" data-ajax="true" data-mini="true" href="<?=$this->url('online');?>"><?=$this->translate('Sort by Newest', 'default')?></a>
+                <a data-role="button" data-ajax="true" data-mini="true" href="<?=$this->url('online');?>"><?=$this->translate('Sort by Rating', 'default')?></a>
+            </fieldset>
+            <!-- Фильтры -->                
+            </li>
+            <?php foreach($items['online'] as $user):?>
+                <li class="ui-li-has-thumb">
+                        <?php if($user['photo']):?>
+                            <img class="ui-img-list" src="/files/images/thumb/<?=$user['user_id'];?>/<?=$user['photo'];?>" />
+                        <?php else:?>
+                            <img class="ui-img-list" src="/images/mobile/<?php if($user['gender'] == 2):?>female.png<?php else:?>male.png<?php endif;?>" />
+                        <?php endif;?>
+                            <h3>
+                                <span class="<?php if($user['gender'] == 2):?>ui-f<?php else:?>ui-m<?php endif;?>"></span>
+                                <a href="<?=$this->url('user/slug-user', array('slug' => $user['user_id']), array(), true);?>"><?=$user['name'];?></a>
+                                <?=$format->getYears($user['birthday'], $user['timezone'], ', ');?> » 
+                                <a class="ui-li-user-notice" href="<?=$user['page'];?>"><?=$user['title'];?></a>
+                            </h3>    
+                            
+			<p>
+                            <span class="ui-location-string"><img class="ui-small-flag" src="/images/flags/small/<?=strtolower($user['country_code']);?>.png" alt="" /> <?=$user['country'];?> » <?=$user['region'];?>, <?=$user['city'];?></span>
+                        </p>
+                        <p>
+                            <?php echo $this->bbcode($this->escapeHTML($user['personal']));?>
+                        </p>
+                        
+                </li>              
+             <?php endforeach;?> 
+        </ul>
+        <?php else: ?>
+            <ul data-role="listview" data-inset="true">
+                <li data-role="list-divider ui-li-has-thumb">
+                    <?php echo $params;?>
+                </li>
+            </ul>
+        <?php endif;?>        
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <?php echo $this->socialPlugin('bookmarks'); // виджет соц. закладок ?>
+        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+    </footer>
+</section>
+<!-- Кто онлайн? -->
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>

@@ -1,1 +1,27 @@
-OKEY
+
+<?php
+$title = 'My albums';
+$this->headTitle($title);
+$url_order = 'ASC';  // the following lines
+if ($order_by == 'title')
+    $url_order = $order == 'ASC' ? 'DESC' : 'ASC';
+elseif ($order_by == 'artist')
+    $url_order = $order == 'ASC' ? 'DESC' : 'ASC';
+?>
+
+<table class="table">
+    <tr>
+        <th>
+            <a href="<?php echo $this->url('plugins', array('order_by' => 'title', 'order' => $url_order)); ?>">Title <?php if ($order_by == 'title'): ?><i class="icon-chevron-<?php echo $url_order == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?></a>
+        </th>
+        <th>
+            <a href="<?php echo $this->url('plugins', array('order_by' => 'artist', 'order' => $url_order)); ?>">Artist <?php if ($order_by == 'artist'): ?><i class="icon-chevron-<?php echo $url_order == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?></a></th>
+        <th>&nbsp;</th>
+    </tr>
+    
+    <?php
+    
+    echo $this->paginationControl(
+            $paginator, 'Sliding', 'layout/pagination', array('order_by' => $order_by, 'order' => $order)
+    );
+    ?>

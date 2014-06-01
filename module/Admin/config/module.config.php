@@ -5,14 +5,13 @@
  * Записываются все контроллеры в процессе создания приложения
  * Устанавливается путь к приложению по умолчанию
  */
-return array(
+return [
      /*
       * Пространство имен для всех контроллеров Admin
       */
     'controllers' => [
         'invokables' => [
             'admin.Controller'      => 'Admin\Controller\AdminController',      // Контроллер администратора
-            'sign.Controller'       => 'Admin\Controller\SignController',       // Контроллер авторизации
             'plugins.Controller'    => 'Admin\Controller\PluginsController',    // Контроллер управления плагинами
         ],
     ],
@@ -21,128 +20,92 @@ return array(
      * Настройки маршрутизатора
      */
 
-    'router' => array(
-        'routes' => array(
-
-            'admin-auth' => array( // Авторизация
+    'router' => [
+        'routes' => [
+            
+            'admin' => [ // Главная страница Админки
                 'type'          => 'Segment',
-                'options'       => array(
-                'route'         => '/admin[/:lang]/sign',
-                'constraints'   => array(
+                'options'       => [
+                'route'         => '/admin[/:lang][/:action]',
+                'constraints'   => [
                     'controller'    => '[a-zA-Z]*',
                     'lang'          => '(en|ru|ua)',
                     'action'        => '[a-zA-Z]*',
-                ),
-                'defaults' => array(
-		    'controller'    => 'sign.Controller',
-		    'action'        => 'login',
-                    ),
-                ),
-            ),     
-            
-            'admin-logout' => array( // Выход
-                'type'          => 'Segment',
-                'options'       => array(
-                'route'         => '/admin/logout',
-                'constraints'   => array(
-                    'controller'    => '[a-zA-Z]*',
-                ),
-                'defaults' => array(
-		    'controller'    => 'sign.Controller',
-		    'action'        => 'logout',
-                    ),
-                ),
-            ),              
-            
-            
-            'admin' => array( // Главная страница Админки
-                'type'          => 'Segment',
-                'options'       => array(
-                'route'         => '/admin[/:lang]',
-                'constraints'   => array(
-                    'controller'    => '[a-zA-Z]*',
-                    'lang'          => '(en|ru|ua)',
-                    'action'        => '[a-zA-Z]*',
-                ),
-                'defaults' => array(
+                ],
+                'defaults' => [
 		    'controller'    => 'admin.Controller',
 		    'action'    => 'index',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             
-            'plugins' => array( // Управление плагинами
+            /*'plugins' => [ // Управление плагинами
                 'type'          => 'Segment',
-                'options'       => array(
-                'route'         => '/admin[/:lang]/plugins[/page/:page][/perPage/:perPage][/sortBy/:sortBy][/sortDir/:sortDir][/filterLetter/:filterLetter]',
-                'constraints'   => array(
-                    'controller'    => '[a-zA-Z]*',
-                    'lang'          => '(en|ru|ua)',
-                    'action'        => '[a-zA-Z]*',
-                    'page'	    => '[0-9]*',
-                    'perPage'       => '[0-9]*',
-                ),
-                'defaults' => array(
+                'options'       => [
+                    'route'         => '/admin[/:lang]/plugins[/:id][/page/:page][/order_by/:order_by][/:order]',
+                'constraints'   => [
+                    'action'    => '(?!\border_by\b)[a-zA-Z][a-zA-Z0-9_-]*',
+                    'id'        => '[0-9]+',
+                    'page' => '[0-9]+',
+                    'order_by'  => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    'order'     => 'ASC|DESC',
+                ],
+                'defaults' => [
 		    'controller'    => 'plugins.Controller',
 		    'action'    => 'index',
-		    'page'	=> 1,
-		    'perPage'	=> 10,
-		    'sortBy'	=> "id",
-		    'sortDir'	=> "asc",
-		    'filterLetter'	=> "",
-                    ),
-                ),
-            ),            
+                    ],
+                ],
+            ],*/       
             
 	    
-            'admin-post' => array( // Post обработчик форм (всегда редирект на контроллер)
+            'admin-post' => [ // Post обработчик форм (всегда редирект на контроллер)
                 'type'          => 'Segment',
-                'options'       => array(
+                'options'       => [
                 'route'         => '/admin/post[/]',
-                'constraints'   => array(
+                'constraints'   => [
                     'controller'    => '[a-zA-Z]*',
-                ),
-                'defaults' => array(
+                ],
+                'defaults' => [
                     'controller'    => 'admin.Controller',
                     'action'        => 'post',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true, 		
-            ),	    
-        ),
-    ),
+            ],	    
+        ],
+    ],
 
     /*
      * Пути к языковым файлам
      */
-    'translator' => array(
+    'translator' => [
         'locale' => 'ru_RU', // по умолчанию
-        'translation_file_patterns' => array(
-            array(
+        'translation_file_patterns' => [
+            [
                 'type'     => 'PhpArray',
                 'base_dir' => __DIR__ . '/../language/admin',
                 'pattern'  => '%s.inc',
                 'text_domain' => 'admin'
-            ),
-            array(
+            ],
+            [
                 'type'     => 'PhpArray',
                 'base_dir' => __DIR__ . '/../language/admin-errors',
                 'pattern'  => '%s.inc',
                 'text_domain' => 'admin-errors'
-            ),
-            array(
+            ],
+            [
                 'type'     => 'PhpArray',
                 'base_dir' => __DIR__ . '/../language/mails',
                 'pattern'  => '%s.inc',
                 'text_domain' => 'admin-mails'
-            ),
-        ),
-    ),
+            ],
+        ],
+    ],
 
     /*
      * Параметры шаблонов и их публикации
      */
-    'view_manager' => array(
+    'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true, // показывать ли исключения в 404
         // XHTML11, XHTML1_STRICT, XHTML1_TRANSITIONAL, XHTML1_FRAMESET, HTML4_STRICT, HTML4_STRICT, HTML4_LOOSE, HTML4_FRAMESET, HTML5, CUSTOM
@@ -154,5 +117,5 @@ return array(
         // Шаблоны
 
         'template_map' => include __DIR__  . '../../autoload_templatemap.php',
-    ),
-);
+    ],
+];

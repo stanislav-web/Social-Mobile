@@ -3,7 +3,7 @@ namespace Admin\Controller; // пространтво имен текущего 
 
 // объявляю зависимости от главных Zend ActionConroller , Zend ViewModel
 
-use Admin\Controller\Auth;
+use Admin\Controller\Auth; // Базовый контроллер проверки аутентификации
 use Zend\View\Model\ViewModel;
 use Admin\Form; // Констуктор форм
 use Zend\Debug\Debug;
@@ -21,24 +21,50 @@ use Zend\Debug\Debug;
  */
 class AdminController extends Auth\AbstractAuthActionController
 {
-
-    /**
-     * $_lng Свойство объекта Zend l18 translator
-     * @access protected
-     * @var type object
-     */
-    protected $_lng;
     
-    /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->getServiceLocator();
-    }
 
+    /**
+     * pluginsAction() Управление плагинами
+     * @access public
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function pluginsAction()
+    {
+        // Устанавливаю МЕТА и заголовок страницы
+        
+        $this->renderer->headTitle($this->lng->translate('Plugins control', 'admin'));
+        
+        // Получаю таблицу с содержимым 
+        
+        $plugins = $this->getServiceLocator()->get('plugins.Service'); 
+        $fetch  =   $plugins->getPlugins();
+        
+        // Проверяю и вывожу
+        if(count($fetch) < 1) $this->flashMessenger()->addMessage($this->lng->translate('Plugins not found', 'admin-errors'));
+        else
+        {
+	    
+	    // Настраиваю постраничный вывод
+	    
+	    $matches	=   $this->getEvent()->getRouteMatch();
+	    $page	=   $matches->getParam('page', 1);
+	    $itAdapter	=   new \Zend\Paginator\Adapter\Iterator($fetch);
+	    $paginator	=   new \Zend\Paginator\Paginator($itAdapter);
+	    
+	    $paginator->setCurrentPageNumber($page);
+	    $paginator->setItemCountPerPage($this->items);
+	                
+        }
+        
+        return new ViewModel(
+                [
+                    'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
+                    'items'         =>  $paginator,  // вывод всех
+                    'messages'      =>  $this->flashMessenger()->getMessages()  // сообщения мессенджера
+                ]
+        );
+    }    
+    
     /**
      * usersAction() Пользователи
      * @access public
@@ -46,23 +72,19 @@ class AdminController extends Auth\AbstractAuthActionController
      */
     public function usersAction()
     {
-        $this->_lng = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
-        exit($this->authAdmin);
+        $this->lng = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
         /**
          * Делаю проверку на авторизацию
          */
-        $this->_authAdmin = $this->zfService()->get('authentification.Service');
-        $user       = $this->zfService()->get('user.Model');
-        $adminFetch  = $user->getProfile($this->_authAdmin->getIdentity());
+        $adminFetch  = $this->user->getProfile($this->auth->getIdentity());
         if($this->_authAdmin->hasIdentity() && $user->checkRole($adminFetch->id, 4))
         {
             // если уже авторизирован
             // Устанавливаю заголовок со страницы
-            $renderer	= $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
-            $renderer->headTitle($this->_lng->translate('Users Control', 'admin').' | '.$this->_lng->translate('Social Mobile', 'default'));
+            $this->renderer->headTitle($this->lng->translate('Users Control', 'admin'));
 	    
 	    // Добавляю стиль к нафигации
-	    $viewrender = $this->zfService()->get('viewhelpermanager')->get('headLink');
+	    $viewrender = $this->getServiceLocator()->get('viewhelpermanager')->get('headLink');
 	    $viewrender->appendStylesheet('/css/mobile/paginator.css');
 	    
 	    /**
@@ -98,12 +120,11 @@ class AdminController extends Auth\AbstractAuthActionController
     public function indexAction()
     {
 
-        $this->_lng = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
+        $this->lng = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
 
         // если уже авторизирован
         // Устанавливаю заголовок со страницы
-        $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
-        $renderer->headTitle($this->_lng->translate('Control Panel', 'admin').' | '.$this->_lng->translate('Social Mobile', 'default'));
+        $this->renderer->headTitle($this->lng->translate('Control Panel', 'admin'));
             
         $view = new ViewModel(
             [

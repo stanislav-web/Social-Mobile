@@ -8,9 +8,15 @@
 
 return array(
     
+    'Title'         =>  'Название',
+    'Description'   =>  'Описание',
+    'Status'        =>  'Статус',
+    'Read only'     =>  'Для чтения',
+    
+    
     // Флэш стена
     
-    'Live Wall'    =>  'Живая стена',
+    'Live Wall'                 =>  'Живая стена',
     'There are nobody wrote'    =>  'Сдесь еще никто не писал :(',
     
     /* Информер онлайн */

@@ -82,7 +82,7 @@ class FlashWallModel extends AbstractTableGateway implements ServiceLocatorAware
         $service    = $this->getServiceLocator()->get('plugins.Service');   // Мой менеджер плагинов
         $lng        = $this->getServiceLocator()->get('MvcTranslator');     // Переводчик
         $user       = $this->getServiceLocator()->get('user.Model');        // Модель доступа к users
-        foreach($service->getPlugins() as $value)
+        foreach($service->getActivePlugins() as $value)
         {
             // Тут немного иначе, чем в других плагинах
             // Я не использую базу данных для выборки меню

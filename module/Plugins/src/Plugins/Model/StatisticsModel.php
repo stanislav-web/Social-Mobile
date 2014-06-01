@@ -167,7 +167,7 @@ class StatisticsModel extends AbstractTableGateway implements ServiceLocatorAwar
     public function set()
     {
         $service = $this->getServiceLocator()->get('plugins.Service');
-        foreach($service->getPlugins() as $value)
+        foreach($service->getActivePlugins() as $value)
         {
             if($this->table == $value['system'])
             {

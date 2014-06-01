@@ -4,9 +4,9 @@ namespace Admin\Controller; // пространтво имен текущего 
 use Admin\Controller\Auth;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Admin\Form; // Констуктор форм
-use Zend\Debug\Debug;
 
+use Zend\Paginator\Paginator;
+use Zend\Paginator\Adapter\Iterator as paginatorIterator;
 /**
  * Контроллер управления плагинами, Административная панель
  * @package Zend Framework 2
@@ -45,6 +45,30 @@ class PluginsController extends Auth\AbstractAuthActionController
      */
     public function indexAction()
     {
-        die('Plugins will be able soon...');
+        $plugins = $this->zfService()->get('plugins.Service');
+        
+        $select = new \Zend\Db\Sql\Select();
+
+        $order_by = $this->params()->fromRoute('order_by') ?
+                $this->params()->fromRoute('order_by') : 'id';
+        $order = $this->params()->fromRoute('order') ?
+                $this->params()->fromRoute('order') : \Zend\Db\Sql\Select::ORDER_ASCENDING;
+        $page = $this->params()->fromRoute('page') ? (int) $this->params()->fromRoute('page') : 1;        
+        
+        $albums = $plugins->getPlugins($select->order($order_by . ' ' . $order));
+        $itemsPerPage = 4;
+
+        $albums->current();
+        $paginator = new Paginator(new paginatorIterator($albums));
+        $paginator->setCurrentPageNumber($page)
+                ->setItemCountPerPage($itemsPerPage)
+                ->setPageRange(7);
+
+        return new ViewModel(array(
+                    'order_by' => $order_by,
+                    'order' => $order,
+                    'page' => $page,
+                    'paginator' => $paginator,
+                ));        
     }
 }

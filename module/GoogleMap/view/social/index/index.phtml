@@ -1,0 +1,57 @@
+<!-- Главная страница -->
+<section id="MainPage" data-role="page" data-theme="a">
+    <?php echo $this->socialPlugin('header'); // заголовок jQuery Mobile ?>
+    <div data-role="content" data-theme="a">
+        <!-- Статус бар пользователя -->
+        <div class="ui-users-info">
+            <?php 
+                printf( $this->translate('Here are %s users!', 'default'),
+                        '<a href="'.$this->url('social', array('action'=>'users')).'">'.$users['all']->count.'</a>'
+                      );
+            ?> 
+            <?php echo $this->socialPlugin('user'); // сколько в онлайн? ?>     
+        </div>
+        <!-- Статус бар пользователя -->
+
+        <!-- Форма поиска -->
+        <?php  echo $this->setForm('IndexSearchForm');?>
+        <!-- Форма поиска -->
+        <ul data-role="listview" data-inset="true">
+            <li data-role="divider"><?=$this->translate('Last users', 'default')?></li>
+            <?php if(!empty($users['last'])):?>
+            <?php $format = new SW\String\Format(); // Вперед форматировать! ?>
+            <?php foreach($users['last'] as $user):?>
+                <li class="ui-li-has-thumb">
+                    <a href="/user/<?=$user['id'];?>/">
+                        <?php if($user['photo']):?>
+                            <img class="ui-img-list" src="/files/images/thumb/<?=$user['id'];?>/<?=$user['photo'];?>" />
+                        <?php else:?>
+                            <img class="ui-img-list" src="/images/mobile/<?php if($user['gender'] == 2):?>female.png<?php else:?>male.png<?php endif;?>" />
+                        <?php endif;?>
+                            <h3><span class="<?php if($user['gender'] == 2):?>ui-f<?php else: ?>ui-m<?php endif;?>"></span> <?=$user['name'];?><?=$format->getYears($user['birthday'], $user['timezone'], ', ');?> </h3>
+			<p>
+                            <span class="ui-location-string"><img class="ui-small-flag" src="/images/flags/small/<?=strtolower($user['country_code']);?>.png" alt="" /> <?=$user['country'];?> » <?=$user['region'];?>, <?=$user['city'];?></span> 
+                        </p>
+                    </a> 
+                </li>
+            <?php endforeach;?>
+                <?php else: ?>
+                <li><?=$this->translate('Nobody at this time...', 'default')?></li>
+                <?php endif;?>
+        </ul>
+        
+        <?php echo $this->socialPlugin('flashwall'); // флэш стена ?>
+        <?php if(!$this->identity()): // не авторизирован ?>
+        <a data-role="button" data-mini="true" href="<?=$this->url('sign');?>"><?=$this->translate('Sign in', 'default')?></a>
+        <?php endif;?>
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <?php echo $this->socialPlugin('bookmarks'); // виджет соц. закладок ?>
+        <?php if(!$this->identity()): // не авторизирован ?>
+            <?php echo $this->socialPlugin('qrcode', $this->serverUrl()); // qr код ?>
+        <?php endif;?>
+        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+    </footer>
+</section>
+<!-- Главная страница -->
+<?php echo $this->socialPlugin('language'); // виджет выбора языка

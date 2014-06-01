@@ -3,30 +3,30 @@
  * Глобальные настройки приложения.
  */
 
-return array(
-
+return [
+    
     // Параметры старта сессии
-    'session' => array(
+    'session' => [
         'remember_me_seconds' => 2419200,
         'use_cookies'       => true,
         'cookie_httponly'   => true,
         'cookie_lifetime'   => 2419200,
         'gc_maxlifetime'    => 2419200,
-    ),
+    ],
 
     // Параметры локализации
-    'languages'=> array(
-        'ru' => array(
+    'languages'=> [
+        'ru' => [
             'name' => 'russian',
             'locale' => 'ru_RU',
-        ),
-        'ua' => array(
+        ],
+        'ua' => [
             'name' => 'ukrainian',
             'locale' => 'ua_UA',
-        ),
-        'en' => array(
+        ],
+        'en' => [
             'name' => 'english',
             'locale' => 'en_US',
-        ),
-    ),
-);
+        ],
+    ],
+];

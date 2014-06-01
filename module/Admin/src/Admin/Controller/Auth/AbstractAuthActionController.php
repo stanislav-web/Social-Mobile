@@ -22,7 +22,7 @@ abstract class AbstractAuthActionController extends AbstractActionController
      * @access protected
      * @var array 
      */
-    protected $allowedRoutes = ['admin-auth'];
+    protected $allowedRoutes = ['sign'];
     
     /**
      * Объект сохраняющий состояние авторизации админа
@@ -36,7 +36,28 @@ abstract class AbstractAuthActionController extends AbstractActionController
      * @access protected
      * @var object ModelUser
      */
-    protected $user = null;     
+    protected $user = null;  
+    
+    /**
+     * $lng Свойство объекта Zend l18 translator
+     * @access protected
+     * @var type object
+     */
+    protected $lng;    
+    
+    /**
+     * $renderer Свойство объекта Zend\View\Renderer\PhpRenderer
+     * @access protected
+     * @var type object
+     */
+    protected $renderer;     
+    
+    /**
+     * $items Объектов, выводимых на страницу
+     * @access protected
+     * @var int 
+     */
+    protected $items    =   10; 
     
     /**
      * setEventManager(EventManagerInterface $events) Событие на отработку контроллера
@@ -50,8 +71,10 @@ abstract class AbstractAuthActionController extends AbstractActionController
         
         // Получаю сервис авторизации и модель пользователей
         $this->auth     = $this->getServiceLocator()->get('authentification.Service');
-        $this->user     = $this->getServiceLocator()->get('user.Model');
-        
+        $this->user     = $this->getServiceLocator()->get('user.Model');                        // модель получения данных о пользователе
+        $this->lng      = $this->getServiceLocator()->get('MvcTranslator');                     // загружаю переводчик
+        $this->renderer = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');    // управление МЕТА и заголовками таблицы
+
         $events->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH, function($e) 
         {
             $routeName = $e->getRouteMatch()->getMatchedRouteName();
@@ -60,10 +83,10 @@ abstract class AbstractAuthActionController extends AbstractActionController
             if(!in_array($routeName,$this->allowedRoutes))
             {
                 // Проверяю авторизацию и роль Администратора
-                if(!$this->auth->hasIdentity() && !$this->user->checkRole($auth->getIdentity(), 4)) 
+                if(!$this->auth->hasIdentity() && !$this->user->checkRole($this->auth->getIdentity(), 4)) // 4 - роль Админа (у меня)
                 {
                     // Перекидываю на страницу авторизации
-                    return $this->redirect()->toRoute('admin-auth');
+                    return $this->redirect()->toRoute('sign');
                 }     
             }
             

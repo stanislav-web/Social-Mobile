@@ -87,6 +87,6 @@ class CronjobLogModel extends AbstractTableGateway implements ServiceLocatorAwar
         $insert->values($data);
         $selectString = $sql->getSqlStringForSqlObject($insert);
         $resultSet = $this->adapter->query($selectString, $Adapter::QUERY_MODE_EXECUTE);
-        if(!$resultSet)throw new \RuntimeException('Cronjob command write '.$data['command'].' failure!');
+        if(!$resultSet) throw new \RuntimeException('Cronjob command write '.$data['command'].' failure!');
     }
 }

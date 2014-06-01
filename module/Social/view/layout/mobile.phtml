@@ -29,13 +29,14 @@
         <?=$this
                 ->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico'))
                 ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
+                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
         ?>
 	
         <?=$this->headScript()
                 ->appendFile($this->basePath().'/js/jquery.min.js')
                 ->appendFile($this->basePath().'/js/languages/'.$this->lang.'.js')
                 ->appendFile($this->basePath().'/js/mobile/init.js')
-                ->appendFile($this->basePath().'/js/mobile/jquery.mobile.min.js')
+                ->appendFile($this->basePath().'/js/mobile/jquery.mobile.min.js');
         ?>
     </head>
     <body>    

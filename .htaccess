@@ -100,3 +100,5 @@ FileETag MTime Size
     RewriteRule ^(.*) - [E=BASE:%1]
     RewriteRule ^(.*)$ %{ENV:BASE}index.php [NC,L]
 </IfModule>
+
+SetEnv APPLICATION_ENV development

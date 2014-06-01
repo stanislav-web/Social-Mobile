@@ -8,6 +8,8 @@ REQUIREMENTS
 
 PHP5.4 >
 
+SPL Library
+
 MySQL Databases
 
 Memcache Server

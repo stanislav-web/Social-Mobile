@@ -83,7 +83,7 @@ class BookmarksModel implements ServiceLocatorAwareInterface
     public function get()
     {
         $service = $this->getServiceLocator()->get('plugins.Service');
-        foreach($service->getPlugins() as $value)
+        foreach($service->getActivePlugins() as $value)
         {
             if($this->table == $value['system'])
             {
