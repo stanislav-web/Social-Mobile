@@ -22,49 +22,6 @@ use Zend\Debug\Debug;
 class AdminController extends Auth\AbstractAuthActionController
 {
     
-
-    /**
-     * pluginsAction() Управление плагинами
-     * @access public
-     * @return \Zend\View\Model\ViewModel
-     */
-    public function pluginsAction()
-    {
-        // Устанавливаю МЕТА и заголовок страницы
-        
-        $this->renderer->headTitle($this->lng->translate('Plugins control', 'admin'));
-        
-        // Получаю таблицу с содержимым 
-        
-        $plugins = $this->getServiceLocator()->get('plugins.Service'); 
-        $fetch  =   $plugins->getPlugins();
-        
-        // Проверяю и вывожу
-        if(count($fetch) < 1) $this->flashMessenger()->addMessage($this->lng->translate('Plugins not found', 'admin-errors'));
-        else
-        {
-	    
-	    // Настраиваю постраничный вывод
-	    
-	    $matches	=   $this->getEvent()->getRouteMatch();
-	    $page	=   $matches->getParam('page', 1);
-	    $itAdapter	=   new \Zend\Paginator\Adapter\Iterator($fetch);
-	    $paginator	=   new \Zend\Paginator\Paginator($itAdapter);
-	    
-	    $paginator->setCurrentPageNumber($page);
-	    $paginator->setItemCountPerPage($this->items);
-	                
-        }
-        
-        return new ViewModel(
-                [
-                    'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
-                    'items'         =>  $paginator,  // вывод всех
-                    'messages'      =>  $this->flashMessenger()->getMessages()  // сообщения мессенджера
-                ]
-        );
-    }    
-    
     /**
      * usersAction() Пользователи
      * @access public
@@ -72,27 +29,17 @@ class AdminController extends Auth\AbstractAuthActionController
      */
     public function usersAction()
     {
-        $this->lng = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
-        /**
-         * Делаю проверку на авторизацию
-         */
-        $adminFetch  = $this->user->getProfile($this->auth->getIdentity());
-        if($this->_authAdmin->hasIdentity() && $user->checkRole($adminFetch->id, 4))
-        {
+
             // если уже авторизирован
             // Устанавливаю заголовок со страницы
             $this->renderer->headTitle($this->lng->translate('Users Control', 'admin'));
-	    
-	    // Добавляю стиль к нафигации
-	    $viewrender = $this->getServiceLocator()->get('viewhelpermanager')->get('headLink');
-	    $viewrender->appendStylesheet('/css/mobile/paginator.css');
-	    
+
 	    /**
 	     * Настраиваю постраничный вывод
 	     */
 	    $matches	=   $this->getEvent()->getRouteMatch();
 	    $page	=   $matches->getParam('page', 1);
-	    $itAdapter	=   new \Zend\Paginator\Adapter\Iterator($user->getUsers());
+	    $itAdapter	=   new \Zend\Paginator\Adapter\Iterator($this->user->getUsers());
 	    $paginator	=   new \Zend\Paginator\Paginator($itAdapter);
 	    
 	    $paginator->setCurrentPageNumber($page);
@@ -103,13 +50,11 @@ class AdminController extends Auth\AbstractAuthActionController
 	
             $view = new ViewModel(
                 array(
-                    'user'         =>  $adminFetch, // админ
+                    'user'         =>  $this->user->getProfile($this->auth->getIdentity()), // админ
                     'items'        =>  $paginator,  // все пользователи
                 )
             );
             return $view;
-        }
-        else return $this->logoutAction();
     }    
     
     /**

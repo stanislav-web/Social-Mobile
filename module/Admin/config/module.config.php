@@ -26,11 +26,9 @@ return [
             'admin' => [ // Главная страница Админки
                 'type'          => 'Segment',
                 'options'       => [
-                'route'         => '/admin[/:lang][/:action]',
+                'route'         => '/admin[/:lang]',
                 'constraints'   => [
-                    'controller'    => '[a-zA-Z]*',
                     'lang'          => '(en|ru|ua)',
-                    'action'        => '[a-zA-Z]*',
                 ],
                 'defaults' => [
 		    'controller'    => 'admin.Controller',
@@ -39,24 +37,39 @@ return [
                 ],
             ],
             
-            /*'plugins' => [ // Управление плагинами
+            'plugins' => [ // Управление плагинами
                 'type'          => 'Segment',
                 'options'       => [
-                    'route'         => '/admin[/:lang]/plugins[/:id][/page/:page][/order_by/:order_by][/:order]',
+                    'route'         => '/admin[/:lang]/plugins[/page/:page]',
                 'constraints'   => [
-                    'action'    => '(?!\border_by\b)[a-zA-Z][a-zA-Z0-9_-]*',
-                    'id'        => '[0-9]+',
-                    'page' => '[0-9]+',
-                    'order_by'  => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    'order'     => 'ASC|DESC',
+                    'lang'          => '(en|ru|ua)',
+                    'page'          => '[0-9]+',
                 ],
                 'defaults' => [
 		    'controller'    => 'plugins.Controller',
 		    'action'    => 'index',
+		    'lang'      => 'ru',
                     ],
                 ],
-            ],*/       
-            
+                'may_terminate' => true, 
+                'child_routes' => [
+                    
+                    'id' => [
+                        'type'      => 'Segment',
+                        'options'   => [
+                            'route' => '/view[/:id]',
+                                'constraints' => [
+                                    'id' => '[0-9]+',
+                                ],
+                                'defaults' => [
+                                    'controller'    => 'plugins.Controller',
+                                    'action'        => 'view',
+                                ]
+                        ],
+                    ],
+                    
+                ],  
+            ],      
 	    
             'admin-post' => [ // Post обработчик форм (всегда редирект на контроллер)
                 'type'          => 'Segment',
@@ -74,7 +87,7 @@ return [
             ],	    
         ],
     ],
-
+    
     /*
      * Пути к языковым файлам
      */

@@ -2,6 +2,7 @@
 /**
  * Шаблон постраничного вывода для Панели администрирования
  */
+
 $controller	= $this->getRoute()->route['controller'];
 $action		= $this->getRoute()->route['action'];
 $parameterGet	= $this->getRoute()->route['request'];
@@ -9,30 +10,31 @@ if($parameterGet != "")  $parameterGet = "?".$parameterGet;
 ?>
 
 <?php if($this->pageCount): ?>
+    <link href="<?php echo $this->basePath().'/css/mobile/paginator.css'; ?>" media="screen" rel="stylesheet" type="text/css">
     <div class="ui-pagination">
 	<fieldset data-role="controlgroup" data-type="horizontal">
 	    <?php if(isset($this->previous)): // Предыдущая, первая ?>
-		<a data-role="button" class="ui-pagination-page" data-mini="true" href="<?php echo '/'.$controller.'/'.$action.'/page/1'; ?>">&lt;&lt; <?=$this->translate('first', 'plugins')?></a>
-		<a data-role="button" class="ui-pagination-page" data-mini="true" href="<?php echo '/'.$controller.'/'.$action.'/page/'.$this->previous.$parameterGet; ?>">&lt; <?=$this->translate('prev', 'plugins')?></a>      
+		<a data-role="button" class="ui-pagination-page" data-mini="true" href="<?php echo '/admin/'.$controller.'/page/1'; ?>">&lt;&lt; <?php echo $this->translate('first', 'plugins')?></a>
+		<a data-role="button" class="ui-pagination-page" data-mini="true" href="<?php echo '/admin/'.$controller.'/page/'.$this->previous.$parameterGet; ?>">&lt; <?php echo $this->translate('prev', 'plugins')?></a>      
 	    <?php else: // Предыдущая, первая (активны)?>
-		<span data-role="button" class="ui-pagination-current ui-hover-a" data-mini="true" disabled>&lt;&lt; <?=$this->translate('first', 'plugins')?></span>
-		<span data-role="button" class="ui-pagination-current ui-hover-a" data-mini="true" disabled>&lt; <?=$this->translate('prev', 'plugins')?></span>
+		<span data-role="button" class="ui-pagination-current ui-hover-a" data-mini="true" disabled="disabled">&lt;&lt; <?php echo $this->translate('first', 'plugins')?></span>
+		<span data-role="button" class="ui-pagination-current ui-hover-a" data-mini="true" disabled="disabled">&lt; <?php echo $this->translate('prev', 'plugins')?></span>
 	    <?php endif;?>
 	    
 	    <?php foreach($this->pagesInRange as $page): // Страницы ?>
 		<?php if($page != $this->current): ?>
-		    <a data-role="button" data-mini="true" class="ui-pagination-page" href="<?php echo '/'.$controller.'/'.$action.'/page/'.$page.$parameterGet; ?>"><?php echo $page; ?></a>
+		    <a data-role="button" data-mini="true" class="ui-pagination-page" href="<?php echo '/admin/'.$controller.'/page/'.$page.$parameterGet; ?>"><?php echo $page; ?></a>
 		<?php else: ?>
-		    <span data-role="button" data-mini="true" class="ui-pagination-current ui-hover-a" disabled><?php echo $page; ?></span>
+		    <span data-role="button" data-mini="true" class="ui-pagination-current ui-hover-a" disabled="disabled"><?php echo $page; ?></span>
 		<?php endif; ?>		
 	    <?php endforeach;?>
 		    
 	    <?php if (isset($this->next)): // Следующая, последняя?>
-		<a class="ui-pagination-page" data-role="button" data-mini="true" href="<?php echo '/'.$controller.'/'.$action.'/page/'.$this->next.$parameterGet; ?>"><?=$this->translate('next', 'plugins')?> &gt;</a>
-		<a class="ui-pagination-page" data-role="button" data-mini="true" href="<?php echo '/'.$controller.'/'.$action.'/page/ssssssssssssss'.$this->pageCount.$parameterGet; ?>"><?=$this->translate('last', 'plugins')?> &gt;&gt;</a>
+		<a class="ui-pagination-page" data-role="button" data-mini="true" href="<?php echo '/admin/'.$controller.'/page/'.$this->next.$parameterGet; ?>"><?php echo $this->translate('next', 'plugins')?> &gt;</a>
+		<a class="ui-pagination-page" data-role="button" data-mini="true" href="<?php echo '/admin/'.$controller.'/page/'.$this->pageCount.$parameterGet; ?>"><?php echo $this->translate('last', 'plugins')?> &gt;&gt;</a>
 	    <?php else: // Следующая, последняя (активные)?>      	
-		<span data-role="button" data-mini="true" class="ui-pagination-current" disabled><?=$this->translate('next', 'plugins')?> &gt;</span>
-		<span data-role="button" data-mini="true" class="ui-pagination-current" disabled><?=$this->translate('last', 'plugins')?> &gt;&gt;</span>
+		<span data-role="button" data-mini="true" class="ui-pagination-current" disabled><?php echo $this->translate('next', 'plugins')?> &gt;</span>
+		<span data-role="button" data-mini="true" class="ui-pagination-current" disabled><?php echo $this->translate('last', 'plugins')?> &gt;&gt;</span>
 	    <?php endif; ?>		    
 	</fieldset>
     </div>

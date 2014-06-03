@@ -1,7 +1,7 @@
-<?=$this->doctype();?>
-<html lang="<?=$this->lang;?>">
+<?php echo $this->doctype();?>
+<html lang="<?php echo $this->lang;?>">
     <head>
-        <?=$this->headMeta()
+        <?php echo $this->headMeta()
                 // META информация
                 ->setCharset('UTF-8')
                 //->appendHttpEquiv('Cache-Control', 'public')
@@ -12,14 +12,14 @@
                 ->appendName('generator', 'Zend Framework 2.1.5')
                 ->appendName('author', 'Stanislav WEB');
         ?>
-        <?=$this->headTitle()->setSeparator(' / ');?>
-        <?=$this
+        <?php echo $this->headTitle()->setSeparator(' / ');?>
+        <?php echo $this
                 ->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico'))
                 ->appendStylesheet($this->basePath().'/css/mobile/jquery.mobile.css')
                 ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
                 ->appendStylesheet($this->basePath().'/css/mobile/admin.css')
         ?>
-        <?=$this->headScript()
+        <?php echo $this->headScript()
                 ->appendFile($this->basePath().'/js/jquery.min.js')
                 ->appendFile($this->basePath().'/js/languages/admin-'.$this->lang.'.js')
                 ->appendFile($this->basePath().'/js/mobile/init.js')
@@ -28,6 +28,6 @@
         ?>
     </head>
     <body>
-        <?=$this->content;?>
+        <?php echo $this->content;?>
     </body>
 </html>

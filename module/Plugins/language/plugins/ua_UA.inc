@@ -8,6 +8,16 @@
 
 return array(
     
+    'Title'         =>  'Назва',
+    'Description'   =>  'Опис',
+    'Status'        =>  'Статус',
+    'Read only'     =>  'Для читання',
+    'System code'   =>  'Системний код',
+    'Filter: Please choise type'    =>  'Фільтр: будь ласка, виберіть тип плагіна',
+    'Show'          =>  'Показати',
+    'edit'          =>  'ред.',
+    'Check this'    =>  'Відмітити',
+
     // Флэш стена
     
     'Live Wall'    =>  'Жива стіна',

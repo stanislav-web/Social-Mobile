@@ -12,7 +12,7 @@ use Zend\Db\Sql\Select;
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
  * @filesource /module/Plugins/src/Plugins/Service/PluginsService.php
@@ -51,21 +51,48 @@ class PluginsService
     {
         $this->tableGateway = new TableGateway($this->table, $dbAdapter);
     }
-    
+
     /**
-     * getPlugins(Select $select = null) метод выборки всех плагинов
+     * fetchAll($type  =   null, Select $select = null) метод выборки всех плагинов
+     * @param int Тип плагина
      * @param Select $select description
      * @access public
      * @return object Базы данных
      */
-    public function getPlugins(Select $select = null)
+    public function fetchAll($type  =   null, Select $select = null)
     {
         if(null === $select) $select = new Select();
         $select->from($this->table);
+        if(isset($type) && !empty($type)) $select->where('`type` = '.(int)$type);
         $resultSet = $this->tableGateway->selectWith($select);
         $resultSet->buffer();
         return $resultSet;
     }
+    
+    /**
+     * delete(array $items) удаление плагинов
+     * @param  string|array|\Closure $items id плагина
+     * @access public
+     * @return boolean
+     */
+    public function delete(array $items)
+    {
+        $result =   $this->tableGateway->delete($items);
+        return $result;
+    } 
+    
+    /**
+     * update(array $set, array $items) обновлене плагинов
+     * @param array $set массив с установленными знаениями
+     * @param  string|array|\Closure $items id плагина
+     * @access public
+     * @return boolean
+     */
+    public function update(array $set, array $items)
+    {
+        $result =   $this->tableGateway->update($set, $items);
+        return $result;
+    }    
    
     /**
      * getActivePlugins() метод выборки всех активных плагинов

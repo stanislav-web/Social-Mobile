@@ -122,6 +122,9 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
      */
     public function getUsers()
     {
+        
+        $this->_lng  = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
+        
         $users = array(); // массив с результатом
         
         // Использую лямпду как передаваемый объект для выборки

@@ -1,0 +1,55 @@
+/* 
+    Description: Tables   
+    Created on : 03.06.2014, 7:41:40
+    Author     : Stanislav WEB
+*/
+
+.ui-table {
+    border-color: #999;
+    opacity: 0.7;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+}
+.ui-table thead {
+    background: #2f3e46;
+    border-radius: 5px 5px 0 0 ;
+    font-weight: bold;
+}
+ .ui-table .tfoot {
+    background: #2f3e46;
+    border-radius:  0 0 5px 5px;
+    font-weight: bold;
+}
+.ui-table tbody {
+    border-radius: 5px 5px 0 0 ;
+}
+
+.ui-table tbody tr td > a {
+    color: #eee!important;
+    text-shadow: 2px 2px 2px #222;
+}
+
+.ui-table tr.ui-even {
+    background-color: #555;
+}
+.ui-table tr.ui-odd {
+    background-color: #333;
+}
+.ui-table td.ui-center {
+    vertical-align: middle;
+    text-align: center;
+}
+.ui-table td.ui-center {
+    vertical-align: middle;
+    text-align: center;
+}
+.ui-table tr td > .ui-status-container {
+    opacity: 1 !important;
+    cursor: default;
+}
+.ui-table tr td > .ui-status-container.ui-green {
+    background: #5F9EA0;
+}
+.ui-table tr td > .ui-status-container.ui-red {
+    background: #B22222;
+}

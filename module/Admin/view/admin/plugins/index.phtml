@@ -1,27 +1,135 @@
-
-<?php
-$title = 'My albums';
-$this->headTitle($title);
-$url_order = 'ASC';  // the following lines
-if ($order_by == 'title')
-    $url_order = $order == 'ASC' ? 'DESC' : 'ASC';
-elseif ($order_by == 'artist')
-    $url_order = $order == 'ASC' ? 'DESC' : 'ASC';
-?>
-
-<table class="table">
-    <tr>
-        <th>
-            <a href="<?php echo $this->url('plugins', array('order_by' => 'title', 'order' => $url_order)); ?>">Title <?php if ($order_by == 'title'): ?><i class="icon-chevron-<?php echo $url_order == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?></a>
-        </th>
-        <th>
-            <a href="<?php echo $this->url('plugins', array('order_by' => 'artist', 'order' => $url_order)); ?>">Artist <?php if ($order_by == 'artist'): ?><i class="icon-chevron-<?php echo $url_order == 'ASC' ? 'down' : 'up' ?>"></i><?php endif; ?></a></th>
-        <th>&nbsp;</th>
-    </tr>
-    
-    <?php
-    
-    echo $this->paginationControl(
-            $paginator, 'Sliding', 'layout/pagination', array('order_by' => $order_by, 'order' => $order)
-    );
-    ?>
+<section data-role="page" data-theme="a">
+    <header data-role="header" data-theme="a" data-position="fixed" class="ui-admin-header">
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <a href="#Language" title="<?php echo $this->translate('Choose a language' , 'default');?>" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?php echo $this->getLang('code');?>.png" alt="<?php echo $this->getLang('code');?>" /></a>
+                <a href="#" id="login" title="Администратор" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/admin/admin.gif" alt="Администратор" />&nbsp;&nbsp;<span><?php echo $this->user->name?></span></a>                
+            </div>
+            <div class="ui-block-b">
+                <h1 class="ui-admin-logo">
+                    <a href="<?php echo $this->url('social' , ['lang' => $this->getLang('code')] , ['force_canonical' => true]);?>"><img src="/images/mobile/logo.png" alt="Logo"></a>
+                </h1>              
+            </div>
+            <div class="ui-block-c" align="right">
+                <a href="#" class="ui-hover-btn ui-admin-nav-btn" data-role="button" onclick="return false;" id="clock" data-rel="dialog"></a>
+                <a href="<?php echo $this->url('admin' , ['lang' => $this->getLang('code') ,'action' => 'logout'] , ['force_canonical' => true]);?>" title="<?php echo $this->translate('Logout' , 'admin');?>" class="ui-hover-btn ui-admin-nav-btn" data-transition="pop" data-role="button"><img src="/images/admin/mini_logout.png" alt="<?php echo $this->translate('Logout' , 'admin')?>" /></a>                
+            </div>
+        </div>
+    </header>
+    <div data-role="content" data-theme="a">
+        <div class="ui-items-body">
+            <div class="ui-hover-title">
+		<?php echo $this->translate('Plugins control' , 'admin');?>
+            </div>           
+            <?php if(!empty($filter)): ?>
+            <!-- Фильтры -->
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <form action="" method="get" name="type" data-ajax="false" id="type">
+                        <fieldset data-role="controlgroup" data-type="horizontal">
+                            <select name="type" id="type" data-mini="true">
+                                <option value="" selected="selected"><?php echo $this->translate('Filter: Please choise type' , 'plugins');?></option>
+                                <?php foreach($filter as $v): ?>
+                                <option value="<?php echo $v['id']; ?>"><?php echo $v['name']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <input type="submit" data-inline="true" data-icon="search" data-mini="true" value="<?php echo $this->translate('Show' , 'plugins');?>">
+                        </fieldset>
+                    </form>
+                </div>
+            </div>            
+            <!-- Фильтры -->
+            <?php endif; ?>
+            <?php if(!empty($this->messages)):?>
+            <ul class="ui-error">
+                <?php foreach($this->messages as $message):?>
+                <li>
+                    <?php echo $this->translate($message, 'admin-errors');?>
+                </li>
+                <?php endforeach; ?>
+            </ul>
+            <?php endif;?>		    
+	    <!-- Таблица плагинов -->
+            <link href="<?php echo $this->basePath().'/css/tables.css'; ?>" media="screen" rel="stylesheet" type="text/css">
+	    <form method="post">
+                <table class="ui-table" data-theme="a" border="1">
+                    <thead class="ui-table-hover">
+                        <tr>
+                            <th>
+                                <label for="all"><?php echo $this->translate('All' , 'admin');?></label>
+                                <input type="checkbox" name="all" id="all" data-mini="true" value="1">
+                            </th>
+                            <th>
+                                <span><?php echo $this->translate('Title' , 'plugins');?></span>
+                            </th>                                
+                            <th>
+                                <span><?php echo $this->translate('Description' , 'plugins');?></span>
+                            </th>                                
+                            <th>
+                                <span><?php echo $this->translate('System code' , 'plugins');?></span>
+                            </th>
+                            <th>
+                                <span><?php echo $this->translate('Status' , 'plugins');?></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $i = 0; foreach($items as $item):?>
+			<?php $class	=   ($i++ % 2 == 0) ? 'ui-even' : 'ui-odd'; ?>
+			<tr class="<?php echo $class?>">
+                            <td>
+                                <fieldset data-role="controlgroup" data-type="horizontal">
+                                    <label for="select-<?php echo $item['id']?>"><?php echo $item['id']?></label>
+                                    <input title="<?php echo $this->translate('Check this' , 'plugins');?>" type="checkbox" name="select[]" id="select-<?php echo $item['id']?>" data-mini="true" value="<?php echo $item['id']?>">
+                                    <a data-role="button" title="<?php echo $this->translate('edit' , 'plugins');?>" data-mini="true" href="/admin/plugins/view/<?php echo $item['id'];?>"><?php echo $this->translate('edit' , 'plugins');?></a>
+                                </fieldset>
+                            </td>
+                            <td>
+                                <a href="/admin/plugins/view/<?php echo $item['id'];?>"><?php echo $item['title']?></a> 
+                            </td>
+                            <td>
+                                <?php echo $item['description'];?>
+                            </td>
+                            <td>
+                                <?php echo $item['system'];?>
+                            </td>
+                            <td class="ui-center">
+                                <span data-role="button" data-mini="true" disabled="disabled" class="ui-status-container <?php echo ($item['status'] != 0) ? 'ui-green' : 'ui-red';?>">
+                                    <?php echo ($item['status'] != 0) ? $this->translate('active' , 'admin') : $this->translate('off' , 'admin');?>
+                                </span>
+                            </td>
+			</tr>
+			<?php endforeach;?>
+                        <tr class="tfoot">
+                            <td colspan="5">
+                                <!-- Навигация -->
+                                <?php echo (count($items) > 0) ? $this->paginationControl($items, 'sliding', 'plugins/admin-pager') : '' ?>
+                                <!-- Навигация -->
+                                <!-- Панель управления CRUD -->
+                                <fieldset data-role="controlgroup" data-type="horizontal"> 
+                                    <legend><?php echo $this->translate('What to do with markup ?', 'admin');?></legend>
+                                    <label>
+                                        <?php echo $this->translate('On', 'admin');?><input id="onAction" type="radio" name="action" data-inline="true" data-mini="true" value="onAction">
+                                    </label>  
+                                    <label>
+                                        <?php echo $this->translate('Off', 'admin');?><input id="offAction" type="radio" name="action" data-inline="true" data-mini="true" value="offAction">
+                                    </label>                             
+                                    <label>
+                                        <?php echo $this->translate('Delete', 'admin');?><input id="deleteAction" type="radio" name="action" data-inline="true" data-mini="true" value="deleteAction">
+                                    </label>                            
+                                    <input type="submit" data-inline="true" data-icon="arrow-d" data-mini="true" value="<?php echo $this->translate('Do it!', 'admin');?>">
+                                </fieldset>
+                                <!-- Панель управления CRUD -->                                     
+                            </td>
+                        </tr>
+                    </tbody>                      
+                </table>
+	    </form>
+	    <!-- Таблица пользователей -->	    
+        </div>
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <h4>&copy; 2013  <a href="/"><?php echo $this->translate('Social Mobile' , 'default')?></a> <?php echo $this->translate('powered by' , 'default')?> <?php echo Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?php echo Zend\Version\Version::VERSION;?> <?php echo $this->translate('All rights reserved.' , 'default')?></h4>
+    </footer>
+</section>
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>

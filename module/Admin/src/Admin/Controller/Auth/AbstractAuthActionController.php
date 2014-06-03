@@ -53,11 +53,18 @@ abstract class AbstractAuthActionController extends AbstractActionController
     protected $renderer;     
     
     /**
-     * $items Объектов, выводимых на страницу
+     * $perpage Объектов, выводимых на страницу
      * @access protected
      * @var int 
      */
-    protected $items    =   10; 
+    protected $perpage    =   10; 
+    
+    /**
+     * $sm Сервис локатор
+     * @access protected
+     * @var Zend\ServiceManager 
+     */
+    protected $sm    =   null;     
     
     /**
      * setEventManager(EventManagerInterface $events) Событие на отработку контроллера
@@ -70,10 +77,11 @@ abstract class AbstractAuthActionController extends AbstractActionController
         parent::setEventManager($events);
         
         // Получаю сервис авторизации и модель пользователей
-        $this->auth     = $this->getServiceLocator()->get('authentification.Service');
-        $this->user     = $this->getServiceLocator()->get('user.Model');                        // модель получения данных о пользователе
-        $this->lng      = $this->getServiceLocator()->get('MvcTranslator');                     // загружаю переводчик
-        $this->renderer = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');    // управление МЕТА и заголовками таблицы
+        $this->sm       =   $this->getServiceLocator();
+        $this->auth     =   $this->sm->get('authentification.Service');
+        $this->user     =   $this->sm->get('user.Model');                        // модель получения данных о пользователе
+        $this->lng      =   $this->sm->get('MvcTranslator');                     // загружаю переводчик
+        $this->renderer =   $this->sm->get('Zend\View\Renderer\PhpRenderer');    // управление МЕТА и заголовками таблицы
 
         $events->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH, function($e) 
         {
@@ -89,7 +97,6 @@ abstract class AbstractAuthActionController extends AbstractActionController
                     return $this->redirect()->toRoute('sign');
                 }     
             }
-            
         }, 100);
     }
 }

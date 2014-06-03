@@ -12,7 +12,11 @@ return array(
     'Description'   =>  'Описание',
     'Status'        =>  'Статус',
     'Read only'     =>  'Для чтения',
-    
+    'System code'   =>  'Системный код',
+    'Filter: Please choise type'    =>  'Фильтр: пожалуйста выберите тип плагина',
+    'Show'          =>  'Показать',
+    'edit'          =>  'ред.',
+    'Check this'    =>  'Отметить',
     
     // Флэш стена
     

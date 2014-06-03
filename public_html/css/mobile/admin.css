@@ -45,112 +45,37 @@
 
 /* Users Control */
 
-.ui-grid-d.ui-admin-users .ui-block-a {
+.ui-grid-d.ui-items .ui-block-a {
     width: 7%;
     border-bottom: 1px solid #999;
     border-left: 1px solid #999;
 
 }
-.ui-grid-d.ui-admin-users .ui-block-b {
+.ui-grid-d.ui-items .ui-block-b {
     width: 16%;
     border-bottom: 1px solid #999;
     border-left: 1px solid #999;
 
 }
-.ui-grid-d.ui-admin-users .ui-block-c {
+.ui-grid-d.ui-items .ui-block-c {
     width: 7%;
     border-bottom: 1px solid #999;
     border-left: 1px solid #999;
 
 }
-.ui-grid-d.ui-admin-users .ui-block-d {
+.ui-grid-d.ui-items .ui-block-d {
     width: 30%;
     border-bottom: 1px solid #999;
     border-left: 1px solid #999;
 
 }
-.ui-grid-d.ui-admin-users .ui-block-e {
+.ui-grid-d.ui-items .ui-block-e {
     width: 40%;
     border-bottom: 1px solid #999;
     border-left: 1px solid #999;
 }
 
-.ui-admin-grid-hover, .ui-admin-grid-content, .ui-admin-grid-footer {
-    width: 100% !important;
-    border: 1px solid #000;
-}
-.ui-admin-grid-hover {
-    border-radius: 5px 5px 0 0 ;
-    border-top: 1px solid #999;
-}
-
-.ui-admin-grid-hover {
-    height: 40px;
-    background: #2f3e46;
-    border-radius: 5px 5px 0 0 ;
-    opacity: 0.7;
-    font-weight: bold;
-}
-.ui-admin-grid-hover > div:first-child {
-    border-radius: 2px 0 0 0;
-}
-.ui-admin-grid-hover > div:last-child {
-    border-radius: 0 2px 0 0;
-    border-right: 1px solid #999;
-}
-.ui-admin-grid-hover > div {
-    height: inherit;
-}
-.ui-admin-grid-hover > div > span {
-    display: inline-block;
-    margin: 10px;
-}
-
-.ui-admin-grid-content {
-
-}
-.ui-admin-grid-content > div {
-    height: 85px;
-    opacity: 0.7;
-}
-.ui-admin-grid-content div .ui-img-list {
-    margin: 10px 0 0 18px;    
-}
-.ui-admin-grid-content > div.ui-even {
-    background-color: #555;
-}
-.ui-admin-grid-content > div.ui-odd {
-    background-color: #333;
-}
-.ui-admin-grid-content > div.ui-prime {
-    background-color: goldenrod;
-    color: #080808;
-}
-.ui-admin-grid-content div a {
-    color: #eee!important;
-    text-shadow: 2px 2px 2px #222;
-}
-.ui-admin-grid-content div.ui-block-e {
-    border-right: 1px solid #999;
-}
-.ui-admin-grid-content .ui-admin-userinfo {
-    margin: 10px;
-}
-.ui-admin-grid-content .ui-admin-userinfo span {
-    display: inline-block;
-}
-.ui-admin-grid-footer {
-    background: #2f3e46;
-    border-radius:  0 0 5px 5px;
-    opacity: 0.7;
-    font-weight: bold;
-    clear: both;
-}
-.ui-admin-grid-footer fieldset {
-    margin: 10px;
-}
-
-.ui-admin-body .ui-hover-title, .ui-admin-users-body .ui-hover-title {
+.ui-admin-body .ui-hover-title, .ui-items-body .ui-hover-title {
     text-shadow: 1px 1px 1px #c7cdef;
     text-transform: uppercase;
     text-align: center;

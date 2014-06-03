@@ -15,19 +15,16 @@ return [
 
         /* Модели */
 
-        'MenuItemsModel' => function($serviceManager) { // Модель для сервисов авторизации итп
+        'MenuItemsModel' => function($serviceManager) { // Модель для формирования меню
             $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
             $table = new \Admin\Model\MenuItemsModel($dbAdapter);
             return $table;
          },
-
-        /* Валидаторы */
-
-        'adminAuth.Validator' => function($serviceManager) { // валидация авторизации
+                 
+        'plugintypes.Model' => function($serviceManager) { // Модель с фильтрами плагинов
             $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
-            $translator = $serviceManager->get('MvcTranslator');
-            return new \Admin\Validator\AuthValidator($dbAdapter, $translator);
-        },
-
+            $table = new \Admin\Model\PlugintypesModel($dbAdapter);
+            return $table;
+         },                 
     ]
 ];

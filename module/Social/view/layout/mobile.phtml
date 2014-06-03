@@ -1,6 +1,6 @@
 <?php $this->socialPlugin('statistics');// плагин сбора статистики ?>
-<?=$this->doctype();?>
-<html lang="<?=$this->lang;?>" xmlns:og="http://ogp.me/ns#">
+<?php echo $this->doctype();?>
+<html lang="<?php echo $this->lang;?>" xmlns:og="http://ogp.me/ns#">
     <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#">
         <?php
             // Устанавливаю правильный заголовок страницы
@@ -8,7 +8,7 @@
                 $this->headTitle($this->translate('Social Mobile', 'default'), "prepend")->setSeparator(' | ')->setAutoEscape(false);
             echo $this->headTitle();
         ?>
-        <?=$this->headMeta()
+        <?php echo $this->headMeta()
                 // META информация
                 ->setCharset('UTF-8')
                 ->appendName('keywords',        '')
@@ -26,13 +26,12 @@
                 ->setProperty('og:site_name',    $this->translate('Social Mobile', 'default'))
                 ->setProperty('og:description',  '');
         ?>
-        <?=$this
+        <?php echo $this
                 ->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico'))
-                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
-                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
+                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css');
         ?>
 	
-        <?=$this->headScript()
+        <?php echo $this->headScript()
                 ->appendFile($this->basePath().'/js/jquery.min.js')
                 ->appendFile($this->basePath().'/js/languages/'.$this->lang.'.js')
                 ->appendFile($this->basePath().'/js/mobile/init.js')
@@ -40,6 +39,6 @@
         ?>
     </head>
     <body>    
-        <?=$this->content;?>
+        <?php echo $this->content;?>
     </body>
 </html>

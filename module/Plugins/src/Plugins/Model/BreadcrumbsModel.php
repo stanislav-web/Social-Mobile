@@ -55,46 +55,6 @@ class BreadcrumbsModel extends DefaultNavigationFactory implements ServiceLocato
     {
         return $this->_serviceLocator;
     }
-
-    /**
-     * get() Метод выдает хлебные крошки
-     * @param string $system Системный код уведомления
-     * @access public
-     * @param \Zend\Db\TableGateway\Feature\EventFeature\TableGatewayEvent
-     * @return object DB initialize
-     */
-    
-    public function get()
-    {
-        $service    = $this->getServiceLocator()->get('plugins.Service');   // Мой менеджер плагинов
-        foreach($service->getActivePlugins() as $value)
-        {
-            if($this->table == $value['system'])
-            {   
-                $config = $this->config();
-                if(!isset($config['navigation'])) {
-                    throw new Exception\InvalidArgumentException('Could not find navigation configuration key');
-                }
-                if(!isset($config['navigation'][$this->getName()])) {
-                    throw new Exception\InvalidArgumentException(sprintf(
-                        'Failed to find a navigation container by the name "%s"',
-                        $this->getName()
-                    ));
-                }
-                
-                $application = $this->getServiceLocator()->get('Application');
-                $routeMatch  = $application->getMvcEvent()->getRouteMatch();
-                $router      = $application->getMvcEvent()->getRouter();
-                $pages       = $this->getPagesFromConfig($config['navigation'][$this->getName()]);                
-                
-                $this->pages = $this->injectComponents($pages, $routeMatch, $router);
-                
-                break;
-            }
-        } 
-        return $this->pages; // возвращаю свойство крошек
-    }
-    
     /**
      * config() Параметры хлебных крошек
      * @return array

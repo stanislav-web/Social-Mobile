@@ -5,11 +5,11 @@
         <fieldset data-role="controlgroup" data-type="horizontal">
 	<?php $i = 0; foreach($letters as $l): // вывожу первые буквы городов?>
 	    <?php if($i !=7):?>
-		<a href="<?=\SW\String\Translit::asURLSegment($l['city']);?>" data-role="button" data-mini="true"><?=$l['city'];?></a>
+		<a href="<?php echo \SW\String\Translit::asURLSegment($l['city']);?>" data-role="button" data-mini="true"><?php echo $l['city'];?></a>
 	    <?php else:?>
 	    </fieldset>
 	    <fieldset data-role="controlgroup" data-type="horizontal">
-		<a href="<?=\SW\String\Translit::asURLSegment($l['city']);?>" data-role="button" data-mini="true"><?=$l['city'];?></a>
+		<a href="<?php echo \SW\String\Translit::asURLSegment($l['city']);?>" data-role="button" data-mini="true"><?php echo $l['city'];?></a>
 		<?$i = 0;?>
 	    <?php endif;?>
 	<?php $i++; endforeach;?>
@@ -32,8 +32,8 @@
     ?>
     </div>
     <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
-        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+        <h4>&copy; 2013  <a href="/"><?php echo $this->translate('Social Mobile', 'default')?></a> <?php echo $this->translate('powered by', 'default')?> <?php echo Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?php echo Zend\Version\Version::VERSION;?> <?php echo $this->translate('All rights reserved.', 'default')?></h4>
     </footer>
 </section>
 <?php echo $this->socialPlugin('language'); // виджет выбора языка ?>
-<?=$this->inlineScript()->appendFile($this->basePath().'/js/mobile/tooltip.js', 'text/javascript');?>
+<?php echo $this->inlineScript()->appendFile($this->basePath().'/js/mobile/tooltip.js', 'text/javascript');?>

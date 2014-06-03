@@ -76,6 +76,30 @@ class MenuItemsService implements ServiceLocatorAwareInterface
     }
 
     /**
+     * fetchAll() Чтение всей таблицы с пунктами меню
+     * @access public
+     * @return object Menu Items
+     */
+    public function fetchAll()
+    {    
+        // Использую лямпду как передаваемый объект для выборки
+
+        $resultSet = $this->tableGateway->select(function (Select $select) {
+            $select
+                ->columns([
+                    'title'         =>  'title_'.$this->getLocaleCode().'',
+                    'description'   =>  'description_'.$this->getLocaleCode().'',
+                    'icon',
+                    'alias',
+                ])
+                ->order('order ASC');
+        });
+        if($resultSet) return $resultSet;        
+        
+        return $this->tableGateway->select()->toArray();
+    }
+    
+    /**
      * getMenuItems($menu) Пункты главного меню Панели управления
      * @param $menu Код элементов меню, который проходит в шаблон
      * @access public
@@ -87,16 +111,16 @@ class MenuItemsService implements ServiceLocatorAwareInterface
 
         $resultSet = $this->tableGateway->select(function (Select $select) use($menu) {
             $select
-                ->columns(array(
+                ->columns([
                     'title' =>  'title_'.$this->getLocaleCode().'',
                     'description'   =>  'description_'.$this->getLocaleCode().'',
                     'icon',
                     'alias',
-                ))
+                ])
                 ->where('`activation` = \'1\' AND `menu` = \''.$menu.'\' AND `children` IS NULL')
                 ->order('order ASC');
         });
-        if($resultSet) return $resultSet; // PHP5.4 in use
+        if($resultSet) return $resultSet;
     }
     
     /**
@@ -109,12 +133,12 @@ class MenuItemsService implements ServiceLocatorAwareInterface
     {
         $resultSet = $this->tableGateway->select(function (Select $select) use($alias) {
             $select
-                ->columns(array(
+                ->columns([
                     'title' =>  'title_'.$this->getLocaleCode().'',
                     'description'   =>  'description_'.$this->getLocaleCode().'',
                     'icon',
                     'alias',
-                ))
+                ])
                 ->where('`activation` = \'1\' AND `alias` = \''.$alias.'\'')
                 ->order('order ASC')
                 ->limit(1);
