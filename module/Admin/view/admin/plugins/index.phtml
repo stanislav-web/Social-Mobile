@@ -19,7 +19,7 @@
     <div data-role="content" data-theme="a">
         <div class="ui-items-body">
             <div class="ui-hover-title">
-		<?php echo $this->translate('Plugins control' , 'admin');?>
+                <?php echo $title; ?>
             </div>           
             <?php if(!empty($filter)): ?>
             <!-- Фильтры -->
@@ -27,6 +27,7 @@
                 <div class="ui-block-a">
                     <form action="" method="get" name="type" data-ajax="false" id="type">
                         <fieldset data-role="controlgroup" data-type="horizontal">
+                            <a href="/admin/plugins/add" data-mini="true" data-role="button"><?php echo $this->translate('Register plugin', 'plugins');?></a>
                             <select name="type" id="type" data-mini="true">
                                 <option value="" selected="selected"><?php echo $this->translate('Filter: Please choise type' , 'plugins');?></option>
                                 <?php foreach($filter as $v): ?>
@@ -40,15 +41,10 @@
             </div>            
             <!-- Фильтры -->
             <?php endif; ?>
-            <?php if(!empty($this->messages)):?>
-            <ul class="ui-error">
-                <?php foreach($this->messages as $message):?>
-                <li>
-                    <?php echo $this->translate($message, 'admin-errors');?>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-            <?php endif;?>		    
+            <!-- Вывод мессенджера -->
+                <?php echo $this->flashMessenger()->render('error', array('ui-error')); ?>
+                <?php echo $this->flashMessenger()->render('success', array('ui-success')); ?>
+            <!-- Вывод мессенджера -->
 	    <!-- Таблица плагинов -->
             <link href="<?php echo $this->basePath().'/css/tables.css'; ?>" media="screen" rel="stylesheet" type="text/css">
 	    <form method="post">
@@ -81,11 +77,11 @@
                                 <fieldset data-role="controlgroup" data-type="horizontal">
                                     <label for="select-<?php echo $item['id']?>"><?php echo $item['id']?></label>
                                     <input title="<?php echo $this->translate('Check this' , 'plugins');?>" type="checkbox" name="select[]" id="select-<?php echo $item['id']?>" data-mini="true" value="<?php echo $item['id']?>">
-                                    <a data-role="button" title="<?php echo $this->translate('edit' , 'plugins');?>" data-mini="true" href="/admin/plugins/view/<?php echo $item['id'];?>"><?php echo $this->translate('edit' , 'plugins');?></a>
+                                    <a data-role="button" title="<?php echo $this->translate('edit' , 'plugins');?>" data-mini="true" href="/admin/plugins/edit/<?php echo $item['id'];?>"><?php echo $this->translate('edit' , 'plugins');?></a>
                                 </fieldset>
                             </td>
                             <td>
-                                <a href="/admin/plugins/view/<?php echo $item['id'];?>"><?php echo $item['title']?></a> 
+                                <a href="/admin/plugins/edit/<?php echo $item['id'];?>"><?php echo $item['title']?></a> 
                             </td>
                             <td>
                                 <?php echo $item['description'];?>

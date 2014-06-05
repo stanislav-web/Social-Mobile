@@ -17,6 +17,15 @@ return array(
     'System overview'       =>  'Информация о системе',
     'Users Control'         =>  'Управление пользователями',
     'Plugins control'       =>  'Управление плагинами',
+    'Plugins control ▶ %s'  =>  'Управление плагинами ▶ %s',
+    'Plugins control ▶ Register plugin'  =>  'Управление плагинами ▶ Регистрировать плагин',
+    'Title'                 =>  'Название',
+    'Description'           =>  'Описание',
+    'System'                =>  'Идентификатор в системе',
+    'Type'                  =>  'Тип',
+    'Status'                =>  'Статус',
+    'Mode'                  =>  'Режим',
+    'Save params'           =>  'Сохранить настройки',
     
     // Элементы
     
@@ -35,6 +44,7 @@ return array(
     'On'        =>  'Вкл.',
     'Off'       =>  'Выкл.',
     'Delete'    =>  'Удалить',
+    'Add this'  =>  'Добавить',
     'Do it!'    =>  'Подтведить',
     
     'active'    =>  'активно',

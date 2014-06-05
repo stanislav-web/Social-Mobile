@@ -17,6 +17,13 @@ return array(
     'Show'          =>  'Показать',
     'edit'          =>  'ред.',
     'Check this'    =>  'Отметить',
+    'Register plugin'    =>  'Регистрировать плагин',
+    'Enter the name of the plugin'  =>  'Введите название плагина',
+    'Brief description of the plugin'   =>  'Краткое описание работы плагина',
+    'The code in which a plug can be identified'    =>  'Код, по которому можно идентифицировать плагин',
+    'Typing your plugin'    =>  'Типизация вашего плагина',
+    'Set activity status'   =>  'Установите статус активности',
+    'Set readonly mode (read - mosly system plugins)'    =>  'Режим "для чтения" - в основном системные плагины',
     
     // Флэш стена
     

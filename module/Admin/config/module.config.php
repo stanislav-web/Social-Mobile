@@ -49,6 +49,7 @@ return [
 		    'controller'    => 'plugins.Controller',
 		    'action'    => 'index',
 		    'lang'      => 'ru',
+		    'page'      => '1',
                     ],
                 ],
                 'may_terminate' => true, 
@@ -57,17 +58,28 @@ return [
                     'id' => [
                         'type'      => 'Segment',
                         'options'   => [
-                            'route' => '/view[/:id]',
+                            'route' => '/edit[/:id]',
                                 'constraints' => [
                                     'id' => '[0-9]+',
                                 ],
                                 'defaults' => [
                                     'controller'    => 'plugins.Controller',
-                                    'action'        => 'view',
+                                    'action'        => 'edit',
                                 ]
                         ],
                     ],
-                    
+                    'add' => [
+                        'type'      => 'Segment',
+                        'options'   => [
+                            'route' => '/add',
+                                'constraints' => [
+                                ],
+                                'defaults' => [
+                                    'controller'    => 'plugins.Controller',
+                                    'action'        => 'add',
+                                ]
+                        ],
+                    ],                    
                 ],  
             ],      
 	    
@@ -102,9 +114,9 @@ return [
             ],
             [
                 'type'     => 'PhpArray',
-                'base_dir' => __DIR__ . '/../language/admin-errors',
+                'base_dir' => __DIR__ . '/../language/admin-messages',
                 'pattern'  => '%s.inc',
-                'text_domain' => 'admin-errors'
+                'text_domain' => 'admin-messages'
             ],
             [
                 'type'     => 'PhpArray',

@@ -39,17 +39,14 @@ class PluginsController extends Auth\AbstractAuthActionController
         if($request->isPost())
         {
             $post   =   $request->getPost();
-
-            if(!isset($post['action']))   $this->flashMessenger()->addMessage($this->lng->translate('Action not selected', 'admin-errors'));
-            if(empty($post['select']))    $this->flashMessenger()->addMessage($this->lng->translate('Not selected items', 'admin-errors'));
+            if(!isset($post['action']))   $this->messenger->addErrorMessage($this->lng->translate('Action not selected', 'admin-messages'));
+            if(empty($post['select']))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
             else
             {
-                // Привожу ключи массива к одному
+                // Привожу ключи массива к одному // вызываю экшн
                 $this->__select = $post['select'];
                 
-                // вызываю экшн
-                
-                if(!method_exists(__CLASS__, $post['action'])) $this->flashMessenger()->addMessage($this->lng->translate('Action is not available', 'admin-errors'));    
+                if(!method_exists(__CLASS__, $post['action'])) $this->messenger->addErrorMessage($this->lng->translate('Action is not available', 'admin-messages'));    
                 else return $this->$post['action']();            
             }
 
@@ -58,19 +55,19 @@ class PluginsController extends Auth\AbstractAuthActionController
         }
         
         // Устанавливаю МЕТА и заголовок страницы
-        
-        $this->renderer->headTitle($this->lng->translate('Plugins control', 'admin'));
+        $title  =   $this->lng->translate('Plugins control', 'admin');
+        $this->renderer->headTitle($title);
         
         // Получаю таблицу с содержимым 
         
         $plugins    =   $this->sm->get('plugins.Service'); 
-        $fetch      =   $plugins->fetchAll($this->params()->fromQuery('type'));
+        $fetch      =   $plugins->fetchAll($this->params()->fromQuery('type'), 'id DESC');
 
         // получаю параметры для фильтра
         $filter     =   $this->sm->get('plugintypes.Model')->fetchAll();
         
         // Проверяю и вывожу
-        if(count($fetch) < 1) $this->flashMessenger()->addMessage($this->lng->translate('Plugins not found', 'admin-errors'));
+        if(count($fetch) < 1) $this->messenger->addErrorMessage($this->lng->translate('Plugins not found', 'admin-messages'));
         else
         {
 	    
@@ -90,20 +87,105 @@ class PluginsController extends Auth\AbstractAuthActionController
                     'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
                     'items'         =>  (isset($items)) ? $items : '',  // вывод строк
                     'filter'        =>  $filter,
-                    'messages'      =>  $this->flashMessenger()->getMessages()  // сообщения мессенджера
+                    'title'         =>  $title
                 ]
         );       
     }
     
     /**
-     * viewAction() Просмотр плагина и редактирование
+     * editAction() Просмотр плагина и редактирование
      * @access public
      * @return \Zend\View\Model\ViewModel
      */
-    public function viewAction()
+    public function editAction()
     {
-        $id     =   $this->params('id');
-        echo($id);
+        
+        // POST обработчик
+        $request    =   $this->getRequest();
+        $id         =   (int)$this->params('id');
+        $plugins    =   $this->sm->get('plugins.Service');
+        
+        if($request->isPost())
+        {
+            if($request->getPost()['readonly'] == 1)    $this->messenger->addErrorMessage($this->lng->translate('This plugin is only for reading, the changes may lead to malfunction of the system', 'admin-messages'));
+            else
+            {
+                // Update values
+                $plugins->update((array)$request->getPost(), ['id' => $id]);
+                $this->messenger->addSuccessMessage($this->lng->translate('Plugin configuration\'s has been changed', 'admin-messages'));
+            }
+
+            // Возвращаю обратно 
+            return $this->redirect()->toUrl('/admin/plugins/edit/'.$id);
+        }        
+        else $this->messenger->addInfoMessage($this->lng->translate('All fields must be required', 'admin-messages'));
+
+        // Получаю параметры плагина по id
+
+        $fetch  =   $plugins->fetch($id);
+        
+        if($fetch) 
+        {
+            // Устанавливаю МЕТА и заголовок страницы
+            $title  =   sprintf($this->lng->translate('Plugins control ▶ %s' , 'admin'), $fetch->title);
+            $this->renderer->headTitle($title);
+            
+            if($fetch->readonly) $this->messenger->addErrorMessage($this->lng->translate('This plugin is only for reading, the changes may lead to malfunction of the system', 'admin-messages'));
+
+            // получаю параметры для фильтра
+            $filter     =   $this->sm->get('plugintypes.Model')->fetchAll();            
+            
+            return new ViewModel(
+                [
+                    'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
+                    'filter'        =>  $filter,
+                    'item'          =>  (isset($fetch)) ? $fetch : '',  // вывод строк
+                    'title'         =>  $title
+                ]
+            );            
+        }
+        else
+        {
+            $this->messenger->addErrorMessage($this->lng->translate('Plugin not found', 'admin-messages'));
+            return $this->redirect()->toRoute('plugins');
+        }
+    }
+    
+    /*
+     * addAction() Добавление 
+     * @access public
+     */
+    public function addAction()
+    {
+        
+        // POST обработчик
+        $request    =   $this->getRequest();
+        
+        if($request->isPost())
+        {
+            // Add values
+
+            $result = $this->sm->get('plugins.Service')->add((array)$request->getPost());
+            if($result) $this->messenger->addSuccessMessage($this->lng->translate('Plugin has been registered', 'admin-messages'));
+            else  $this->messenger->addErrorMessage($this->lng->translate('An error occurred while registering plugin', 'admin-messages'));
+            // Возвращаю обратно 
+            return $this->redirect()->toRoute('plugins');
+        }        
+        else $this->messenger->addInfoMessage($this->lng->translate('All fields must be required', 'admin-messages'));
+        // Устанавливаю МЕТА и заголовок страницы
+        $title  =   $this->lng->translate('Plugins control ▶ Register plugin' , 'admin');
+        $this->renderer->headTitle($title);
+
+        // получаю параметры для фильтра
+        $filter     =   $this->sm->get('plugintypes.Model')->fetchAll();            
+            
+        return new ViewModel(
+            [
+                'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
+                'filter'        =>  $filter,
+                'title'         =>  $title
+            ]
+        );            
     }
     
     /*
@@ -112,13 +194,14 @@ class PluginsController extends Auth\AbstractAuthActionController
      */
     public function deleteAction()
     {
-        if(empty($this->__select))    $this->flashMessenger()->addMessage($this->lng->translate('Not selected items', 'admin-errors'));
+        if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
         $result = $this->sm->get('plugins.Service')->delete(['id' => $this->__select]);
-        if(!$result)  $this->flashMessenger()->addMessage($this->lng->translate('Error while deleting', 'admin-errors'));
+
+        if(empty($result))  $this->messenger->addErrorMessage($this->lng->translate('Error while deleting', 'admin-messages'));
+        else  $this->messenger->addSuccessMessage($this->lng->translate('Plugin was deleted successfuly', 'admin-messages'));
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
     }    
-    
      
     /*
      * onAction() Включить 
@@ -126,9 +209,9 @@ class PluginsController extends Auth\AbstractAuthActionController
      */
     public function onAction()
     {
-        if(empty($this->__select))    $this->flashMessenger()->addMessage($this->lng->translate('Not selected items', 'admin-errors'));
+        if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
         $result = $this->sm->get('plugins.Service')->update(['status' => '1'], ['id' => $this->__select]);
-        if(!$result)  $this->flashMessenger()->addMessage($this->lng->translate('Error while update status', 'admin-errors'));
+        if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update status', 'admin-messages'));
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
     }    
@@ -139,9 +222,9 @@ class PluginsController extends Auth\AbstractAuthActionController
      */
     public function offAction()
     {
-        if(empty($this->__select))    $this->flashMessenger()->addMessage($this->lng->translate('Not selected items', 'admin-errors'));
+        if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
         $result = $this->sm->get('plugins.Service')->update(['status' => '0'], ['id' => $this->__select]);
-        if(!$result)  $this->flashMessenger()->addMessage($this->lng->translate('Error while update status', 'admin-errors'));
+        if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update status', 'admin-messages'));
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
     }      

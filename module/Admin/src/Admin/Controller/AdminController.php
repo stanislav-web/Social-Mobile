@@ -65,8 +65,6 @@ class AdminController extends Auth\AbstractAuthActionController
     public function indexAction()
     {
 
-        $this->lng = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
-
         // если уже авторизирован
         // Устанавливаю заголовок со страницы
         $this->renderer->headTitle($this->lng->translate('Control Panel', 'admin'));
@@ -74,7 +72,6 @@ class AdminController extends Auth\AbstractAuthActionController
         $view = new ViewModel(
             [
                 'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // Данные об Админе
-		'errorMsg'  =>  $this->flashMessenger()->getErrorMessages()		    
             ]
         );
         return $view;

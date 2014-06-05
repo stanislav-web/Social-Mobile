@@ -1,0 +1,102 @@
+<section data-role="page" data-theme="a">
+    <header data-role="header" data-theme="a" data-position="fixed" class="ui-admin-header">
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <a href="#Language" title="<?php echo $this->translate('Choose a language' , 'default');?>" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?php echo $this->getLang('code');?>.png" alt="<?php echo $this->getLang('code');?>" /></a>
+                <a href="#" id="login" title="Администратор" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/admin/admin.gif" alt="Администратор" />&nbsp;&nbsp;<span><?php echo $this->user->name?></span></a>                
+            </div>
+            <div class="ui-block-b">
+                <h1 class="ui-admin-logo">
+                    <a href="<?php echo $this->url('social' , ['lang' => $this->getLang('code')] , ['force_canonical' => true]);?>"><img src="/images/mobile/logo.png" alt="Logo"></a>
+                </h1>              
+            </div>
+            <div class="ui-block-c" align="right">
+                <a href="#" class="ui-hover-btn ui-admin-nav-btn" data-role="button" onclick="return false;" id="clock" data-rel="dialog"></a>
+                <a href="<?php echo $this->url('admin' , ['lang' => $this->getLang('code') ,'action' => 'logout'] , ['force_canonical' => true]);?>" title="<?php echo $this->translate('Logout' , 'admin');?>" class="ui-hover-btn ui-admin-nav-btn" data-transition="pop" data-role="button"><img src="/images/admin/mini_logout.png" alt="<?php echo $this->translate('Logout' , 'admin')?>" /></a>                
+            </div>
+        </div>
+    </header>
+    <div data-role="content" data-theme="a">
+        <div class="ui-items-body">
+            <div class="ui-hover-title">
+                <?php echo $title; ?>
+            </div>         
+            <!-- Вывод мессенджера -->
+                <?php echo $this->flashMessenger()->render('error', array('ui-error')); ?>
+                <?php echo $this->flashMessenger()->render('success', array('ui-success')); ?>
+            <!-- Вывод мессенджера -->		    
+	    <!-- Таблица плагина -->
+            <link href="<?php echo $this->basePath().'/css/tables.css'; ?>" media="screen" rel="stylesheet" type="text/css">
+            <?php $disable   =   ($item->readonly) ? 'disabled' : ''; ?>
+	    <form method="post">
+               <input type="hidden" name="readonly" value="<?php echo $item->readonly;?>">
+               <table class="ui-table" data-theme="a" border="1">
+                    <tbody>
+			<tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('Title', 'admin');?>
+                            </td>
+                            <td>
+                                <input type="text" name="title" data-clear-btn="true" autofocus="autofocus" data-mini="true" value="<?php echo $item->title;?>" <?php echo $disable; ?> required>
+                            </td>
+                        </tr>
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('Description', 'admin');?>
+                            </td>
+                            <td>
+                                <input type="text" name="description" data-clear-btn="true" data-mini="true" value="<?php echo $item->description;?>" <?php echo $disable; ?> required>                                
+                            </td>
+                        </tr>
+                        <tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('System', 'admin');?>
+                            </td>
+                            <td>
+                                <input type="text" name="system" data-clear-btn="true" data-mini="true" value="<?php echo $item->system;?>" <?php echo $disable; ?> required>
+                            </td>
+                        </tr>                        
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('Type', 'admin');?>
+                            </td>
+                            <td>
+                                <select name="type" id="type" data-mini="true" <?php echo $disable; ?>>
+                                    <?php foreach($filter as $v): ?>
+                                    <option value="<?php echo $v['id']; ?>" <?php echo ($v['id'] == $item->type) ? 'selected': ''; ?>><?php echo $v['name']; ?></option>
+                                    <?php endforeach; ?>
+                                </select>                                
+                            </td>
+                        </tr>     
+                        <tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('Status', 'admin');?>
+                            </td>
+                            <td>
+                                <select name="status" id="status" data-mini="true" <?php echo $disable; ?>>
+                                    <option value="0" <?php echo ($item->status == 0) ? 'selected': ''; ?>><?php echo $this->translate('off' , 'admin'); ?></option>
+                                    <option value="1" <?php echo ($item->status == 1) ? 'selected': ''; ?>><?php echo $this->translate('active' , 'admin'); ?></option>
+                                </select>     
+                            </td>
+                        </tr>                         
+                        <tr class="tfoot">
+                            <td colspan="2">
+                                <fieldset data-role="controlgroup" data-type="horizontal"> 
+                                    <label>
+                                        <input type="submit" data-inline="true" data-icon="arrow-d" data-mini="true" value="<?php echo $this->translate('Save params', 'admin');?>" <?php echo $disable; ?>>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </tbody>                      
+                </table>
+	    </form>
+            <?php echo $this->flashMessenger()->render('info', array('ui-info')); ?>
+	    <!-- Таблица плагина -->
+        </div>
+    </div>
+    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
+        <h4>&copy; 2013  <a href="/"><?php echo $this->translate('Social Mobile' , 'default')?></a> <?php echo $this->translate('powered by' , 'default')?> <?php echo Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?php echo Zend\Version\Version::VERSION;?> <?php echo $this->translate('All rights reserved.' , 'default')?></h4>
+    </footer>
+</section>
+<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>

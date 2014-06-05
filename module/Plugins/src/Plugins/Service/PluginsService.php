@@ -53,20 +53,36 @@ class PluginsService
     }
 
     /**
-     * fetchAll($type  =   null, Select $select = null) метод выборки всех плагинов
+     * fetchAll($type  =   null, $sort = 'ASC', Select $select = null) метод выборки всех плагинов
      * @param int Тип плагина
+     * @param string $sort порядок сортировки
      * @param Select $select description
      * @access public
      * @return object Базы данных
      */
-    public function fetchAll($type  =   null, Select $select = null)
+    public function fetchAll($type  =   null, $sort = 'id ASC', Select $select = null)
     {
         if(null === $select) $select = new Select();
         $select->from($this->table);
         if(isset($type) && !empty($type)) $select->where('`type` = '.(int)$type);
+        $select->order($sort);
         $resultSet = $this->tableGateway->selectWith($select);
         $resultSet->buffer();
+
         return $resultSet;
+    }
+    
+    
+    /**
+     * fetch($id) выборка плагина по ID
+     * @param int Тип плагина
+     * @access public
+     * @return object Базы данных
+     */
+    public function fetch($id)
+    {
+        $result =   $this->tableGateway->select(['id' => $id])->current();
+        return $result;
     }
     
     /**
@@ -91,6 +107,19 @@ class PluginsService
     public function update(array $set, array $items)
     {
         $result =   $this->tableGateway->update($set, $items);
+        return $result;
+    } 
+    
+    
+    /**
+     * add(array $items) добавлене плагина
+     * @param  array $items параметры плагина
+     * @access public
+     * @return boolean
+     */
+    public function add(array $items)
+    {
+        $result =   $this->tableGateway->insert($items);
         return $result;
     }    
    

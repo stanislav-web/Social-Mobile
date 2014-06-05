@@ -185,7 +185,7 @@ class Module
         {
             // Авторизирован
             
-            if(in_array($e->getRouteMatch()->getMatchedRouteName(), ['admin', 'plugins'])) $e->getViewModel()->setTemplate('layout/admin');
+            if(in_array($e->getRouteMatch()->getMatchedRouteName(), ['admin', 'plugins', 'plugins/id', 'plugins/add'])) $e->getViewModel()->setTemplate('layout/admin');
             else  $e->getViewModel()->setTemplate('layout/user');
         }
         else

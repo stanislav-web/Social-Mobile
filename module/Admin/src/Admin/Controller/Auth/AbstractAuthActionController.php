@@ -64,7 +64,14 @@ abstract class AbstractAuthActionController extends AbstractActionController
      * @access protected
      * @var Zend\ServiceManager 
      */
-    protected $sm    =   null;     
+    protected $sm    =   null; 
+    
+    /**
+     * $messenger Объект мессенджера
+     * @access protected
+     * @var Zend\Mvc\Controller\Plugin\FlashMessenger 
+     */    
+    protected $messenger    =   null;
     
     /**
      * setEventManager(EventManagerInterface $events) Событие на отработку контроллера
@@ -76,12 +83,14 @@ abstract class AbstractAuthActionController extends AbstractActionController
     {
         parent::setEventManager($events);
         
-        // Получаю сервис авторизации и модель пользователей
-        $this->sm       =   $this->getServiceLocator();
-        $this->auth     =   $this->sm->get('authentification.Service');
-        $this->user     =   $this->sm->get('user.Model');                        // модель получения данных о пользователе
-        $this->lng      =   $this->sm->get('MvcTranslator');                     // загружаю переводчик
-        $this->renderer =   $this->sm->get('Zend\View\Renderer\PhpRenderer');    // управление МЕТА и заголовками таблицы
+        // Получаю необходимые сервисы авторизации, локалей, мессенджера...
+        
+        $this->sm           =   $this->getServiceLocator();
+        $this->auth         =   $this->sm->get('authentification.Service');         // сервис аутентификации
+        $this->user         =   $this->sm->get('user.Model');                       // модель получения данных о пользователе
+        $this->lng          =   $this->sm->get('MvcTranslator');                    // загружаю переводчик
+        $this->renderer     =   $this->sm->get('Zend\View\Renderer\PhpRenderer');   // управление МЕТА и заголовками таблицы
+        $this->messenger    =   $this->flashMessenger();                            // Флэш мессенджер
 
         $events->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH, function($e) 
         {

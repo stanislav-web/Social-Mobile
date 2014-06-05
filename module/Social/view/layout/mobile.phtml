@@ -28,7 +28,8 @@
         ?>
         <?php echo $this
                 ->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico'))
-                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css');
+                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
+                ->appendStylesheet($this->basePath().'/css/notifications.css');
         ?>
 	
         <?php echo $this->headScript()

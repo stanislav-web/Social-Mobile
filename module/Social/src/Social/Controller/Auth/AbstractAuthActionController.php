@@ -38,6 +38,42 @@ abstract class AbstractAuthActionController extends AbstractActionController
      */
     protected $user = null;     
     
+    
+    /**
+     * $lng Свойство объекта Zend l18 translator
+     * @access protected
+     * @var type object
+     */
+    protected $lng;    
+    
+    /**
+     * $renderer Свойство объекта Zend\View\Renderer\PhpRenderer
+     * @access protected
+     * @var type object
+     */
+    protected $renderer; 
+    
+    /**
+     * $perpage Объектов, выводимых на страницу
+     * @access protected
+     * @var int 
+     */
+    protected $perpage    =   10; 
+    
+    /**
+     * $sm Сервис локатор
+     * @access protected
+     * @var Zend\ServiceManager 
+     */
+    protected $sm    =   null; 
+    
+    /**
+     * $messenger Объект мессенджера
+     * @access protected
+     * @var Zend\Mvc\Controller\Plugin\FlashMessenger 
+     */    
+    protected $messenger    =   null;
+    
     /**
      * setEventManager(EventManagerInterface $events) Событие на отработку контроллера
      * @param \Zend\EventManager\EventManagerInterface $events
@@ -49,8 +85,13 @@ abstract class AbstractAuthActionController extends AbstractActionController
         parent::setEventManager($events);
         
         // Получаю сервис авторизации и модель пользователей
-        $this->auth     = $this->getServiceLocator()->get('authentification.Service');
-        $this->user     = $this->getServiceLocator()->get('user.Model'); // Модель получения данных о пользователе
+        
+        $this->sm           =   $this->getServiceLocator();
+        $this->auth         =   $this->sm->get('authentification.Service');         // сервис аутентификации
+        $this->user         =   $this->sm->get('user.Model');                       // модель получения данных о пользователе
+        $this->lng          =   $this->sm->get('MvcTranslator');                    // загружаю переводчик
+        $this->renderer     =   $this->sm->get('Zend\View\Renderer\PhpRenderer');   // управление МЕТА и заголовками таблицы
+        $this->messenger    =   $this->flashMessenger();                            // Флэш мессенджер
 
         $events->attach(\Zend\Mvc\MvcEvent::EVENT_DISPATCH, function($e) 
         {

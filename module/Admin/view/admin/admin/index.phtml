@@ -24,15 +24,10 @@
             <!--<div class="ui-admin-top">
                 <?php //echo $this->socialPlugin('menu', 'admin-nav-menu'); // верхнее меню ?>
             </div>-->
-            <?php if(!empty($this->errorMsg)):?>
-            <ul class="ui-error">
-                <?php foreach($this->errorMsg as $error):?>
-                <li>
-                    <?php echo $this->translate($error, 'admin-errors');?>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-            <?php endif;?>	    
+             <!-- Вывод мессенджера -->
+                <?php echo $this->flashMessenger()->render('error', array('ui-error')); ?>
+                <?php echo $this->flashMessenger()->render('success', array('ui-success')); ?>
+            <!-- Вывод мессенджера -->	    
             <div class="ui-grid-a">
                 <div class="ui-block-a">
                     <?php echo $this->socialPlugin('menu', 'admin-main-menu'); // главное меню админа ?>

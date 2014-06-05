@@ -17,7 +17,14 @@ return array(
     'Show'          =>  'Показати',
     'edit'          =>  'ред.',
     'Check this'    =>  'Відмітити',
-
+    'Register plugin'    =>  'Реєструвати плагін',
+    'Enter the name of the plugin'  =>  'Введіть назву плагіна',
+    'Brief description of the plugin'   =>  'Короткий опис роботи плагіна',
+    'The code in which a plug can be identified'    =>  'Код, за яким можна ідентифікувати плагін',
+    'Typing your plugin'    =>  'Типізація вашого плагіна',
+    'Set activity status'   =>  'Встановіть статус активності',
+    'Set readonly mode (read - mosly system plugins)'    =>  'Режим "для читання" - в основному системні плагіни',
+    
     // Флэш стена
     
     'Live Wall'    =>  'Жива стіна',
