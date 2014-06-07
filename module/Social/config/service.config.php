@@ -81,6 +81,12 @@ return array(
             return $table;
          },
             
+        'roles.Model' => function($serviceManager) { // Модель ролей пользователя
+            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
+            $table = new \Social\Model\RolesModel($dbAdapter);
+            return $table;
+         },                 
+                 
         /* Сервисы */
 
         'authentification.Service' => function($serviceManager) { // Сервис авторизации
@@ -90,7 +96,7 @@ return array(
                                         'zf_users',
                                         'id',
                                         'password',
-                                        'MD5(?) AND activation = \'1\'' // хэширую пароль и csrf код (УЖЕ ДОЛЖЕН ПЕРЕДАВАТЬСЯ СЮДА)
+                                        'MD5(?) AND state = \'1\'' // хэширую пароль и csrf код (УЖЕ ДОЛЖЕН ПЕРЕДАВАТЬСЯ СЮДА)
             );
             //print_r($dbTableAuthAdapter->getResultRowObject());
             $authService = new \Zend\Authentication\AuthenticationService();

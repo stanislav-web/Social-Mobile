@@ -38,14 +38,7 @@ class EventsUserModel extends AbstractTableGateway implements ServiceLocatorAwar
      * @var string $table;
      */
     protected $table = 'zf_users_events';
-    
-    /**
-     * $_lng Свойство объекта Zend l18 translator
-     * @access protected
-     * @var type object
-     */
-    protected $_lng;
-    
+
     /**
      * Конструктор адаптера БД
      * @access public

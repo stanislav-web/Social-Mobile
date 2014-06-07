@@ -9,6 +9,7 @@ REQUIREMENTS
 PHP5.4 >
 
 SPL Library
+Intl 
 
 MySQL Databases
 

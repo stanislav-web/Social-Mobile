@@ -39,9 +39,8 @@
     vertical-align: middle;
     text-align: center;
 }
-.ui-table td.ui-center {
-    vertical-align: middle;
-    text-align: center;
+.ui-table td.ui-left {
+    text-align: left !important;
 }
 .ui-table tr td > .ui-status-container {
     opacity: 1 !important;
@@ -52,4 +51,11 @@
 }
 .ui-table tr td > .ui-status-container.ui-red {
     background: #B22222;
+}
+
+.ui-table tr td > .ui-status-container.ui-yellow {
+    background: #DAA520;
+}
+.ui-table tr td > .ui-status-container.ui-blue {
+    background: #4682B4;
 }

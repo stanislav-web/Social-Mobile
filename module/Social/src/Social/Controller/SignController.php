@@ -328,7 +328,7 @@ class SignController extends AbstractActionController
                         $result                         = $registerStep3Form->getData(); // для хранения результата
                         $this->_register->city_id       = $result['city'];
                         $this->_register->online        = 1;
-                        $this->_register->activation    = 1;
+                        $this->_register->state         = 1;
                         $this->_register->ip            = $request->getServer('REMOTE_ADDR');
                         $this->_register->agent         = $request->getServer('HTTP_USER_AGENT');
                         // Генерирую пароль

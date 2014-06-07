@@ -170,7 +170,7 @@ span.ui-m {
     background-position: -0px -16px; width: 16px; height: 16px;
 }
 img.ui-small-flag {
-    vertical-align: bottom;
+    vertical-align: text-bottom;
 }
 
 /* Map */

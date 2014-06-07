@@ -9,13 +9,13 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Помошник вида StringHelper выводит постянные переменные в шаблон. Форматирую им строки
- * например так $this->getInfo()['version'] PHP 5.4
+ * например так $this->StringHelper()
  * или $this->getInfo()->version если invoke преобразует (object)
  * @package Zend Framework 2
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
  * @filesource /module/Social/src/Social/View/Helper/StringHelper.php
@@ -38,7 +38,7 @@ class StringHelper extends AbstractHelper implements ServiceLocatorAwareInterfac
         return $this->_sm;
     }
 
-    public function __invoke($type,$string)
+    public function __invoke($type, $string)
     {
         $translator = $this->_sm->getServiceLocator()->get('MvcTranslator');
         switch($type)
@@ -56,9 +56,8 @@ class StringHelper extends AbstractHelper implements ServiceLocatorAwareInterfac
                     '1' =>  array($translator->translate('day'),  $translator->translate('days'), $translator->translate('days')),
                     '2' =>  array($translator->translate('hour'), $translator->translate('hours'), $translator->translate('hours')),
                     '3' =>  array($translator->translate('min.'), $translator->translate('min.'), $translator->translate('min.')),
-                ));                
-            break;        
+                ));    
+            break;   
         }
-
     }
 }

@@ -185,14 +185,23 @@ class Module
         {
             // Авторизирован
             
-            if(in_array($e->getRouteMatch()->getMatchedRouteName(), ['admin', 'plugins', 'plugins/id', 'plugins/add'])) $e->getViewModel()->setTemplate('layout/admin');
+            if(in_array($e->getRouteMatch()->getMatchedRouteName(), [
+                'admin', 
+                'plugins', 
+                'plugins/edit', 
+                'plugins/add',
+                'users', 
+                'users/edit', 
+                'users/view',                
+                'distributions',
+                'distributions/provider',
+                ])) $e->getViewModel()->setTemplate('layout/admin');
             else  $e->getViewModel()->setTemplate('layout/user');
         }
         else
         {
             // Не авторизирован
             $e->getViewModel()->setTemplate('layout/layout');
-
         }
     }
     

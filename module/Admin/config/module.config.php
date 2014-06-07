@@ -11,8 +11,10 @@ return [
       */
     'controllers' => [
         'invokables' => [
-            'admin.Controller'      => 'Admin\Controller\AdminController',      // Контроллер администратора
-            'plugins.Controller'    => 'Admin\Controller\PluginsController',    // Контроллер управления плагинами
+            'admin.Controller'          => 'Admin\Controller\AdminController',          // Контроллер администратора
+            'users.Controller'          => 'Admin\Controller\UsersController',          // Контроллер управления пользователями
+            'plugins.Controller'        => 'Admin\Controller\PluginsController',        // Контроллер управления плагинами
+            'distributions.Controller'  => 'Admin\Controller\DistributionsController',  // Контроллер управления масштабными рассылками
         ],
     ],
 
@@ -36,20 +38,22 @@ return [
                     ],
                 ],
             ],
-            
-            'plugins' => [ // Управление плагинами
+
+            'users' => [ // Управление пользователями
                 'type'          => 'Segment',
                 'options'       => [
-                    'route'         => '/admin[/:lang]/plugins[/page/:page]',
+                    'route'         => '/admin[/:lang]/users[/page/:page][/order/:order]',
                 'constraints'   => [
                     'lang'          => '(en|ru|ua)',
                     'page'          => '[0-9]+',
+                    'order'         =>  '[a-zA-Z0-9_-]*',
                 ],
                 'defaults' => [
-		    'controller'    => 'plugins.Controller',
+		    'controller'    => 'users.Controller',
 		    'action'    => 'index',
 		    'lang'      => 'ru',
 		    'page'      => '1',
+		    'order'     => 'id',
                     ],
                 ],
                 'may_terminate' => true, 
@@ -81,22 +85,88 @@ return [
                         ],
                     ],                    
                 ],  
-            ],      
-	    
-            'admin-post' => [ // Post обработчик форм (всегда редирект на контроллер)
+            ],            
+            
+            'plugins' => [ // Управление плагинами
                 'type'          => 'Segment',
                 'options'       => [
-                'route'         => '/admin/post[/]',
+                    'route'         => '/admin[/:lang]/plugins[/page/:page]',
                 'constraints'   => [
-                    'controller'    => '[a-zA-Z]*',
+                    'lang'          =>  '(en|ru|ua)',
+                    'page'          =>  '[0-9]+',
                 ],
                 'defaults' => [
-                    'controller'    => 'admin.Controller',
-                    'action'        => 'post',
+		    'controller'    => 'plugins.Controller',
+		    'action'    => 'index',
+		    'lang'      => 'ru',
+		    'page'      => '1',
                     ],
                 ],
-                'may_terminate' => true, 		
-            ],	    
+                'may_terminate' => true, 
+                'child_routes' => [
+                    
+                    'edit' => [
+                        'type'      => 'Segment',
+                        'options'   => [
+                            'route' => '/edit[/:id]',
+                                'constraints' => [
+                                    'id' => '[0-9]+',
+                                ],
+                                'defaults' => [
+                                    'controller'    => 'plugins.Controller',
+                                    'action'        => 'edit',
+                                ]
+                        ],
+                    ],
+                    'add' => [
+                        'type'      => 'Segment',
+                        'options'   => [
+                            'route' => '/add',
+                                'constraints' => [
+                                ],
+                                'defaults' => [
+                                    'controller'    => 'plugins.Controller',
+                                    'action'        => 'add',
+                                ]
+                        ],
+                    ],                    
+                ],  
+            ],      
+	    
+            'distributions' => [ // Управление масштабными рассылками
+                'type'          => 'Segment',
+                'options'       => [
+                    'route'         => '/admin[/:lang]/distributions[/page/:page]',
+                'constraints'   => [
+                    'lang'          => '(en|ru|ua)',
+                    'page'          => '[0-9]+',
+                ],
+                'defaults' => [
+		    'controller'    => 'distributions.Controller',
+		    'action'    => 'index',
+		    'lang'      => 'ru',
+		    'page'      => '1',
+                    ],
+                ],
+                'may_terminate' => true, 
+                'child_routes' => [
+                    
+                    'provider' => [
+                        'type'      => 'Segment',
+                        'options'   => [
+                            'route' => '/view[/:provider]',
+                                'constraints' => [
+                                    'provider' => '[a-zA-Z0-9_-]*',
+                                ],
+                                'defaults' => [
+                                    'controller'    => 'distributions.Controller',
+                                    'action'        => 'view',
+                                ]
+                        ],
+                    ],
+                ],  
+            ], 
+            
         ],
     ],
     

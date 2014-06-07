@@ -136,7 +136,6 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
                 ))
 		->where("`activation` = '1' {$ccode} {$rcode} AND `city_{$this->getLocaleCode()}` LIKE '{$city}%'")
                 ->order('city_'.$this->getLocaleCode().' ASC');
-		echo $select->getSqlString();
         });
         $resultSet = $resultSet->toArray();
         return $resultSet;

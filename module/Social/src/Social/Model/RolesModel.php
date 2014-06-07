@@ -4,41 +4,40 @@ namespace Social\Model; // инициализирую текущее прост�
 // подключаю адаптеры Бд
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Sql; // для запросов
-use Zend\Db\Sql\Expression;
+
 // подключаю интерфейсы ServiceLocator
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-
 /**
- * Модель Профиля пользователя
+ * Модель ролей пользователя
  * использовать сервис менеджер в модели
- * $sm->get('userProfile.Model');
+ * $sm->get('roles.Model');
  * @package Zend Framework 2
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
+ * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
- * @filesource /module/Social/src/Social/Model/UserProfileModel.php
+ * @filesource /module/Social/src/Social/Model/RolesModel.php
  */
-class UserProfileModel extends AbstractTableGateway implements ServiceLocatorAwareInterface
+class RolesModel extends AbstractTableGateway implements ServiceLocatorAwareInterface
 {
+
     /**
      * Таблица, к которой обращаюсь
      * @access protected
      * @var string $table;
      */
-    protected $table = 'zf_users_profile';
-    
+    protected $table = 'zf_users_roles';
+
     /**
      * $_serviceLocator Свойство для хрения сервис менеджера
      * @access protected
      * @var type object
      */
     protected $_serviceLocator;
-
+    
     /**
      * Конструктор адаптера БД
      * @access public
@@ -47,7 +46,6 @@ class UserProfileModel extends AbstractTableGateway implements ServiceLocatorAwa
      */
     public function __construct($adapter)
     {
-
         $this->adapter = $adapter;
         $this->initialize();
     }
@@ -71,43 +69,35 @@ class UserProfileModel extends AbstractTableGateway implements ServiceLocatorAwa
     {
         return $this->_serviceLocator;
     }
-        
-   /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->getServiceLocator();
-    }
     
     /**
-     * updatePersonal($user_id, $personal) Обновление персонального статуса
-     * @param int $personal статус
-     * @param string $user_id ID пользователя
-     * @access public
-     * @return boolean
+     * getRoles() Все существующие роли
+     * @acceess public
+     * @return array
      */
-    public function updatePersonal($user_id, $personal)
+    public function getRoles()
     {
-        $Adapter = $this->adapter; // Загружаю адаптер БД
-        $sql = new Sql($Adapter);
-        $update = $sql->update($this->table);
-        $update->set(array(
-            'personal' => $personal
-            )
-        );
-        $update->where(array('user_id' => $user_id));
-        $statement = $sql->prepareStatementForSqlObject($update);
 
-        $rows = 0;
-        try {
-            $result = $statement->execute();
-            $rows = $result->getAffectedRows();
-            return $rows;
-        } catch (\Exception $e) {
-            die('Error: ' . $e->getMessage());
-        } 
-    }    
+        $resultSet = $this->select(function (Select $select) {
+            $select
+                ->columns([
+                    'id',
+                    'name'  =>  'title_'.$this->getLocaleCode().'',
+                ]);
+        });
+        return $resultSet->toArray();
+    }
+    
+
+    /**
+     * getLocaleCode() код текущей локализации
+     * @access private
+     * @return string
+     */
+    public function getLocaleCode()
+    {
+        $locale = $this->getServiceLocator()->get('MvcTranslator');
+        $locale = substr($locale->getLocale(), 0,2);
+        return $locale;
+    }     
 }

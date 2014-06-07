@@ -62,13 +62,6 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
      * @var string $table_profile;
      */
     protected $table_profile = 'zf_users_profile';
-    
-    /**
-     * $_lng Свойство объекта Zend l18 translator
-     * @access protected
-     * @var type object
-     */
-    protected $_lng;
 
     /**
      * Конструктор адаптера БД
@@ -102,16 +95,6 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
         return $this->_serviceLocator;
     }
     
-   /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->getServiceLocator();
-    }
-    
     /**
      * getAuthService() метод достает сервис авторизации по \Zend\Authentication\AuthenticationService()
      * @access public
@@ -119,7 +102,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
      */
     public function getAuthService()
     {
-        if(!$this->_authService) $this->_authService =  $this->zfService()->get('authentification.Service'); // инициализирован в Model.php
+        if(!$this->_authService) $this->_authService =  $this->getServiceLocator()->get('authentification.Service'); // инициализирован в Model.php
         return $this->_authService;
     }
 
@@ -130,7 +113,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
      */
     public function getSessionStorage()
     {
-        if(!$this->_authStorage) $this->_authStorage = $this->zfService()->get('auth.Service'); // инициализирован в Model.php
+        if(!$this->_authStorage) $this->_authStorage = $this->getServiceLocator()->get('auth.Service'); // инициализирован в Model.php
         return $this->_authStorage;
     }
 
@@ -149,7 +132,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                     'csrf',
                     'role_id',
                 ))
-                ->where('`activation` = \'1\' AND `id` = '.(int)$id)
+                ->where('`state` = \'1\' AND `id` = '.(int)$id)
                 ->order('id ASC')
                 ->limit(1);
                //$select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
@@ -224,7 +207,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 ->join($this->table_profile, $this->table_profile.'.user_id = '.$this->table.'.id', array(
                     'name',
                 ))
-                ->where('`'.$this->table.'`.`activation` = \'1\' AND `mail_code` !=\'\' AND `login` = \''.$login.'\'')
+                ->where('`'.$this->table.'`.`state` = \'1\' AND `mail_code` !=\'\' AND `login` = \''.$login.'\'')
                 ->limit(1);
         })->current();
         return $resultSet;
@@ -247,7 +230,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 $sql = new Sql($Adapter);
                 $update = $sql->update($this->table);
                 $update->set(array('sms_code' => $restoreArr['code']));
-                $update->where(array('login' => $login, 'activation' => '1'));
+                $update->where(array('login' => $login, 'state' => '1'));
             }
             else
             {
@@ -258,7 +241,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 $sql = new Sql($Adapter);
                 $update = $sql->update($this->table);
                 $update->set(array('mail_code' => $mail_code));
-                $update->where(array('login' => $login, 'activation' => '1'));
+                $update->where(array('login' => $login, 'state' => '1'));
                 $updateString = $sql->getSqlStringForSqlObject($update);
                 $results = $this->adapter->query($updateString, $Adapter::QUERY_MODE_EXECUTE);
 
@@ -269,7 +252,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
             if($results) return $restoreArr; // возвращаю оригинальный код для отправки на почту или SMS
             else 
             {
-                $this->_lng             = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
+                $this->_lng             = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
                 throw new \Exception($this->_lng->translate('Ivalid restore parameter. SQL Query is invalid', 'exceptions'));
             }
      }
@@ -294,7 +277,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
             // Обновляю пароль, если форма была для Email кода
             $resultSet = $this->select(function (Select $select) use ($formResult) {
             $select->columns(array('id', 'mail_code'))
-                    ->where('`login` = \''.$formResult['login'].'\' AND `activation` = \'1\'')
+                    ->where('`login` = \''.$formResult['login'].'\' AND `state` = \'1\'')
                     ->limit(1);
                     //print $select->getSqlString($this->adapter->getPlatform()); // SHOW SQL
             })->current();
@@ -348,7 +331,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 if(isset($remember) && $remember > 0)
                 {
                     // Если выбрали запомнить, устанавливаю параметры формы в сессию
-                    $config = $this->zfService()->get('Configuration');
+                    $config = $this->getServiceLocator()->get('Configuration');
                     $this->getSessionStorage()->setRememberMe($config['session']['remember_me_seconds']);
                     // устанавливаю все в хранилище
                     $this->getAuthService()->setStorage($this->getSessionStorage());
@@ -369,7 +352,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
      */
     public function signRegister()
     {
-        $this->_lng = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
+        $this->_lng = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
         $register   = new Container('register'); // достаю контейнер сессии с регистрацией
         
         if(!isset($register->init)) throw new \Exception($this->_lng->translate('Ivalid register parameter. Session continer could not exist', 'exceptions'));
@@ -384,7 +367,7 @@ class signModel extends AbstractTableGateway implements ServiceLocatorAwareInter
                 'login'             => $register->login,
                 'password'          => $register->password,
                 'csrf'              => $register->csrf,
-                'activation'        => 1,
+                'state'             => 1,
                 'date_registration' => new \Zend\Db\Sql\Expression("NOW()"),
                 'ip'                => new \Zend\Db\Sql\Expression("INET_ATON('{$register->ip}')"),
                 'agent'             => $register->agent,

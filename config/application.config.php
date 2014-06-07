@@ -13,7 +13,7 @@ return array(
         'ZFTool',               // Модуль диагностики
         'Decoda',               // Сервис BB кодов и эмотиконов
         'Social',               // Социальная сеть с управлением юзерами
-        'Payments',             // Сервис платежных систем
+        'Submissions',          // Сервис платежных систем
         'Locations',            // Модуль управления локациями (города, регионы, страны)
         'SwebSocialAuth',       // Мой модуль авторизации в соц сетях
         'Admin',                // Админ панель
@@ -35,7 +35,7 @@ return array(
         // Файлы конфигурации модулей (по умочанию будут найдены и загружены)
         'config_glob_paths' => array(
             'config/autoload/{,*.}{global,local,service,helper}.php',
-            './vendor/Payments/config/providers/*.php',
+            './vendor/Submissions/config/providers/*.php',
         ),
 
         // кэширование всех настроек

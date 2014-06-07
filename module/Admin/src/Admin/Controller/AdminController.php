@@ -23,41 +23,6 @@ class AdminController extends Auth\AbstractAuthActionController
 {
     
     /**
-     * usersAction() Пользователи
-     * @access public
-     * @return \Zend\View\Model\ViewModel
-     */
-    public function usersAction()
-    {
-
-            // если уже авторизирован
-            // Устанавливаю заголовок со страницы
-            $this->renderer->headTitle($this->lng->translate('Users Control', 'admin'));
-
-	    /**
-	     * Настраиваю постраничный вывод
-	     */
-	    $matches	=   $this->getEvent()->getRouteMatch();
-	    $page	=   $matches->getParam('page', 1);
-	    $itAdapter	=   new \Zend\Paginator\Adapter\Iterator($this->user->getUsers());
-	    $paginator	=   new \Zend\Paginator\Paginator($itAdapter);
-	    
-	    $paginator->setCurrentPageNumber($page);
-	    $paginator->setItemCountPerPage(3);
-	    
-	    
-	    //$usersFetch	=   ;
-	
-            $view = new ViewModel(
-                array(
-                    'user'         =>  $this->user->getProfile($this->auth->getIdentity()), // админ
-                    'items'        =>  $paginator,  // все пользователи
-                )
-            );
-            return $view;
-    }    
-    
-    /**
      * indexAction() Панель управления
      * @access public
      * @return \Zend\View\Model\ViewModel

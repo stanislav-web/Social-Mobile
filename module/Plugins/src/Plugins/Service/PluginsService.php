@@ -110,7 +110,6 @@ class PluginsService
         return $result;
     } 
     
-    
     /**
      * add(array $items) добавлене плагина
      * @param  array $items параметры плагина
