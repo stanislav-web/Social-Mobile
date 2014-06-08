@@ -43,16 +43,6 @@ class SignController extends AbstractActionController
     protected $_restore;
     
     /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return  $this->getServiceLocator();
-    }
-    
-    /**
      * step1Action() STEP 1. Заполнение профиля в сессию
      * @access public
      * @return \Zend\View\Model\ViewModel
@@ -64,14 +54,14 @@ class SignController extends AbstractActionController
         // Проверяю наличие в сесси заполненых в прошлой форме данных
         if($this->_register->offsetExists('login') && $this->_register->offsetExists('password') && $this->_register->offsetExists('csrf'))
         {
-            $this->_lng             = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
-            $countries              = $this->zfService()->get('countries.Service'); // достаю страны
+            $this->_lng             = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
+            $countries              = $this->getServiceLocator()->get('countries.Service'); // достаю страны
             $registerStep1Form      = new Form\RegisterStep1Form($countries, $this->_lng); // Форма регистрации (шаг 1)
             $request    = $this->getRequest(); // Запрос через форму
             if($request->isPost()) //  пошла POST форма
             {
                 // Устанавливаю фильтры и валидацию
-                $registerProfileValidator   = $this->zfService()->get('registerStep1.Validator');
+                $registerProfileValidator   = $this->getServiceLocator()->get('registerStep1.Validator');
                 $registerStep1Form->setInputFilter($registerProfileValidator->getInputFilter());
 
                 $arrPost = $request->getPost()->toArray();
@@ -79,7 +69,7 @@ class SignController extends AbstractActionController
 
                 $data = array_merge(
                     $arrPost,
-                    array('file' => $arrFile['filename']['name'])
+                    ['file' => $arrFile['filename']['name']]
                 );
 
                 $registerStep1Form->setData($data); // применяю валидацию
@@ -94,30 +84,30 @@ class SignController extends AbstractActionController
                         $pathConfig = (object)$reader->fromFile(DOCUMENT_ROOT.DS.'config'.DS.'paths.json'); // настройки директорий
 
                         // Начинаю обработку загружаемого файла
-                        $s = array('min' => '3kb','max' => '2mb');
+                        $s = ['min' => '3kb','max' => '2mb'];
                         $validFile = new \Zend\File\Transfer\Adapter\Http();
                         $size = new \Zend\Validator\File\Size($s); // фильтр на размер
                         $isimage = new \Zend\Validator\File\IsImage(); // валидация на изображение
-                        $validFile->setValidators(array($size, $isimage), $data['file']);
+                        $validFile->setValidators([$size, $isimage], $data['file']);
                         if(!$validFile->isValid())
                         {
                             // Записую ошибки при валидации файла
-                            $imgErrors = array();
+                            $imgErrors = [];
                             $validFileErrors = $validFile->getErrors(); // коды ошибок
 
                             // Переопределяю стандартные шаблон ошибок
-                            $errorTemplates = array(
+                            $errorTemplates = [
                                     'fileIsImageFalseType'  => $this->_lng->translate("Download file is no image", 'errors'),
                                     'fileSizeTooSmall'  => $this->_lng->translate("Download image size is too small.", 'errors')." ".$this->_lng->translate("The should be less than", 'errors').' '.$s['min'],
                                     'fileSizeTooBig'    => $this->_lng->translate("Download image size is too big.", 'errors')." ".$this->_lng->translate("The should be more than", 'errors').' '.$s['max'],
                                     'fileIsImageNotDetected' => $this->_lng->translate("The mimetype could not be detected from the file", 'errors'),
                                     'fileIsImageNotReadable' => $this->_lng->translate("File is not readable or does not exist", 'errors'),
-                            );
+                            ];
                             foreach($validFileErrors as $key => $row)
                             {
                                 $imgErrors[] = $errorTemplates[$row]; //$this->_lng->translate($row, 'error');
                             }
-                            if(!empty($imgErrors)) $registerStep1Form->setMessages(array('filename' => $imgErrors)); // в форму передаю ошибки
+                            if(!empty($imgErrors)) $registerStep1Form->setMessages(['filename' => $imgErrors]); // в форму передаю ошибки
 
                         }
                         else
@@ -127,18 +117,18 @@ class SignController extends AbstractActionController
                             $fileinfo = $validFile->getFileInfo();
                             // Рандомизирую имя файла
                             $validFile->addFilter('File\Rename',
-                                array(
+                                [
                                     'target' => $pathConfig->tmp_original_images_dir.DS.Translit::transliterate($fileinfo['filename']['name'], '', true),
                                     'overwrite' => true,
                                     //'randomize' => true,
-                                )
+                                ]
                             ); // загрузил оригинал
                             if($validFile->receive($fileinfo['filename']['name']))
                             {
                                 // Если загружаемый файл полностью валидный
                                 // Подключаю сервисы для обработки изображений
-                                if(extension_loaded('imagemagic')) $thumbnailer =  $this->zfService()->get('ImageMagic.Service'); 
-                                else  $thumbnailer =  $this->zfService()->get('GD2.Service'); 
+                                if(extension_loaded('imagemagic')) $thumbnailer =  $this->getServiceLocator()->get('ImageMagic.Service'); 
+                                else  $thumbnailer =  $this->getServiceLocator()->get('GD2.Service'); 
                                 
                                 // Достаю информацию о загруженном файле
 
@@ -197,13 +187,13 @@ class SignController extends AbstractActionController
             }
             
             // Устанавливаю заголовок со страницы
-            $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
+            $renderer = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');
             $renderer->headTitle($this->_lng->translate('Setup your basic profile. Step 1', 'default'));
             
             $registerView = new ViewModel(
-                array(
+                [
                     'registerProfileForm'   => $registerStep1Form, // Форма регистрации (шаг2)
-                    )
+                    ]
             );
             return $registerView;
         }
@@ -224,8 +214,8 @@ class SignController extends AbstractActionController
            && $this->_register->offsetExists('birthday'))
         {
             // Если прошли все обязательные параметры в сессию, продолжаю регистрацию
-            $this->_lng         = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
-            $regions = $this->zfService()->get('regions.Service'); // достаю регионы
+            $this->_lng         = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
+            $regions = $this->getServiceLocator()->get('regions.Service'); // достаю регионы
             $registerStep2Form   = new Form\RegisterStep2Form($regions, $this->_register->offsetGet('country_id'), $this->_lng); // Форма регистрации. Шаг 2
             /*
              *  Если сессия существует
@@ -252,7 +242,7 @@ class SignController extends AbstractActionController
                 {
                     // Обрабатываю выборку валидатором
 
-                    $registerProfileValidator   = $this->zfService()->get('registerStep2.Validator'); // валидатор формы регистрации (финал)
+                    $registerProfileValidator   = $this->getServiceLocator()->get('registerStep2.Validator'); // валидатор формы регистрации (финал)
                     $registerStep2Form->setInputFilter($registerProfileValidator->getInputFilter()); // устанавливаю фильтры на форму восстановления пароля
                     $registerStep2Form->setData($request->getPost());
                     if($registerStep2Form->isValid())
@@ -271,13 +261,13 @@ class SignController extends AbstractActionController
             }
             
             // Устанавливаю заголовок со страницы
-            $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
+            $renderer = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');
             $renderer->headTitle($this->_lng->translate('Setup your basic profile. Step 2', 'default'));
             
             $registerView = new ViewModel(
-                array(
+                [
                     'registerProfileForm'   => $registerStep2Form, // Форма регистрации (шаг 2)
-                    )
+                    ]
             );
             return $registerView;
         }
@@ -297,9 +287,9 @@ class SignController extends AbstractActionController
            && $this->_register->offsetExists('birthday') && $this->_register->offsetExists('region_id'))
         {
             // Если прошли все обязательные параметры в сессию, продолжаю регистрацию
-            $this->_lng         = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
+            $this->_lng         = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
 	    
-            $cities = $this->zfService()->get('cities.Service'); // достаю города
+            $cities = $this->getServiceLocator()->get('cities.Service'); // достаю города
             $letters = $cities->getFirstLetter($this->_register->offsetGet('country_id'), $this->_register->offsetGet('region_id')); // достаю первые буквы
 	    
             $registerStep3Form   = new Form\RegisterStep3Form($cities, $this->_register->offsetGet('country_id'), $this->_register->offsetGet('region_id'),$this->_lng); // Форма регистрации. Шаг 3
@@ -319,7 +309,7 @@ class SignController extends AbstractActionController
                 else
                 {
                     // Обрабатываю выборку валидатором
-                    $registerProfileValidator   = $this->zfService()->get('registerStep3.Validator'); // валидатор формы регистрации (финал)
+                    $registerProfileValidator   = $this->getServiceLocator()->get('registerStep3.Validator'); // валидатор формы регистрации (финал)
                     $registerStep3Form->setInputFilter($registerProfileValidator->getInputFilter()); // устанавливаю фильтры на форму восстановления пароля
                     $registerStep3Form->setData($request->getPost());
                     if($registerStep3Form->isValid())
@@ -342,7 +332,7 @@ class SignController extends AbstractActionController
                         try {
                             // 1. Сохраняю в базу и беру результат (Регистрация)
 
-                            $this->zfService()->get('sign.Model')->signRegister();
+                            $this->getServiceLocator()->get('sign.Model')->signRegister();
 
                             // 2. Переношу аватару из tmp в папку пользователя
 
@@ -380,21 +370,21 @@ class SignController extends AbstractActionController
 
                             // 3. Авторизирую
 
-                            $this->zfService()->get('sign.Model')->signAuth($this->_register->user_id, $this->_register->passwordfree, $remember = 1);
+                            $this->getServiceLocator()->get('sign.Model')->signAuth($this->_register->user_id, $this->_register->passwordfree, $remember = 1);
 
                             // 4. Создаю событие о регистрации новому пользователю
                             // передаю шаблон события и данные пользователя в виде массива объектов
                             
-                            $this->zfService()->get('userEvents.Model')->setEventForRegister('register',
-                                    array(
+                            $this->getServiceLocator()->get('userEvents.Model')->setEventForRegister('register',
+                                    [
                                         'user_id'       =>  $this->_register->user_id,
                                         'name'          =>  $this->_register->name,
-                                        'title'         =>  array(
+                                        'title'         =>  [
                                                 'ru' => $this->_lng->translate('Social Mobile', 'default', 'ru_RU'),
                                                 'en' => $this->_lng->translate('Social Mobile', 'default', 'en_US'),
                                                 'ua' => $this->_lng->translate('Social Mobile', 'default', 'ua_UA'),
-                                        )
-                                    )
+                                        ]
+                                    ]
                              );			    
 			    
 			    // 5. Создаю уведомление зарегистрированному на почту или SMS
@@ -406,13 +396,13 @@ class SignController extends AbstractActionController
                             else
                             {
                                 // Организовую отправку на email. PS: Почтовые события настроены из конфига Базы!
-                                $mailer = $this->zfService()->get('mail.Service');
-                                $plugContent = $this->zfService()->get('plugContent.Service');
+                                $mailer = $this->getServiceLocator()->get('mail.Service');
+                                $plugContent = $this->getServiceLocator()->get('plugContent.Service');
                                 $tplConfig = $plugContent('mailtemplates')->get('register'); // шаблон регистрации из БД
-                                $message = $mailer->createHtmlMessage($this->_register->login, sprintf($tplConfig->subject, $this->_register->name, $this->_lng->translate('Social Mobile', 'default')), $tplConfig->template, array(
+                                $message = $mailer->createHtmlMessage($this->_register->login, sprintf($tplConfig->subject, $this->_register->name, $this->_lng->translate('Social Mobile', 'default')), $tplConfig->template, [
                                     'login'         => $this->_register->login,
                                     'password'      => $this->_register->passwordfree,
-                                ));
+                                ]);
                                 $mailer->send($message);
                             }
                             
@@ -431,13 +421,13 @@ class SignController extends AbstractActionController
             }
             
             // Устанавливаю заголовок со страницы
-            $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
+            $renderer = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');
             $renderer->headTitle($this->_lng->translate('Finaly step of registration', 'default'));
             $registerView = new ViewModel(
-                array(
+                [
 		    'letters'		    => $letters,
                     'registerProfileForm'   => $registerStep3Form, // Форма регистрации (шаг 2)
-                    )
+                    ]
             );
             return $registerView;
         }
@@ -451,19 +441,19 @@ class SignController extends AbstractActionController
      */
     public function indexAction()
     {
-        $errorMsg           = array(
+        $errorMsg           = [
             'auth'      =>  '',
             'reg'       =>  '',
             'restore'   =>  ''
-        ); // Для сообщений об ошибках
+        ]; // Для сообщений об ошибках
 
-        $successMsg         = array(
+        $successMsg         = [
             'auth'      =>  '',
             'reg'       =>  '',
             'restore'   =>  ''
-        ); // Для валидных сообщений
+        ]; // Для валидных сообщений
         $floodTime          = '60'; // Время до повторной отправки (антифлуд)
-        $this->_lng         = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
+        $this->_lng         = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
 
         // Достаю параметры с GET или POST
         
@@ -490,7 +480,7 @@ class SignController extends AbstractActionController
             {
                 // Обработчк $_POST, валидация и сверка > выдача результата
                 $SetPasswordFormEmail    = new Form\SetPasswordFormEmail($this->_lng); // Форма установки пароля
-                $SetPasswordFormEmailValidator   = $this->zfService()->get('setpassemail.Validator'); // валидатор формы восст. по email
+                $SetPasswordFormEmailValidator   = $this->getServiceLocator()->get('setpassemail.Validator'); // валидатор формы восст. по email
                 $SetPasswordFormEmail->setInputFilter($SetPasswordFormEmailValidator->getInputFilter()); // устанавливаю фильтры на форму восст. пароля
                 $SetPasswordFormEmail->setData($request->getPost());
                 if($SetPasswordFormEmail->isValid())
@@ -502,16 +492,16 @@ class SignController extends AbstractActionController
 
                     //\Zend\Debug\Debug::dump($fromResult);
 
-                    $dbResult = $this->zfService()->get('sign.Model')->setNewPassword($fromResult);
+                    $dbResult = $this->getServiceLocator()->get('sign.Model')->setNewPassword($fromResult);
                     if(!$dbResult) $errorMsg['restore'] = 'This key is not correct!';
                     else
                     {
                         // Идентификация прошла успешно, пароль изменен, авторизирую и кидаю на профиль
-                        $auth = $this->zfService()->get('sign.Model')->signAuth($this->zfService()->get('user.Model')->getID($fromResult['login']), $fromResult['password'], $remember = 0);
+                        $auth = $this->getServiceLocator()->get('sign.Model')->signAuth($this->getServiceLocator()->get('user.Model')->getID($fromResult['login']), $fromResult['password'], $remember = 0);
                         if($auth)
                         {
                             // успешная авторизация
-                            $this->zfService()->get('sign.Model')->dropRestoreCode($dbResult->id, $type = 'email');     // Удаляю ключ
+                            $this->getServiceLocator()->get('sign.Model')->dropRestoreCode($dbResult->id, $type = 'email');     // Удаляю ключ
                             $this->redirect()->toUrl('profile');                                // Перенаправляю в личный кабинет
                         }
                         else
@@ -524,17 +514,17 @@ class SignController extends AbstractActionController
             }
             
             // Устанавливаю заголовок со страницы
-            $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
+            $renderer = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');
             $renderer->headTitle($this->_lng->translate('Setup new password', 'default'));
             
-            $setPassView = new ViewModel(array(
+            $setPassView = new ViewModel([
                                         'SetPasswordFormEmail'   => $SetPasswordFormEmail,
                                         'email'         => (isset($emailString)) ? $emailString : $request->getPost()->login,
                                         'keyString'     => (isset($keyString)) ? $keyString : $request->getPost()->mail_code,
                                         'restore'       => (isset($restoreStringGet)) ? $restoreStringGet : 'email',
                                         'errorMsg'      => $errorMsg['restore'], // сообщения об ошибках
                                         'successMsg'    => $successMsg['restore'], // успешно
-                                    )
+                                    ]
             );
             $setPassView->setTemplate('social/sign/setpasswordemail'); // показываю шаблон установки кода
             return $setPassView;
@@ -543,7 +533,7 @@ class SignController extends AbstractActionController
         /**
          * Делаю проверку на авторизацию
          */
-        if($this->zfService()->get('authentification.Service')->hasIdentity())
+        if($this->getServiceLocator()->get('authentification.Service')->hasIdentity())
         {
             // если уже авторизирован, выносим его отсюда
             // $auth->clearIdentity();
@@ -571,7 +561,7 @@ class SignController extends AbstractActionController
                 switch($request->getPost()->type)
                 {
                     case 'register': // Обработка регистрации
-                    $registerValidator   = $this->zfService()->get('register.Validator'); // валидатор формы регистрации
+                    $registerValidator   = $this->getServiceLocator()->get('register.Validator'); // валидатор формы регистрации
                     $registerForm->setInputFilter($registerValidator->getInputFilter()); // устанавливаю фильтры на форму восстановления пароля
                     $registerForm->setData($request->getPost());
                     if($registerForm->isValid())
@@ -593,7 +583,7 @@ class SignController extends AbstractActionController
                     break;
 
                     case 'auth': // Обработка авторизации
-                    $authValidator   = $this->zfService()->get('auth.Validator'); // валидатор формы авторизации
+                    $authValidator   = $this->getServiceLocator()->get('auth.Validator'); // валидатор формы авторизации
                     $authForm->setInputFilter($authValidator->getInputFilter()); // устанавливаю фильтры на форму авторизации
                     $authForm->setData($request->getPost());
                     if($authForm->isValid())
@@ -601,8 +591,8 @@ class SignController extends AbstractActionController
                         // теперь проверяю по базе пользователей
                         // вытягиваю сервис авторизации
                         $result         = $authForm->getData();
-                        $userModel      = $this->zfService()->get('user.Model');
-                        $auth = $this->zfService()->get('sign.Model')->signAuth($userModel->getID($result['login']), $result['password'], $result['remember']);
+                        $userModel      = $this->getServiceLocator()->get('user.Model');
+                        $auth = $this->getServiceLocator()->get('sign.Model')->signAuth($userModel->getID($result['login']), $result['password'], $result['remember']);
                         
                         if($auth && $userModel->checkRole($userModel->getID($result['login']), 4)) return $this->redirect()->toRoute('admin'); // админ
                         
@@ -633,7 +623,7 @@ class SignController extends AbstractActionController
 
                         // Все ок.. пошил отправлять
                         $this->_restore->getManager()->getStorage()->clear('restore'); // очищаю контейнер с временем
-                        $restoreValidator   = $this->zfService()->get('restore.Validator'); // валидатор формы восстановления
+                        $restoreValidator   = $this->getServiceLocator()->get('restore.Validator'); // валидатор формы восстановления
                         $restoreForm->setInputFilter($restoreValidator->getInputFilter()); // устанавливаю фильтры на форму восстановления пароля
                         $restoreForm->setData($request->getPost());
                         if($restoreForm->isValid())
@@ -646,19 +636,19 @@ class SignController extends AbstractActionController
                             {
                                 //@TODO Восстановление по SMS. Coming soon...
                                 // Генерирую код восстановления для пересылки по SMS
-                                $resultArr = $this->zfService()->get('sign.Model')->setRestore($result['resign'], 'mobile');
+                                $resultArr = $this->getServiceLocator()->get('sign.Model')->setRestore($result['resign'], 'mobile');
                                 $successMsg['restore'] = "Instructions for restoration of the password has been sent on your mobile"; // Успешно
 
                             }
                             else
                             {
                                 // Генерирую код восстановления для пересылки по email
-                                $resultArr = $this->zfService()->get('sign.Model')->setRestore($result['resign'], 'email');
+                                $resultArr = $this->getServiceLocator()->get('sign.Model')->setRestore($result['resign'], 'email');
                                 // Организовую отправку на email. PS: Почтовые события настроены из конфига Базы!
-                                $mailer = $this->zfService()->get('mail.Service');
-                                $plugContent = $this->zfService()->get('plugContent.Service');
+                                $mailer = $this->getServiceLocator()->get('mail.Service');
+                                $plugContent = $this->getServiceLocator()->get('plugContent.Service');
                                 $tplConfig = $plugContent('mailtemplates')->get('restore'); // шаблон восстановления из БД 
-                                $message = $mailer->createHtmlMessage($result['resign'], sprintf($tplConfig->subject, $resultArr['name'], $this->_lng->translate('Social Mobile', 'default')), $tplConfig->template, array(
+                                $message = $mailer->createHtmlMessage($result['resign'], sprintf($tplConfig->subject, $resultArr['name'], $this->_lng->translate('Social Mobile', 'default')), $tplConfig->template, [
 
                                         // Создаю контент, передаю шаблон из базы
                                         'content'       => $tplConfig->message,
@@ -668,7 +658,7 @@ class SignController extends AbstractActionController
                                         'sitename'      => $this->_lng->translate('Social Mobile', 'default'),
                                         'restorepage'   => '/sign/?restore=email',
                                         'restorekey'    => $resultArr['code'],
-                                ));
+                                ]);
                                 $mailer->send($message);
                                 $successMsg['restore'] = "Instructions for restoration of the password has been sent on your email"; // Успешно
                             }
@@ -681,7 +671,7 @@ class SignController extends AbstractActionController
         }
         
         // Устанавливаю заголовок со страницы
-        $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
+        $renderer = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');
         $renderer->headTitle($this->_lng->translate('Sign in', 'default'));
             
         $view = new ViewModel();
@@ -690,9 +680,9 @@ class SignController extends AbstractActionController
          * Форма регистрации
          */
         $registerView = new ViewModel(
-                                array(
-                                        'regForm'   => $registerForm,
-                                    ) // форма регистрации
+                                [
+                                    'regForm'   => $registerForm,
+                                ] // форма регистрации
                         );
         $registerView->setTemplate('social/sign/register');
         $view->addChild($registerView, 'registerTemplate');
@@ -701,10 +691,10 @@ class SignController extends AbstractActionController
          * Форма авторизации
          */
         $authView = new ViewModel(
-                                array(
-                                        'authForm'      => $authForm, // форма авторизации
-                                        'errorMsgAuth'  => $errorMsg['auth'], // сообщения об ошибках
-                                    )
+                                [
+                                    'authForm'      => $authForm, // форма авторизации
+                                    'errorMsgAuth'  => $errorMsg['auth'], // сообщения об ошибках
+                                ]
                     );
         $authView->setTemplate('social/sign/auth');
         $view->addChild($authView, 'authTemplate');
@@ -713,14 +703,13 @@ class SignController extends AbstractActionController
          * Форма восстановления аккаунта
          */
         $restoreView = new ViewModel(
-                                array(
-                                        'restoreForm'       => $restoreForm,// форма восстановления
-                                        'successMsgRestore' => $successMsg['restore'], // сообщение succcess
-                                        'errorMsgRestore'   => $errorMsg['restore'],   // сообщения об ошибках
-                                        'floodTime'         => $floodTime,  // секунд до повторной отправки
-
-                                    ) // форма восстановления аккаунта
-                );
+                            [
+                                'restoreForm'       => $restoreForm,// форма восстановления
+                                'successMsgRestore' => $successMsg['restore'], // сообщение succcess
+                                'errorMsgRestore'   => $errorMsg['restore'],   // сообщения об ошибках
+                                'floodTime'         => $floodTime,  // секунд до повторной отправки
+                            ] // форма восстановления аккаунта
+        );
         $restoreView->setTemplate('social/sign/restore');
         $view->addChild($restoreView, 'restoreTemplate');
 
@@ -735,8 +724,9 @@ class SignController extends AbstractActionController
      */
     public function logoutAction() 
     {
-        $this->zfService()->get('sign.Model')->getSessionStorage()->forgetMe(); // очищаю запоминание
-        $this->zfService()->get('sign.Model')->getAuthService()->clearIdentity(); // очищаю весь слой авторизции    
+        $sign   =   $this->getServiceLocator()->get('sign.Model');
+        $sign->getSessionStorage()->forgetMe();     // очищаю сессию
+        $sign->getAuthService()->clearIdentity();   // очищаю весь слой авторизции    
         return $this->redirect()->toRoute('sign');
     }    
 }

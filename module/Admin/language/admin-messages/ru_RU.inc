@@ -24,5 +24,6 @@ return array(
     'An error occurred while registering plugin'        =>      'Возникла ошибка при регистрации плагина',
     'All fields must be required'                       =>      'Все поля должны быть заполнены',
     'Item(s) was deleted successfuly'                   =>      'Записи успешно удалены',
+    'Item(s) was update successfuly'                    =>      'Записи успешно обновлены',
     'Only an administrator can assign roles to users'   =>      'Только администратор может назначать роли пользователям',
 );

@@ -12,7 +12,7 @@
             </div>
             <div class="ui-block-c" align="right">
                 <a href="#" class="ui-hover-btn ui-admin-nav-btn" data-role="button" onclick="return false;" id="clock" data-rel="dialog"></a>
-                <a href="<?php echo $this->url('admin' , ['lang' => $this->getLang('code') ,'action' => 'logout'] , ['force_canonical' => true]);?>" title="<?php echo $this->translate('Logout' , 'admin');?>" class="ui-hover-btn ui-admin-nav-btn" data-transition="pop" data-role="button"><img src="/images/admin/mini_logout.png" alt="<?php echo $this->translate('Logout' , 'admin')?>" /></a>                
+                <a href="<?php echo $this->url('logout');?>" title="<?php echo $this->translate('Logout' , 'admin');?>" class="ui-hover-btn ui-admin-nav-btn" data-transition="pop" data-role="button"><img src="/images/admin/mini_logout.png" alt="<?php echo $this->translate('Logout' , 'admin')?>" /></a>                
             </div>
         </div>
     </header>
@@ -91,7 +91,7 @@
                             </td>
                             <td class="ui-center">
                                 <?php
-                                $this->plugin("dateFormat")->setTimezone($item['timezone'])->setLocale("ru_RU");
+                                $this->plugin("dateFormat")->setTimezone($item['timezone'])->setLocale($this->getLang('code').'_'.  strtoupper($this->getLang('code')));
                                 echo $this->dateFormat(
                                         new DateTime($item['date_registration']),
                                         IntlDateFormatter::MEDIUM,      // date

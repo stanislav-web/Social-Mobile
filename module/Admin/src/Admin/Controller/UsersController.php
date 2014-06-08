@@ -40,7 +40,8 @@ class UsersController extends Auth\AbstractAuthActionController
         if($request->isPost())
         {
             $post   =   $request->getPost();
-            if(isset($post['roleAction']))
+            
+            if(isset($post['roleAction']) && !empty($post['roleAction']))
             {
                 // работаю с ролями
                 if(empty($post['select']))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
@@ -223,6 +224,8 @@ class UsersController extends Auth\AbstractAuthActionController
         if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
         $result = $this->sm->get('user.Model')->updateUsers(['state' => '1'], ['id' => $this->__select]);
         if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update status', 'admin-messages'));
+        else  $this->messenger->addSuccessMessage($this->lng->translate('Item(s) was update successfuly', 'admin-messages'));
+        
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
     }    
@@ -236,6 +239,8 @@ class UsersController extends Auth\AbstractAuthActionController
         if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
         $result = $this->sm->get('user.Model')->updateUsers(['state' => '0'], ['id' => $this->__select]);
         if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update status', 'admin-messages'));
+        else  $this->messenger->addSuccessMessage($this->lng->translate('Item(s) was update successfuly', 'admin-messages'));
+        
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
     }      
@@ -249,6 +254,8 @@ class UsersController extends Auth\AbstractAuthActionController
         if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
         $result = $this->sm->get('user.Model')->updateUsers(['state' => '3'], ['id' => $this->__select]);
         if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update status', 'admin-messages'));
+        else  $this->messenger->addSuccessMessage($this->lng->translate('Item(s) was update successfuly', 'admin-messages'));
+        
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
     }
@@ -268,7 +275,8 @@ class UsersController extends Auth\AbstractAuthActionController
         
             if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
             $result = $this->sm->get('user.Model')->updateUsers(['role_id' => $role_id], ['id' => $this->__select]);
-            if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update the role', 'admin-messages'));            
+            if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update the role', 'admin-messages'));   
+            else  $this->messenger->addSuccessMessage($this->lng->translate('Item(s) was update successfuly', 'admin-messages'));
         }
         else $this->messenger->addErrorMessage($this->lng->translate('Only an administrator can assign roles to users', 'admin-messages'));
         // Возвращаю обратно 

@@ -8,12 +8,16 @@
                 <li><a href="javascript:;" class="ui-tab restore" data-href="restore"><?php echo $this->translate('Access recovery', 'default');?></a>
             </ul>
         </nav>
-    <?php echo $this->registerTemplate; // форма регистрации ?>
-    <?php echo $this->authTemplate; // форма авторизации ?>
-    <?php echo $this->restoreTemplate; // форма восстановления ?>
+        <!-- Вывод мессенджера -->
+        <?php echo $this->flashMessenger()->render('error', array('ui-error')); ?>
+        <?php echo $this->flashMessenger()->render('success', array('ui-success')); ?>
+        <!-- Вывод мессенджера -->	        
+        <?php echo $this->registerTemplate; // форма регистрации ?>
+        <?php echo $this->authTemplate; // форма авторизации ?>
+        <?php echo $this->restoreTemplate; // форма восстановления ?>
     </div>
     <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
-        <?php echo $this->socialAuth(); ?>
+        <?php //echo $this->socialAuth(); ?>
         <?php echo $this->socialPlugin('bookmarks'); // виджет соц. закладок ?>
         <h4>&copy; 2013  <a href="/"><?php echo $this->translate('Social Mobile', 'default')?></a> <?php echo $this->translate('powered by', 'default')?> <?php echo Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?php echo Zend\Version\Version::VERSION;?> <?php echo $this->translate('All rights reserved.', 'default')?></h4>
     </footer>

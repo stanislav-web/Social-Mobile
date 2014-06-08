@@ -37,15 +37,6 @@ class PluginsConstructor extends AbstractHelper implements ServiceLocatorAwareIn
     }
     
     /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->_sm->getServiceLocator();
-    } 
-    /**
      * Фабрика виджетов.
      * @param type $plugin тип виджета из набора
      * @return type
@@ -56,26 +47,26 @@ class PluginsConstructor extends AbstractHelper implements ServiceLocatorAwareIn
         switch($plugin)
         {
             case 'language':
-                $config = $this->zfService()->get('Config'); // подключаю настройки
-                return $this->getView()->partial('plugins/language', array('lang' => $config['languages']));  // устанавливаю шаблон виджета
+                $config = $this->_sm->getServiceLocator()->get('Config'); // подключаю настройки
+                return $this->getView()->partial('plugins/language', ['lang' => $config['languages']]);  // устанавливаю шаблон виджета
             break;
 
             case 'flashwall':
-                $params = $this->zfService()->get($plugin.'.Model')->get();
-                if(!empty($params)) return $this->getView()->partial('plugins/zf_flash_wall/'.$plugin, array('params' => $params));  // устанавливаю шаблон виджета
+                $params = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get();
+                if(!empty($params)) return $this->getView()->partial('plugins/zf_flash_wall/'.$plugin, ['params' => $params]);  // устанавливаю шаблон виджета
                 else return '';
             break;
             
             case 'bookmarks':
-                $params = $this->zfService()->get($plugin.'.Model')->get();
-                if(!empty($params)) return $this->getView()->partial('plugins/zf_plugin_bookmarks/'.$plugin, array('params' => $params));  // устанавливаю шаблон виджета
+                $params = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get();
+                if(!empty($params)) return $this->getView()->partial('plugins/zf_plugin_bookmarks/'.$plugin, ['params' => $params]);  // устанавливаю шаблон виджета
                 else return '';
             break;
             
             case 'qrcode':
-                $qr = $this->zfService()->get($plugin.'.Model')->get($param); // инициализирую при старте
+                $qr = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get($param); // инициализирую при старте
                 try {
-                    if(!empty($qr)) return $this->getView()->partial('plugins/'.$plugin, array('qr' => $qr));  // устанавливаю шаблон
+                    if(!empty($qr)) return $this->getView()->partial('plugins/'.$plugin, ['qr' => $qr]);  // устанавливаю шаблон
                     else return '';                    
                 } 
                 catch(\Exception $e) 
@@ -85,19 +76,19 @@ class PluginsConstructor extends AbstractHelper implements ServiceLocatorAwareIn
             break;
             
             case 'header':
-                $header = $this->zfService()->get($plugin.'.Model')->get(); // инициализирую при старте
-                if($header) return $this->getView()->partial('plugins/'.$plugin, array('param' => $param));  // устанавливаю шаблон виджета
+                $header = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get(); // инициализирую при старте
+                if($header) return $this->getView()->partial('plugins/'.$plugin, ['param' => $param]);  // устанавливаю шаблон виджета
             break;	    
 	    
             case 'breadcrumbs':
-                $nav = $this->zfService()->get($plugin.'.Model')->get(); // инициализирую при старте
+                $nav = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get(); // инициализирую при старте
                 
-                if(!empty($nav)) return $this->getView()->partial('plugins/'.$plugin, array());  // устанавливаю шаблон виджета
+                if(!empty($nav)) return $this->getView()->partial('plugins/'.$plugin, []);  // устанавливаю шаблон виджета
             break;
             
             case 'notices':
-                $params = $this->zfService()->get($plugin.'.Model')->get($param);
-                if(!empty($params)) return $this->getView()->partial('plugins/zf_plugin_notices/'.$param, array('params' => $params));  // устанавливаю шаблон виджета
+                $params = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get($param);
+                if(!empty($params)) return $this->getView()->partial('plugins/zf_plugin_notices/'.$param, ['params' => $params]);  // устанавливаю шаблон виджета
                 else return '';
             break;
             
@@ -107,9 +98,9 @@ class PluginsConstructor extends AbstractHelper implements ServiceLocatorAwareIn
                 // нужно достать элементы меню, по коду меню `zf_menu_items` -> `menu`
                 // и определить в какой из шаблонов меню их передовать. Это $param
                 
-                $items = $this->zfService()->get('menuItems.Service')->getMenuItems($param);
-                $params = $this->zfService()->get($plugin.'.Model')->get($param);
-                if($params != false) return $this->getView()->partial('plugins/zf_plugin_menu/'.$param, array('items' => $items));  // устанавливаю шаблон виджета
+                $items = $this->_sm->getServiceLocator()->get('menuItems.Service')->getMenuItems($param);
+                $params = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get($param);
+                if($params != false) return $this->getView()->partial('plugins/zf_plugin_menu/'.$param, ['items' => $items]);  // устанавливаю шаблон виджета
                 else return '';
             break;
             
@@ -126,13 +117,13 @@ class PluginsConstructor extends AbstractHelper implements ServiceLocatorAwareIn
             break;
         
             case 'statistics':
-                return $this->zfService()->get($plugin.'.Model')->set();
+                return $this->_sm->getServiceLocator()->get($plugin.'.Model')->set();
             break;
         
             case 'user':
-                $params = $this->zfService()->get($plugin.'.Model')->get();
+                $params = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get();
 
-                if(!empty($params)) return $this->getView()->partial('plugins/zf_users/'.$plugin, array('params' => $params));  // устанавливаю шаблон виджета
+                if(!empty($params)) return $this->getView()->partial('plugins/zf_users/'.$plugin, ['params' => $params]);  // устанавливаю шаблон виджета
             break;
         
             default:

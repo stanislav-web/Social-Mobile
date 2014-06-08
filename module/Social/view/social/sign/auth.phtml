@@ -6,7 +6,7 @@
     <?php if(!empty($this->errorMsgAuth)):?>
         <ul class="ui-error">
             <li>
-                <?=$this->translate($this->errorMsgAuth, 'errors');?>
+                <?php echo $this->translate($this->errorMsgAuth, 'errors');?>
             </li>
         </ul>
     <?php endif;?>

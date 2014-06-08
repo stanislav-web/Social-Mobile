@@ -211,6 +211,7 @@ class PluginsController extends Auth\AbstractAuthActionController
         if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
         $result = $this->sm->get('plugins.Service')->update(['status' => '1'], ['id' => $this->__select]);
         if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update status', 'admin-messages'));
+        else  $this->messenger->addSuccessMessage($this->lng->translate('Item(s) was update successfuly', 'admin-messages'));
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
     }    
@@ -224,6 +225,7 @@ class PluginsController extends Auth\AbstractAuthActionController
         if(empty($this->__select))    $this->messenger->addErrorMessage($this->lng->translate('Not selected items', 'admin-messages'));
         $result = $this->sm->get('plugins.Service')->update(['status' => '0'], ['id' => $this->__select]);
         if(!$result)  $this->messenger->addErrorMessage($this->lng->translate('Error while update status', 'admin-messages'));
+        else  $this->messenger->addSuccessMessage($this->lng->translate('Item(s) was update successfuly', 'admin-messages'));
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
     }      

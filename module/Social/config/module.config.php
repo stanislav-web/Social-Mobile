@@ -5,227 +5,227 @@
  * Записываются все контроллеры в процессе создания приложения
  * Устанавливается путь к приложению по умолчанию
  */
-return array(
+return [
      /**
       * Пространство имен для всех контроллеров Social
       */
-    'controllers' => array(
-        'invokables' => array(
+    'controllers' => [
+        'invokables' => [
             'index.Controller'      => 'Social\Controller\IndexController',     // контроллер главной
             'online.Controller'     => 'Social\Controller\OnlineController',    // контроллер просмотра страниц "онлайн"
             'sign.Controller'       => 'Social\Controller\SignController',      // авторизация, регистрация, восстановление пароля
             'user.Controller'       => 'Social\Controller\UserController',      // контроллер над пользователями и все что с ними связано
-        ),
-    ),
+        ],
+    ],
     
     /**
      * Настройки маршрутизатора http
      */
-    'router' => array(
-        'routes' => array(
+    'router' => [
+        'routes' => [
             
-            'social' => array( // Главная страница
+            'social' => [ // Главная страница
                 'type'          => 'Segment',
-                'options'       => array(
+                'options'       => [
                 'route'         => '[/:lang][/:action]',
-                'constraints'   => array(
+                'constraints'   => [
                     'controller'    => '[a-zA-Z]*',
                     'action'        => '[a-zA-Z]*',
                     'lang'          => '(en|ru|ua)',
-                ),
-                'defaults' => array(
+                ],
+                'defaults' => [
                     'controller'    => 'index.Controller',
                     'action'        => 'index',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-            ),
+            ],
 
-            'sign' => array( // Страница регистрации, авторизации и восстановления аккаунта
+            'sign' => [ // Страница регистрации, авторизации и восстановления аккаунта
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '[/:lang]/sign[/:action]',
-                    'constraints'   => array(
+                    'constraints'   => [
                         'controller'    => '[a-zA-Z]*',
                         'action'        => '[a-zA-Z0-3]*',
                         'lang'          => '(en|ru|ua)',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller'    => 'sign.Controller',
                         'action'        => 'index',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-            ),
+            ],
             
-            'logout' => array( // Выход
+            'logout' => [ // Выход
                 'type'          => 'Segment',
-                'options'       => array(
+                'options'       => [
                 'route'         => '/logout',
-                'defaults' => array(
+                'defaults' => [
 		    'controller'    => 'sign.Controller',
 		    'action'        => 'logout',
-                    ),
-                ),
-            ),             
+                    ],
+                ],
+            ],             
             
-           'journal' => array( // Журнал событий пользователя
+           'journal' => [ // Журнал событий пользователя
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '[/:lang]/journal[/]',
-                    'constraints'   => array(
+                    'constraints'   => [
                         'lang'          =>  '(en|ru|ua)',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller'    => 'user.Controller',
                         'action'        => 'journal',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-            ),           
+            ],           
             
-            'profile' => array( // Страница управления пользователем (профиль)
+            'profile' => [ // Страница управления пользователем (профиль)
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '[/:lang]/profile[/:action]',
-                    'constraints'   => array(
+                    'constraints'   => [
                         'lang'          =>  '(en|ru|ua)',
                         'action'        =>  '[a-zA-Z]*',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller'    => 'user.Controller',
                         'action'        => 'profile',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-            ),
+            ],
 
-            'users' => array( // Все пользователи
+            'users' => [ // Все пользователи
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '[/:lang]/users[/]',
-                    'constraints'   => array(
+                    'constraints'   => [
                         'lang'          =>  '(en|ru|ua)',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller'    => 'user.Controller',
                         'action'        => 'users',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-            ),            
+            ],            
           
-            'user' => array( // Страница пользователя
+            'user' => [ // Страница пользователя
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '[/:lang]/user',
-                    'constraints'   => array(
+                    'constraints'   => [
                         'lang'          =>  '(en|ru|ua)',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller'    => 'user.Controller',
                         'action'        => 'index',
                         'lang'          => 'en',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-                'child_routes' => array(
-                    'slug-user' => array(
+                'child_routes' => [
+                    'slug-user' => [
                         'type'      => 'Segment',
-                        'options'   => array(
+                        'options'   => [
                             'route' => '[/:slug][/]',
-                                'constraints' => array(
+                                'constraints' => [
                                     'slug' => '[a-zA-Z0-9_-]*',
 
-                                ),
-                                'defaults' => array(
+                                ],
+                                'defaults' => [
                                     'controller'    => 'user.Controller',
                                     'action'        => 'index',
-                                )
-                        ),
-                    ),
-                ),                
-            ),            
+                                ]
+                        ],
+                    ],
+                ],                
+            ],            
             
-            'online' => array( // Страница просмотра пользователей онлайн
+            'online' => [ // Страница просмотра пользователей онлайн
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '[/:lang]/online[/:action]',
-                    'constraints'   => array(
+                    'constraints'   => [
                         'controller'    => '[a-zA-Z]*',
                         'action'        => '[a-zA-Z0-3]*',
                         'lang'          => '(en|ru|ua)',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller'    => 'online.Controller',
                         'action'        => 'index',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
                 // настраиваю дочерние маршруты
-                'child_routes' => array (
-                    'male' => array(
+                'child_routes' =>  [
+                    'male' => [
                         'type' => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route' => '/male',
-                            'defaults' => array(
+                            'defaults' => [
                                 'action' => 'male',
-                            )
-                        ),
-                    ),
-                    'female' => array(
+                            ]
+                        ],
+                    ],
+                    'female' => [
                         'type' => 'Literal',
-                        'options' => array(
+                        'options' => [
                             'route' => '/female',
-                            'defaults' => array(
+                            'defaults' => [
                                 'action' => 'female',
-                            )
-                        ),
-                    ),
-               ),
-            ),
-        ),
-    ),
+                            ]
+                        ],
+                    ],
+               ],
+            ],
+        ],
+    ],
 
     
     /*
      * Пути к языковым файлам
      */
-    'translator' => array(
+    'translator' => [
         'locale' => 'ru_RU', // по умолчанию
-        'translation_file_patterns' => array(
-            array(
+        'translation_file_patterns' => [
+            [
                 'type'     => 'PhpArray',
                 'base_dir' => __DIR__ . '/../language/social',
                 'pattern'  => '%s.inc',
                 'text_domain' => 'default'
-            ),
-            array(
+            ],
+            [
                 'type'     => 'PhpArray',
                 'base_dir' => __DIR__ . '/../language/errors',
                 'pattern'  => '%s.inc',
                 'text_domain' => 'errors'
-            ),
-            array(
+            ],
+            [
                 'type'     => 'PhpArray',
                 'base_dir' => __DIR__ . '/../language/success',
                 'pattern'  => '%s.inc',
                 'text_domain' => 'success'
-            ),
-            array(
+            ],
+            [
                 'type'     => 'PhpArray',
                 'base_dir' => __DIR__ . '/../language/mails',
                 'pattern'  => '%s.inc',
                 'text_domain' => 'mails'
-            ),
-        ),
-    ),
+            ],
+        ],
+    ],
 
     /*
      * Параметры шаблонов и их публикации
      */
 
-    'view_manager' => array(
+    'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true, // показывать ли исключения в 404
         // XHTML11, XHTML1_STRICT, XHTML1_TRANSITIONAL, XHTML1_FRAMESET, HTML4_STRICT, HTML4_STRICT, HTML4_LOOSE, HTML4_FRAMESET, HTML5, CUSTOM
@@ -237,5 +237,5 @@ return array(
         // Шаблоны
 
         'template_map' => include __DIR__  . '../../autoload_templatemap.php',
-    ),
-);
+    ],
+];
