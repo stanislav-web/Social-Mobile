@@ -24,7 +24,7 @@ return array(
             return  new \Zend\Cache\Storage\Adapter\MemcacheOptions(array(
                     'resource_manager' => $MemcacheResourceManager,
                     'resource_id'      => '1',
-                    'namespace'        => 'CITY_CACHE',
+                    'namespace'        => 'MEMCACHE',
                     'ttl'              => 60*60*24*7,
                 )
             );

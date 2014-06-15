@@ -3,7 +3,7 @@
     <ul>
         <?php foreach($this->items as $item): ?>
         <li>
-            <a href="/<?php echo $item->alias;?>" title="<?php echo $item->description;?>">
+            <a href="/<?php echo $item->route;?>" title="<?php echo $item->description;?>">
                 <img class="ui-img-list" src="/images/mobile/user/<?php echo $item->icon;?>">
                 
                 <div class="ui-menu-description">

@@ -134,5 +134,74 @@ class Format  {
             ->y;
         if($age != $NOW->format('Y')) return $delimiter.$age.$translate;
     }
+    
+    /**
+     * isJson($string) проверка входящей строки на Json
+     * @param mixed $string Строка для проверки
+     * @access static
+     * @return boolean
+     */
+    public static function isJson($string)
+    {
+        return ((is_string($string) && 
+         (is_object(json_decode($string)) || 
+            is_array(json_decode($string))))) ? true : false;        
+    }
+    
+    /**
+     * isSerialized($string) проверка входящей строки на Json
+     * @param mixed $string Строка для проверки
+     * @access static
+     * @return boolean
+     */
+    public static function isSerialized($string)
+    {
+        $array = @unserialize($string);
+        if($array === false && $string !== 'b:0;') return false;
+        else return true;
+    }    
+    
+    /**
+     * getTimezones() Часовые пояса
+     * @access static
+     * @return boolean
+     */    
+    public static function getTimezones()
+    {
+        return [
+            '-1'    =>  '(GMT - 1:00) Azores, islands of Cape Verde',
+            '-2'    =>  '(GMT - 2:00) Mid-Atlantic time',
+            '-3'    =>  '(GMT - 3:00) Brazil, Buenos Aires, Georgetown, Greenland',
+            '-3.5'  =>  '(GMT - 3:30) Newfoundland',
+            '-4'    =>  '(GMT - 4:00) Atlantic Time (Canada), Caracas, La Paz, Santiago',
+            '-5'    =>  '(GMT - 5:00) Eastern Time (U.S. & Canada), Bogota, Lima, Quito',
+            '-6'    =>  '(GMT - 6:00) Central Time (U.S. & Canada), Mexico',
+            '-7'    =>  '(GMT - 7:00) Mountain Time (U.S. and Canada), Arizona',
+            '-8'    =>  '(GMT - 8:00) Pacific Time (U.S. & Canada), Tijuana',
+            '-9'    =>  '(GMT - 9:00) Alaska',
+            '-10'   =>  '(GMT - 10:00) Hawaii',
+            '-11'   =>  '(GMT - 11:00) o.Miduey, Samoa',
+            '-12'   =>  '(GMT - 12:00) Enevetok, Kwajalein',
+            '0'     =>  '(GMT) Casablanca, Dublin, Edinburgh, Lisbon, London, Monrovia',
+            '1'     =>  '(GMT + 1:00) Amsterdam, Berlin, Brussels, Madrid, Paris, Rome',
+            '2'     =>  '(GMT + 2:00) Cairo, Helsinki, Kaliningrad, South Africa, Warsaw, Kyiv',
+            '3'     =>  '(GMT + 3:00) Baghdad, Riyadh, Moscow, Nairobi',
+            '3.5'   =>  '(GMT + 3:30) Tehran',
+            '4'     =>  '(GMT + 4:00) Abu Dhabi, Baku, Muscat, Tbilisi',
+            '4.5'   =>  '(GMT + 4:30) Kabul',
+            '5'     =>  '(GMT + 5:00) Ekaterinburg, Islamabad, Karachi, Tashkent',
+            '5.5'   =>  '(GMT + 5:30) Bombay, Calcutta, Madras, New Delhi',
+            '6'     =>  '(GMT + 6:00) Alma-Ata, Colombo, Dhaka, Novosibirsk, Omsk',
+            '7'     =>  '(GMT + 7:00) Bangkok, Hanoi, Jakarta, Krasnoyarsk',
+            '8'     =>  '(GMT + 8:00) Beijing, Hong Kong, Perth, Singapore, Taipei',
+            '9'     =>  '(GMT + 9:00) Osaka, Sapporo, Seoul, Tokyo, Yakutsk',
+            '9.5'   =>  '(GMT + 9:30) Adelaide, Darwin',
+            '10'    =>  '(GMT + 10:00) Canberra, Melbourne, Guam, Sydney, Vladivostok',
+            '11'    =>  '(GMT + 11:00) Magadan, New Caledonia, Solomon Islands',
+            '12'    =>  '(GMT + 12:00) Auckland, Fiji, Kamchatka, Wellington',
+            '13'    =>  '(GMT + 13:00) Kamchatka',
+            '14'    =>  '(GMT + 14:00) Kiritimati (Christmas Island)',            
+        ];
+    }
 }
 ?>

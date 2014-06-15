@@ -79,12 +79,6 @@ class PluginsConstructor extends AbstractHelper implements ServiceLocatorAwareIn
                 $header = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get(); // инициализирую при старте
                 if($header) return $this->getView()->partial('plugins/'.$plugin, ['param' => $param]);  // устанавливаю шаблон виджета
             break;	    
-	    
-            case 'breadcrumbs':
-                $nav = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get(); // инициализирую при старте
-                
-                if(!empty($nav)) return $this->getView()->partial('plugins/'.$plugin, []);  // устанавливаю шаблон виджета
-            break;
             
             case 'notices':
                 $params = $this->_sm->getServiceLocator()->get($plugin.'.Model')->get($param);

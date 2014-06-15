@@ -10,7 +10,7 @@ return array(
     'Action error! You can not send form without POST!' =>	'Помилка! Ви не зможете відправити форму GET!',
     'Plugins not found'                                 =>	'Плагіни не знайдени',
     'Plugin not found'                                  =>      'Плагін не знайден',
-    'Users not found'                                   =>      'В системі немає жодного користувача',
+    'Users not found'                                   =>      'Користувачів не знайдено',
     'User not found'                                    =>      'Не знайден користувач',
     'Action not selected'                               =>	'Оберить дію',
     'Not selected items'                                =>	'Відмідьте елементи для обробки',

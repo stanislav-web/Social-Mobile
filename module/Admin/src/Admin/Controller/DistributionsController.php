@@ -66,8 +66,6 @@ class DistributionsController extends Auth\AbstractAuthActionController
         
         return new ViewModel(
             [
-                'title'     =>  $title,
-                'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
                 'providers' =>  $this->configList
             ]
         );      
@@ -86,17 +84,16 @@ class DistributionsController extends Auth\AbstractAuthActionController
         {
             // Устанавливаю МЕТА и заголовок страницы
         
-            $title  =   $this->lng->translate('Submissions control', 'admin');
             $title  =   sprintf($this->lng->translate('Submissions control ▶ %s' , 'admin'), $id);          
             $this->renderer->headTitle($title);    
         
             // получаю методы для работы с провайдером
             $factory        = $this->getServiceLocator()->get('Submissions\Factory\ProviderFactory');
-            $this->provider       = $factory->getProvider($id);
-            Debug::dump($this->provider->send(['msisdn' => 380954916517, 'message' => 'Test']));
+            $this->provider = $factory->getProvider($id);
+            //Debug::dump($this->provider->send(['msisdn' => 380954916517, 'message' => 'Test']));
             
             
-            exit;
+            //exit;
             // Делаю запрос
             //$response = $this->provider->subscribe(['email' => 'test3@mail.ua'], 3690382);
             //$response = $this->provider->unsubscribe('test@mail.ua', 3690382);
@@ -116,14 +113,13 @@ class DistributionsController extends Auth\AbstractAuthActionController
             
             if(!isset($response['error']))
             {
-                Debug::dump($response);
+                //Debug::dump($response);
             }
             else $this->messenger->addErrorMessage($response['error']);
             
             return new ViewModel(
                 [
-                    'title'     =>  $title,
-                    'user'	=>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
+                    'title'     =>  $id,
                     'provider'  =>  $this->configList[$id]
                 ]
             );             

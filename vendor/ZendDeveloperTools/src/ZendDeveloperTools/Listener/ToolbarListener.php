@@ -12,7 +12,7 @@
  * obtain it through the world-wide-web, please send an email
  * to license@zend.com so we can send you a copy immediately.
  *
- * @copyright  Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -32,7 +32,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * Developer Toolbar Listener
  *
- * @copyright  Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class ToolbarListener implements ListenerAggregateInterface
@@ -146,22 +146,25 @@ class ToolbarListener implements ListenerAggregateInterface
     protected function injectToolbar(ProfilerEvent $event)
     {
         $entries     = $this->renderEntries($event);
-        $response    = $event->getApplication()->getResponse();;
+        $response    = $event->getApplication()->getResponse();
 
         $toolbarView = new ViewModel(array('entries' => $entries));
         $toolbarView->setTemplate('zend-developer-tools/toolbar/toolbar');
         $toolbar     = $this->renderer->render($toolbarView);
-        $toolbar     = str_replace("\n", '', $toolbar);
 
         $toolbarCss  = new ViewModel(array(
             'position' => $this->options->getToolbarPosition(),
         ));
         $toolbarCss->setTemplate('zend-developer-tools/toolbar/style');
         $style       = $this->renderer->render($toolbarCss);
-        $style       = str_replace(array("\n", '  '), '', $style);
+
+        $toolbarJs  = new ViewModel();
+        $toolbarJs->setTemplate('zend-developer-tools/toolbar/script');
+        $script       = $this->renderer->render($toolbarJs);
 
         $injected    = preg_replace('/<\/body>/i', $toolbar . "\n</body>", $response->getBody(), 1);
         $injected    = preg_replace('/<\/head>/i', $style . "\n</head>", $injected, 1);
+        $injected    = preg_replace('/<\/body>/i', $script . "\n</body>", $injected, 1);
 
         $response->setContent($injected);
     }
@@ -198,6 +201,7 @@ class ToolbarListener implements ListenerAggregateInterface
             'php_version' => phpversion(),
             'has_intl'    => extension_loaded('intl'),
             'doc_uri'     => $docUri,
+            'modules'     => $this->getModules($event),
         ));
         $zfEntry->setTemplate('zend-developer-tools/toolbar/zendframework');
 
@@ -295,5 +299,18 @@ class ToolbarListener implements ListenerAggregateInterface
         );
 
         return array($isLatest, $latest);
+    }
+
+    private function getModules(ProfilerEvent $event)
+    {
+        if (!$application = $event->getApplication()) {
+            return null;
+        }
+
+        $serviceManager = $application->getServiceManager();
+        /* @var $moduleManager \Zend\ModuleManager\ModuleManagerInterface */
+        $moduleManager  = $serviceManager->get('ModuleManager');
+
+        return array_keys($moduleManager->getLoadedModules());
     }
 }

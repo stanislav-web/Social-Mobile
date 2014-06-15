@@ -27,10 +27,12 @@
         "zendframework/zend-eventmanager":   "2.*",
         "zendframework/zend-stdlib":         "2.*",
         "zendframework/zend-servicemanager": "2.*",
-        "zendframework/zend-version":        "2.*"
+        "zendframework/zend-version":        "2.*",
+        "zendframework/zend-debug":          "2.*"
     },
     "suggest": {
-        "bjyoungblood/bjy-profiler": "Version: dev-master, allows the usage of the (Zend) Db collector."
+        "bjyoungblood/bjy-profiler": "Version: dev-master, allows the usage of the (Zend) Db collector.",
+        "ocramius/ocra-service-manager": "OcraServiceManager can help you track dependencies within your application."
     },
     "autoload": {
         "psr-0": {

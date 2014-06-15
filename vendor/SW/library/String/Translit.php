@@ -86,6 +86,7 @@ class Translit
     /**
      * translateToCyr($string) Перевод из Lat > Cyr
      * @param type $string
+     * @access static
      * @return string
      */
     public static function translateToCyr($string)
@@ -98,14 +99,13 @@ class Translit
     }
     
     /**
-     * Приведение к УРЛ
+     * asURLSegment($string) Приведение строки к УРЛ
+     * @param string $string строка
+     * @access static
      * @return string
-     * @access public
-     * @static
      */
-    static public function asURLSegment($string)
+    public static function asURLSegment($string)
     {
         return strtolower(self::transliterate($string, '-', true));
     }
-
 }

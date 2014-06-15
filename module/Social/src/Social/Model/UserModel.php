@@ -6,6 +6,12 @@ use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Sql; // для запросов
 use Zend\Db\Sql\Expression;
+use Zend\Paginator\Paginator; // сам пагинатор
+use Zend\Paginator\Adapter\DbSelect;// адаптер пагинатора
+use Zend\Db\Metadata\Metadata;      // мета данные таблиц
+
+// Кэширование
+
 
 // подключаю интерфейсы ServiceLocator
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
@@ -37,22 +43,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
      * @access protected
      * @var string $table;
      */
-    protected $timeon = 300;   
-    
-    /**
-     * Зависимые таблицы
-     * @access protected
-     * @var string $relationsTable;
-     */
-    protected $relationsTable = [
-        'group'     =>  'zf_users_roles',       // группы
-        'status'    =>  'zf_users_statuses',    // коммерческие статусы
-        'events'    =>  'zf_users_events',      // журнал (события)
-        'countries' =>  'zf_countries',		// страны
-        'regions'   =>  'zf_regions',		// регионы
-        'cities'    =>  'zf_cities',		// города
-        'online'    =>  'zf_users_online',	// кто где в онлайн?
-    ];
+    protected $timeon = 300;
     
     /**
      * $_serviceLocator Свойство для хрения сервис менеджера
@@ -64,9 +55,16 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
     /**
      * $_lng Свойство объекта Zend l18 translator
      * @access protected
-     * @var type object
+     * @var object
      */
     protected $_lng;
+    
+    /**
+     * $_page Количтво объектов на странице
+     * @access protected
+     * @var int
+     */    
+    protected $_page = 10;
     
     /**
      * Конструктор адаптера БД
@@ -76,7 +74,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
      */
     public function __construct($adapter)
     {
-
         $this->adapter = $adapter;
         $this->initialize();
     }
@@ -102,62 +99,21 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
     }
     
     /**
-     * getUsers($page, $perpage, $filter = null) Все пользователи (с фильтром)
-     * @param int $page - страница текущая
-     * @param int $perpage - записей на страницу
-     * @param string $order - сортировка
-     * @param array $filter - записей на страницумассив с объектами фильтрации
-     * @return void
-     */
-    public function getUsers($order = ['id' => 'ASC'])
+     * __getMetadata() Получаю названия полей
+     * @access private
+     * @return array
+     */    
+    private function __getMetadata()
     {
-        $this->_lng  = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
-
-        // Использую лямпду как передаваемый объект для выборки
-        $result = $this->select(function (Select $select) use ($order) {
-        $select
-            ->join('zf_users_profile', 'zf_users_profile.user_id = '.$this->table.'.id', [
-		'name',
-		'gender',
-		'email',
-		'photo',
-		'birthday',
-		'phone',
-                'country_id',                    
-                'region_id',                    
-                'city_id',                    
-                'interests',                    
-                'length',                    
-                'weight',                    
-                'about',                    
-                'alias',                    
-                'personal',
-                'timezone',                    
-            ])
-            ->join($this->relationsTable['group'], $this->relationsTable['group'].'.id = '.$this->table.'.role_id', [
-                'role' => 'title_'.substr($this->_lng->getLocale(), 0,2),
-                'role_class' => 'class'   
-            ])
-            ->join($this->relationsTable['status'], $this->relationsTable['status'].'.id = '.$this->table.'.status_id', [
-                'status_title' => 'title',
-            ])
-            ->join($this->relationsTable['countries'], $this->relationsTable['countries'].'.country_id = zf_users_profile.country_id', [
-                'country_code',
-		'country'       => 'country_'.substr($this->_lng->getLocale(), 0,2),
-            ])
-	    ->join($this->relationsTable['regions'], $this->relationsTable['regions'].'.region_id = zf_users_profile.region_id', [
-                    'region'  => 'region_'.substr($this->_lng->getLocale(), 0,2)
-            ])
-            ->join($this->relationsTable['cities'], $this->relationsTable['cities'].'.city_id = zf_users_profile.city_id', [
-                    'city'  => 'city_'.substr($this->_lng->getLocale(), 0,2)
-            ])    		
-            ->order($order);                     
-        });
-        $result->buffer();
-
-        if($result) return $result;
-        else return null;
-    }    
+        $results = [];
+        $metadata = new Metadata($this->adapter);
+        $table = $metadata->getTable($this->table);
+        foreach($table->getColumns() as $column)
+        {
+            $results[]   =   $column->getName();
+        }
+        return $results;
+    }
     
     /**
      * deleteUser(array $items) удаление записей
@@ -170,7 +126,6 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         $result =   $this->delete($items);
         return $result;
     }     
-    
     
     /**
      * updateUsers(array $set, array $items) обновлене элементов
@@ -199,22 +154,13 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         {
             if($this->table == $value['system'])
             {
-                /**
-                 * Необходимо реализовать такое
-                 *  SELECT 
-                 *  (SELECT COUNT('id') FROM zf_users_profile WHERE online = '1') AS `all`,
-                 *  (SELECT COUNT('id') FROM zf_users_profile WHERE online = '1' AND gender = '1') AS `m`,
-	         *  (SELECT COUNT('id') FROM zf_users_profile WHERE online = '1' AND gender = '2') AS `f`
-                 *  FROM zf_users_profile LIMIT 1;
-                 */
-                
                 $sql = "
                     SELECT 
                     SUM(IF(zf_users_profile.gender =  '1', 1, 0)) as `m`,
                     SUM(IF(zf_users_profile.gender =  '2', 1, 0)) as `f`
-                    FROM {$this->relationsTable["online"]} 
+                    FROM zf_users_online 
                     INNER JOIN zf_users_profile
-                    WHERE zf_users_profile.user_id = {$this->relationsTable["online"]}.user_id LIMIT 1";
+                    WHERE zf_users_profile.user_id = zf_users_online.user_id LIMIT 1";
 
                 $Adapter = $this->adapter;
                 $result = $Adapter->query($sql, $Adapter::QUERY_MODE_EXECUTE);
@@ -406,14 +352,14 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     'timezone',
                     'birthday'
                 ])
-                ->join($this->relationsTable['countries'], 'zf_countries.country_id = zf_users_profile.country_id', [
+                ->join('zf_countries', 'zf_countries.country_id = zf_users_profile.country_id', [
 		    'country_code',
                     'country'       => 'country_'.substr($this->_lng->getLocale(), 0,2)
                 ])
-                ->join($this->relationsTable['regions'], 'zf_regions.region_id = zf_users_profile.region_id', [
+                ->join('zf_regions', 'zf_regions.region_id = zf_users_profile.region_id', [
                     'region'  => 'region_'.substr($this->_lng->getLocale(), 0,2)
                 ])         
-                ->join($this->relationsTable['cities'], 'zf_cities.city_id = zf_users_profile.city_id', [
+                ->join('zf_cities', 'zf_cities.city_id = zf_users_profile.city_id', [
                     'city'  => 'city_'.substr($this->_lng->getLocale(), 0,2)
                 ])		    
                 ->where('`'.$this->table.'`.`state` = \'1\'')
@@ -439,6 +385,9 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
             $select
                     ->columns([
                     'id',
+                    'login',
+                    'role_id',
+                    'state',
                     'date_registration',
                     'date_lastvisit',
                     'time_online',
@@ -463,19 +412,19 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     'personal',
                     'timezone',                    
                 ], $select::JOIN_LEFT)
-                ->join($this->relationsTable['group'], $this->relationsTable['group'].'.id = '.$this->table.'.role_id', [
+                ->join('zf_users_roles', 'zf_users_roles.id = '.$this->table.'.role_id', [
                     'qroup_title' => 'title_'.substr($this->_lng->getLocale(), 0,2),
                 ], $select::JOIN_LEFT)
-                ->join($this->relationsTable['status'], $this->relationsTable['status'].'.id = '.$this->table.'.status_id', [
+                ->join('zf_users_statuses', 'zf_users_statuses.id = '.$this->table.'.status_id', [
                     'status_title' => 'title',
                 ], $select::JOIN_LEFT)
-                ->join($this->relationsTable['events'], $this->relationsTable['events'].'.user_id = '.$this->table.'.id', [
+                ->join('zf_users_events', 'zf_users_events.user_id = '.$this->table.'.id', [
                     'subject'   =>   'subject_'.substr($this->_lng->getLocale(), 0,2),
                     'message'   =>   'message_'.substr($this->_lng->getLocale(), 0,2),
                     'date',
                     'read',
                 ], $select::JOIN_LEFT)
-                 ->join($this->relationsTable['countries'], 'zf_countries.country_id = zf_users_profile.country_id', [
+                 ->join('zf_countries', 'zf_countries.country_id = zf_users_profile.country_id', [
                     'country_code'
                 ])
                 ->where('`'.$this->table.'`.`id` = '.(int)$id)
@@ -484,4 +433,156 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         })->current();
         return $resultSet;
     }
+    
+    /**
+     * getUsers($page, $filter = [], $sort = 'ASC')  Выборка всех записей из таблицы с фильтрами и сортировкой
+     * @param int $page Текущая страница
+     * @param array $filter Парметры фильтрации выборки (where)
+     * @param string [ASC|DESC] параметры сортировки, Ascending, Descendig
+     * @return object DB
+     */
+    public function getUsers($page, $filter = [], $sort = 'ASC') 
+    {
+        $this->_lng  = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
+
+        $select = new Select();
+        $adapter = $this->adapter;
+        $sql = new Sql($this->adapter);
+        $select
+                ->from($this->table)
+                ->join('zf_users_profile', 'zf_users_profile.user_id = '.$this->table.'.id', [
+                        'name',
+                        'gender',
+                        'email',
+                        'photo',
+                        'birthday',
+                        'phone',
+                        'country_id',                    
+                        'region_id',                    
+                        'city_id',                    
+                        'interests',                    
+                        'length',                    
+                        'weight',                    
+                        'about',                    
+                        'alias',                    
+                        'personal',
+                        'timezone',                    
+                    ]
+                )
+                ->join('zf_users_roles', 'zf_users_roles.id = '.$this->table.'.role_id', [
+                        'role' => 'title_'.substr($this->_lng->getLocale(), 0,2),
+                        'role_class' => 'class'   
+                    ]
+                )
+                ->join('zf_users_statuses', 'zf_users_statuses.id = '.$this->table.'.status_id', [
+                        'status_title' => 'title',
+                    ]
+                )
+                ->join('zf_countries', 'zf_countries.country_id = zf_users_profile.country_id', [
+                        'country_code',
+                        'country'       => 'country_'.substr($this->_lng->getLocale(), 0,2),
+                    ]
+                )
+                ->join('zf_regions', 'zf_regions.region_id = zf_users_profile.region_id', [
+                        'region'  => 'region_'.substr($this->_lng->getLocale(), 0,2)
+                    ]
+                )
+                ->join('zf_cities', 'zf_cities.city_id = zf_users_profile.city_id', [
+                        'city'  => 'city_'.substr($this->_lng->getLocale(), 0,2)
+                ]
+        );
+        
+        // Работа с фильтром WHERE
+        
+        if(!empty($filter))
+        {
+            // фильтрую. Проверяю сходства полей в базе с запросом GET
+            $meta = $this->__getMetadata();
+                
+            foreach($filter as $k => $v)
+            {
+                // Фильтрую по текущей таблице
+                if($k == 'id' && !empty($v)) 
+                {
+                    $select->where([$this->table.'.'.$k => (int)trim($v)]);
+                    break;
+                }
+                else
+                {
+                    if($k == 'name') $select->where(['zf_users_profile.'.$k => trim($v)]);
+                    elseif(in_array($k, $meta) && (mb_strlen($v, 'utf-8') > 0)) $select->where([$k => trim($v)]);
+                }
+            }           
+        }
+        
+        // Работа с сортировкой ORDER BY
+        
+        if(!empty($filter['order']) && strlen($filter['order']) >= 2) // ID required
+        {
+            // Проверяю, есть ли в таблице такое поле, если нет то это к профилю
+            if(in_array($filter['order'], $meta)) $select->order($this->table.'.'.$filter['order'].' ASC');
+            else $select->order('zf_users_profile.'.$filter['order'].' '.$sort);
+            // работаю с сортировкой
+        }
+        else $select->order($this->table.'.id '.$sort);
+                
+        $selectString = $sql->getSqlStringForSqlObject($select);
+
+        $paginatorAdapter = new DbSelect($select, $adapter);
+        $paginator = new Paginator($paginatorAdapter);
+        $paginator->setDefaultItemCountPerPage($this->_page);
+        $paginator->setPageRange(7);
+        $paginator->setCurrentPageNumber($page);
+
+        return $paginator;        
+    }     
+    
+    /**
+     * getLoginName($filter = [], $limit = 10)  Выборка login, name для autocomplete
+     * @param array $filter Парметры фильтрации выборки (where)
+     * @param int $limit лимит выводимых записей
+     * @return array
+     */
+    public function getLoginName($filter = [], $limit = 10) 
+    {
+        $Adapter = $this->adapter;
+        
+        $select = new Select();
+        $sql = new Sql($Adapter);
+        $select
+                ->columns(['login'])
+                ->from($this->table)
+                ->join('zf_users_profile', 'zf_users_profile.user_id = '.$this->table.'.id', ['name']);
+        
+        // Работа с фильтром WHERE
+        
+        if(!empty($filter))
+        {
+            // фильтрую. Проверяю сходства полей в базе с запросом POST
+            $meta = $this->__getMetadata();
+                
+            foreach($filter as $k => $v)
+            {
+                if((mb_strlen($v, 'utf-8') > 2))
+                {
+                    if($k == 'name') $select->where->like('zf_users_profile.'.$k, '%'.trim($v).'%');
+                    elseif(in_array($k, $meta)) $select->where->like($k, '%'.trim($v).'%');
+                    else return [];
+                }
+                else return [];
+            }           
+        }
+        
+        // Работа с сортировкой ORDER BY
+        
+        foreach($filter as $k => $v)
+        {
+            if($k == 'name') $select->order('zf_users_profile.name ASC');
+            else $select->order($this->table.'.'.$k.' ASC');
+            break;    
+        }         
+        $select->limit($limit);
+        $selectString = $sql->getSqlStringForSqlObject($select);
+        return $this->adapter->query($selectString, $Adapter::QUERY_MODE_EXECUTE);
+    }    
 }

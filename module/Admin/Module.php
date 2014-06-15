@@ -75,5 +75,5 @@ class Module
     public function getViewHelperConfig()
     {
         return array();
-    }    
+    }   
 }

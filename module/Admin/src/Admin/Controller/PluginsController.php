@@ -83,10 +83,8 @@ class PluginsController extends Auth\AbstractAuthActionController
         
         return new ViewModel(
                 [
-                    'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
                     'items'         =>  (isset($items)) ? $items : '',  // вывод строк
                     'filter'        =>  $filter,
-                    'title'         =>  $title
                 ]
         );       
     }
@@ -136,10 +134,9 @@ class PluginsController extends Auth\AbstractAuthActionController
 
             return new ViewModel(
                 [
-                    'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
+                    'title'         =>  $fetch->title,
                     'filter'        =>  $filter,
                     'item'          =>  (isset($fetch)) ? $fetch : '',  // вывод строк
-                    'title'         =>  $title
                 ]
             );            
         }
@@ -180,9 +177,7 @@ class PluginsController extends Auth\AbstractAuthActionController
             
         return new ViewModel(
             [
-                'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
                 'filter'        =>  $filter,
-                'title'         =>  $title
             ]
         );            
     }

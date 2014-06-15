@@ -1,102 +1,244 @@
-<section data-role="page" data-theme="a">
-    <header data-role="header" data-theme="a" data-position="fixed" class="ui-admin-header">
-        <div class="ui-grid-a">
-            <div class="ui-block-a">
-                <a href="#Language" title="<?php echo $this->translate('Choose a language' , 'default');?>" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?php echo $this->getLang('code');?>.png" alt="<?php echo $this->getLang('code');?>" /></a>
-                <a href="#" id="login" title="Администратор" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/admin/admin.gif" alt="Администратор" />&nbsp;&nbsp;<span><?php echo $this->user->name?></span></a>                
-            </div>
-            <div class="ui-block-b">
-                <h1 class="ui-admin-logo">
-                    <a href="<?php echo $this->url('social' , ['lang' => $this->getLang('code')] , ['force_canonical' => true]);?>"><img src="/images/mobile/logo.png" alt="Logo"></a>
-                </h1>              
-            </div>
-            <div class="ui-block-c" align="right">
-                <a href="#" class="ui-hover-btn ui-admin-nav-btn" data-role="button" onclick="return false;" id="clock" data-rel="dialog"></a>
-                <a href="<?php echo $this->url('logout');?>" title="<?php echo $this->translate('Logout' , 'admin');?>" class="ui-hover-btn ui-admin-nav-btn" data-transition="pop" data-role="button"><img src="/images/admin/mini_logout.png" alt="<?php echo $this->translate('Logout' , 'admin')?>" /></a>                
-            </div>
-        </div>
-    </header>
-    <div data-role="content" data-theme="a">
-        <div class="ui-items-body">
-            <div class="ui-hover-title">
-                <?php echo $title; ?>
-            </div>         
-            <!-- Вывод мессенджера -->
-                <?php echo $this->flashMessenger()->render('error', array('ui-error')); ?>
-                <?php echo $this->flashMessenger()->render('success', array('ui-success')); ?>
-            <!-- Вывод мессенджера -->		    
-	    <!-- Таблица плагина -->
-            <link href="<?php echo $this->basePath().'/css/tables.css'; ?>" media="screen" rel="stylesheet" type="text/css">
-            <?php $disable   =   ($item->readonly) ? 'disabled' : ''; ?>
-	    <form method="post">
-               <input type="hidden" name="readonly" value="<?php echo $item->readonly;?>">
-               <table class="ui-table" data-theme="a" border="1">
+<div data-role="content" data-theme="a">
+    <div class="ui-items-body">
+        <div class="ui-hover-title">
+            <?php echo $this->navigation('navigation')->breadcrumbs()->setTranslatorTextDomain('admin')->setMinDepth(0)->setSeparator(' ▶ ');
+            echo $title; ?>
+        </div>         
+        <!-- Вывод мессенджера -->
+            <?php echo $this->flashMessenger()->render('error', array('ui-error')); ?>
+            <?php echo $this->flashMessenger()->render('success', array('ui-success')); ?>
+        <!-- Вывод мессенджера -->	
+        <nav data-role="navbar">
+            <ul>
+                <li><a href="javascript:;" class="ui-tab system" data-href="system"><?php echo $this->translate('Accesibility', 'admin');?></a>
+                </li>
+                <li><a href="javascript:;" class="ui-tab personal" data-href="personal"><?php echo $this->translate('Personal data', 'admin');?></a>
+                </li>
+                <li><a href="javascript:;" class="ui-tab settings" data-href="settings"><?php echo $this->translate('Settings', 'admin');?></a>
+                </li>
+                <li class="ui-tab-last"><a href="javascript:;" class="ui-tab location" data-href="location"><?php echo $this->translate('Location', 'admin');?></a>
+                </li>                
+            </ul>
+        </nav>        
+        
+        <!-- Таблица -->
+        <link href="<?php echo $this->basePath() . '/css/tables.css'; ?>" media="screen" rel="stylesheet" type="text/css">
+        <form method="post">
+            <input type="hidden" name="id" value="<?php echo $item->id; ?>">
+            <fieldset id="system" class="inner-tabs boxshadow">
+                <table class="ui-table" data-theme="a" border="1">
                     <tbody>
-			<tr class="ui-even">
-                            <td>
-                                <?php echo $this->translate('Title', 'admin');?>
+                        <tr class="ui-even">
+                            <td width="30%">
+                                <?php echo $this->translate('Login', 'admin'); ?>
                             </td>
                             <td>
-                                <input type="text" name="title" data-clear-btn="true" autofocus="autofocus" data-mini="true" value="<?php echo $item->title;?>" <?php echo $disable; ?> required>
+                                <input type="text" name="login" data-clear-btn="true" data-mini="true" value="<?php echo $this->escapeHTML($item->login); ?>" placeholder="<?php echo $this->translate('Login must be required', 'admin'); ?>" required>
                             </td>
                         </tr>
                         <tr class="ui-odd">
                             <td>
-                                <?php echo $this->translate('Description', 'admin');?>
+                                <?php echo $this->translate('Password', 'admin'); ?>
                             </td>
                             <td>
-                                <input type="text" name="description" data-clear-btn="true" data-mini="true" value="<?php echo $item->description;?>" <?php echo $disable; ?> required>                                
+                                <input type="password" name="password" data-clear-btn="true" data-mini="true" placeholder="<?php echo $this->translate('Leave this part blank if there is no need to change the password', 'admin'); ?>">                                
                             </td>
                         </tr>
                         <tr class="ui-even">
                             <td>
-                                <?php echo $this->translate('System', 'admin');?>
+                                <?php echo $this->translate('Retype password', 'admin'); ?>
                             </td>
                             <td>
-                                <input type="text" name="system" data-clear-btn="true" data-mini="true" value="<?php echo $item->system;?>" <?php echo $disable; ?> required>
+                                <input type="password" name="repassword" data-clear-btn="true" data-mini="true" value="">
                             </td>
                         </tr>                        
                         <tr class="ui-odd">
                             <td>
-                                <?php echo $this->translate('Type', 'admin');?>
+                                <?php echo $this->translate('Group', 'admin'); ?>
                             </td>
                             <td>
-                                <select name="type" id="type" data-mini="true" <?php echo $disable; ?> required>
-                                    <?php foreach($filter as $v): ?>
-                                    <option value="<?php echo $v['id']; ?>" <?php echo ($v['id'] == $item->type) ? 'selected': ''; ?>><?php echo $v['name']; ?></option>
+                                <select name="role_id" data-mini="true">
+                                    <?php foreach($roles as $role): ?>
+                                    <option value="<?php echo $role['id']; ?>" <?php echo ($item->role_id == $role['id']) ? 'selected' : '' ?>><?php echo $role['name']; ?></option>
                                     <?php endforeach; ?>
-                                </select>                                
+                                </select>                                 
                             </td>
-                        </tr>     
+                        </tr>
                         <tr class="ui-even">
                             <td>
-                                <?php echo $this->translate('Status', 'admin');?>
+                                <?php echo $this->translate('Status', 'admin'); ?>
                             </td>
                             <td>
-                                <select name="status" id="status" data-mini="true" <?php echo $disable; ?> required>
-                                    <option value="0" <?php echo ($item->status == 0) ? 'selected': ''; ?>><?php echo $this->translate('off' , 'admin'); ?></option>
-                                    <option value="1" <?php echo ($item->status == 1) ? 'selected': ''; ?>><?php echo $this->translate('active' , 'admin'); ?></option>
-                                </select>     
+                                <select name="state" data-mini="true">
+                                    <option value="0"<?php echo ($item->state == 0) ? ' selected' : '' ?>><?php echo $this->translate('disabled','admin');?></option>
+                                    <option value="1"<?php echo ($item->state == 1) ? ' selected' : '' ?>><?php echo $this->translate('enabled','admin');?></option>
+                                    <option value="2"<?php echo ($item->state == 2) ? ' selected' : '' ?>><?php echo $this->translate('banned','admin');?></option>
+                                </select>                                   
+                            </td>
+                        </tr>                        
+                    </tbody>                      
+                </table>
+            </fieldset>
+            
+            <fieldset id="personal" class="inner-tabs boxshadow">
+                <table class="ui-table" data-theme="a" border="1">
+                    <tbody>
+                        <tr class="ui-even">
+                            <td width="30%">
+                                <?php echo $this->translate('Displayed name', 'admin'); ?>
+                            </td>
+                            <td>
+                                <input type="text" name="name" data-clear-btn="true" data-mini="true" value="<?php echo $this->escapeHTML($item->name); ?>" placeholder="<?php echo $this->translate('Apparent user name must be required', 'admin'); ?>" required>                                
+                            </td>
+                        </tr>                        
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('Email', 'admin'); ?>
+                            </td>
+                            <td>
+                                <input type="email" name="email" data-clear-btn="true" data-mini="true" value="<?php echo $this->escapeHTML($item->email); ?>" placeholder="<?php echo $this->translate('Fill the contact email', 'admin'); ?>">      
+                            </td>
+                        </tr> 
+                        <tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('Phone', 'admin'); ?>
+                            </td>
+                            <td>
+                                <input type="text" name="phone" data-clear-btn="true" data-mini="true" value="<?php echo $this->escapeHTML($item->phone); ?>" placeholder="<?php echo $this->translate('Fill the contact phone number', 'admin'); ?>">      
                             </td>
                         </tr>                         
-                        <tr class="tfoot">
-                            <td colspan="2">
-                                <fieldset data-role="controlgroup" data-type="horizontal"> 
-                                    <label>
-                                        <input type="submit" data-inline="true" data-icon="arrow-d" data-mini="true" value="<?php echo $this->translate('Save params', 'admin');?>" <?php echo $disable; ?>>
-                                    </label>
-                                </fieldset>
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('Gender', 'admin'); ?>
+                            </td>
+                            <td>
+                                <select name="gender" data-mini="true">
+                                    <option value="1" <?php echo ($item->gender == 1) ? 'selected' : '' ?>><?php echo $this->translate('male', 'admin'); ?></option>
+                                    <option value="2" <?php echo ($item->gender == 2) ? 'selected' : '' ?>><?php echo $this->translate('female', 'admin'); ?></option>                                    
+                                </select>                                 
+                            </td>
+                        </tr>    
+                        <tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('Birthday', 'admin'); ?>
+                            </td>
+                            <td>
+<input type="text" name="birthday" id="birthday" data-mini="true" data-role="datebox" data-options="{&quot;mode&quot;: &quot;datebox&quot;, &quot;overrideDateFormat&quot; : &quot;%Y-%m-%d&quot;, &quot;useNewStyle&quot; : true, &quot;themeButton&quot; : &quot;a&quot;, &quot;themeInput&quot; : &quot;b&quot;, &quot;themeHeader&quot;: &quot;b&quot;}" value="<?php echo $this->escapeHTML($item->birthday); ?>">
+                            </td>
+                        </tr>  
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('Height / Weight', 'admin'); ?>
+                            </td>
+                            <td>
+                                <fieldset class="ui-grid-a">
+                                    <div class="ui-block-a">
+                                        <input type="text" pattern="^\d+$" name="length" data-mini="true" value="<?php echo $this->escapeHTML($item->length); ?>" maxlength="3" size="3">
+                                    </div>
+                                    <div class="ui-block-b">
+                                        <input type="text" pattern="^\d+$" name="weight" data-clear-btn="true" data-mini="true" value="<?php echo $this->escapeHTML($item->weight); ?>" maxlength="3" size="3" >
+                                    </div>
+                                </fieldset>                                
+                            </td>
+                        </tr>                           
+                        <tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('Interests', 'admin'); ?>
+                            </td>
+                            <td>
+                                <textarea name="interests">
+                                    <?php echo $this->escapeHTML($item->interests); ?>
+                                </textarea>
+                            </td>
+                        </tr>    
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('About', 'admin'); ?>
+                            </td>
+                            <td>
+                                <textarea name="about">
+                                    <?php echo $this->escapeHTML($item->about); ?>
+                                </textarea>
+                            </td>
+                        </tr>                         
+                    </tbody>                      
+                </table>
+            </fieldset>  
+            
+            <fieldset id="settings" class="inner-tabs boxshadow">
+                <table class="ui-table" data-theme="a" border="1">
+                    <tbody>
+                        <tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('Timezone', 'admin'); ?>
+                            </td>
+                            <td>
+                                <select name="timezone" data-mini="true">
+                                    <?php foreach(\SW\String\Format::getTimezones() as $k => $v): ?>
+                                        <option value="<?php echo $k; ?>" <?php echo ($item->timezone == $k) ? 'selected' : '' ?>><?php echo $this->translate($v, 'timezones'); ?></option>
+                                    <?php endforeach; ?>                                  
+                                </select>                              
+                            </td>
+                        </tr>   
+                        <tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('Alias', 'admin'); ?>
+                            </td>
+                            <td>
+                                <input type="text" name="alias" data-clear-btn="true" data-mini="true" value="<?php echo $this->escapeHTML($item->alias); ?>">
+                            </td>
+                        </tr>                         
+                    </tbody>                      
+                </table>
+            </fieldset>  
+            
+            <fieldset id="location" class="inner-tabs boxshadow">
+                <table class="ui-table" data-theme="a" border="1">
+                    <tbody>
+                     
+                    </tbody>                      
+                </table>
+            </fieldset>  
+            <fieldset>
+                <table class="ui-table" data-theme="a">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="submit" data-inline="true" data-icon="arrow-d" data-mini="true" value="<?php echo $this->translate('Save params', 'admin');?>">
                             </td>
                         </tr>
                     </tbody>                      
                 </table>
-	    </form>
-            <?php echo $this->flashMessenger()->render('info', array('ui-info')); ?>
-	    <!-- Таблица плагина -->
-        </div>
+            </fieldset>               
+        </form>
+        <!-- Таблица -->
     </div>
-    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
-        <h4>&copy; 2013  <a href="/"><?php echo $this->translate('Social Mobile' , 'default')?></a> <?php echo $this->translate('powered by' , 'default')?> <?php echo Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?php echo Zend\Version\Version::VERSION;?> <?php echo $this->translate('All rights reserved.' , 'default')?></h4>
-    </footer>
-</section>
-<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>
+</div>
+<?php
+// Редирект на вкладку в случае ошибки формы
+$redirect = $this->getRoute()->post('type');
+if(isset($redirect))
+{
+    
+    $this->inlineScript()->appendScript(<<<EOT
+        $(document).ready(function(){
+            $('a[data-href=".$redirect."]').click();
+    });
+EOT
+    );
+}
+?>
+<?php $this->inlineScript()->appendScript(<<<EOT
+$(document).ready(function() {
+    $('input[name=birthday]').mask('9999-99-99', {placeholder: ""});
+});
+EOT
+); ?>
+<?php $this->headLink()->appendStylesheet($this->basePath().'/css/mobile/jquery.mobile.datebox.css');?>
+<?php $this->inlineScript()->appendFile($this->basePath().'/js/jquery.mousewheel.js', 'text/javascript');?>
+<?php $this->inlineScript()->appendFile($this->basePath().'/js/datebox/jqm-datebox.core.js', 'text/javascript');?>
+<?php $this->inlineScript()->appendFile($this->basePath().'/js/datebox/jqm-datebox.mode.datebox.js', 'text/javascript');?>
+<?php $this->inlineScript()->appendFile($this->basePath().'/js/languages/jqm-datebox-'.$this->getLang('code').'.js', 'text/javascript');?>
+<?php $this->inlineScript()->appendFile($this->basePath().'/js/jquery.maskedinput.js', 'text/javascript');?>
+<?php echo $this->headLink();?>
+<?php echo $this->InlineScript();?>

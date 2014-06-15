@@ -3,7 +3,7 @@
  * Zend Developer Tools for Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/ZendDeveloperTools for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -31,9 +31,25 @@ class Options extends AbstractOptions
             'db'        => 'ZendDeveloperTools\DbCollector',
             'exception' => 'ZendDeveloperTools\ExceptionCollector',
             'request'   => 'ZendDeveloperTools\RequestCollector',
+            'config'    => 'ZendDeveloperTools\ConfigCollector',
             'memory'    => 'ZendDeveloperTools\MemoryCollector',
             'time'      => 'ZendDeveloperTools\TimeCollector',
         ),
+    );
+
+    /**
+     * Defaults for event-level logging
+     * @var array
+     */
+    protected $events = array(
+        'enabled'    => false,
+        'collectors' => array(
+            'memory' => 'ZendDeveloperTools\MemoryCollector',
+            'time'   => 'ZendDeveloperTools\TimeCollector',
+        ),
+        'identifiers' => array(
+        	'all' => '*'
+        )
     );
 
     /**
@@ -48,6 +64,7 @@ class Options extends AbstractOptions
             'request' => 'zend-developer-tools/toolbar/request',
             'time'    => 'zend-developer-tools/toolbar/time',
             'memory'  => 'zend-developer-tools/toolbar/memory',
+            'config'  => 'zend-developer-tools/toolbar/config',
             'db'      => 'zend-developer-tools/toolbar/db',
         ),
     );
@@ -59,7 +76,7 @@ class Options extends AbstractOptions
      * @param  ReportInterface        $report
      * @throws \Zend\Stdlib\Exception\InvalidArgumentException
      */
-    public function __construct($options = null, ReportInterface $report)
+    public function __construct($options, ReportInterface $report)
     {
         $this->report = $report;
 
@@ -92,6 +109,25 @@ class Options extends AbstractOptions
             $this->setCollectors($options['collectors']);
         }
     }
+
+    /**
+     * Sets Event-level profiling options.
+     *
+     * @param array $options
+     */
+    public function setEvents(array $options)
+    {
+        if (isset($options['enabled'])) {
+            $this->events['enabled'] = (bool) $options['enabled'];
+        }
+        if (isset($options['collectors'])) {
+            $this->setEventCollectors($options['collectors']);
+        }
+        if (isset($options['identifiers'])) {
+            $this->setEventIdentifiers($options['identifiers']);
+        }
+    }
+
 
     /**
      * Sets Profiler matcher options.
@@ -148,6 +184,67 @@ class Options extends AbstractOptions
     }
 
     /**
+     * Sets Event-level collectors.
+     *
+     * @param array $options
+     */
+    public function setEventCollectors(array $options)
+    {
+        if (!is_array($options)) {
+            $this->report->addError(sprintf(
+                '[\'zenddevelopertools\'][\'events\'][\'collectors\'] must be an array, %s given.',
+                gettype($options)
+            ));
+
+            return;
+        }
+
+        foreach ($options as $name => $collector) {
+            if (($collector === false || $collector === null)) {
+                unset($this->events['collectors'][$name]);
+            } else {
+                $this->events['collectors'][$name] = $collector;
+            }
+        }
+    }
+
+    /**
+     * Set Event-level collectors to listen to certain event identifiers. Defaults to '*' which causes the listener to
+     * attach to all events.
+     *
+     * @param array $options
+     */
+    public function setEventIdentifiers(array $options)
+    {
+        if (!is_array($options)) {
+            $this->report->addError(sprintf(
+                '[\'zenddevelopertools\'][\'events\'][\'identifiers\'] must be an array, %s given.',
+                gettype($options)
+            ));
+
+            return;
+        }
+
+        foreach ($options as $name => $identifier) {
+            if (($identifier === false || $identifier === null)) {
+                unset($this->events['identifiers'][$name]);
+            } else {
+                $this->events['identifiers'][$name] = $identifier;
+            }
+        }
+    }
+
+    /**
+     * Is the event-level statistics collection enabled?
+     *
+     * @return bool
+     */
+    public function eventCollectionEnabled()
+    {
+        return $this->events['enabled'];
+    }
+
+    /**
      * Is strict mode enabled?
      *
      * @return bool
@@ -196,6 +293,27 @@ class Options extends AbstractOptions
     {
         return $this->profiler['collectors'];
     }
+
+    /**
+     * Returns the event-level collectors.
+     *
+     * @return array
+     */
+    public function getEventCollectors()
+    {
+        return $this->events['collectors'];
+    }
+
+    /**
+     * Returns the event identifiers.
+     *
+     * @return array
+     */
+    public function getEventIdentifiers()
+    {
+        return $this->events['identifiers'];
+    }
+
 
     /**
      * Sets Toolbar options.

@@ -4,8 +4,7 @@ namespace Admin\Controller; // пространтво имен текущего 
 use Admin\Controller\Auth;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\Paginator\Paginator;
-use Zend\Paginator\Adapter\Iterator as paginatorIterator;
+use Zend\View\Model\JsonModel;
 use Zend\Debug\Debug;
 
 /**
@@ -19,7 +18,7 @@ use Zend\Debug\Debug;
  * @license Zend Framework GUI licene
  * @filesource /module/Admin/src/Admin/Controller/UsersController.php
  */
-class UsersController extends Auth\AbstractAuthActionController
+class UsersController extends Auth\AbstractAuthActionController 
 {
     /**
      * $__select Выбранные ячейки
@@ -35,6 +34,7 @@ class UsersController extends Auth\AbstractAuthActionController
      */
     public function indexAction()
     {
+        
         // POST обработчик
         $request    =   $this->getRequest();
         if($request->isPost())
@@ -70,134 +70,96 @@ class UsersController extends Auth\AbstractAuthActionController
         }
         
         // Устанавливаю МЕТА и заголовок страницы
-        $title  =   $this->lng->translate('Users Control', 'admin');
+        $title  =   $this->lng->translate('Users control', 'admin');
         $this->renderer->headTitle($title);
         
-        // Получаю таблицу с содержимым 
-        
+        // Получаю модель
         $users      =   $this->sm->get('user.Model'); 
-        $fetch      =   $users->getUsers(['id' => 'ASC']);
-        
-        // Проверяю и вывожу
-        if(count($fetch) < 1) $this->messenger->addErrorMessage($this->lng->translate('Users not found', 'admin-messages'));
-        else
-        {
-	    
-	    // Настраиваю постраничный вывод
-	    
-	    $matches	=   $this->getEvent()->getRouteMatch();
-	    $page	=   $matches->getParam('page', 1);
-	    $itAdapter	=   new \Zend\Paginator\Adapter\Iterator($fetch);
-	    $items	=   new \Zend\Paginator\Paginator($itAdapter);
-	    
-	    $items->setCurrentPageNumber($page);
-	    $items->setItemCountPerPage($this->perpage);
-        }
+
+        // Получаю данные таблицы пользователей
+        $items      =   $users->getUsers($this->params()->fromRoute('page', 1), $this->params()->fromQuery());
+
+        // использую стандартный метод подсчета
+        if($items->getCurrentItemCount() < 1) $this->messenger->addErrorMessage($this->lng->translate('Users not found', 'admin-messages'));
 
         return new ViewModel(
                 [
-                    'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
-                    'items'         =>  (isset($items)) ? $items : '',  // вывод строк
+                    'items'         =>  $items,  // вывод строк
                     'roles'         =>  $this->sm->get('roles.Model')->getRoles(),
-                    'title'         =>  $title
                 ]
         );       
     }
     
     /**
-     * editAction() Просмотр плагина и редактирование
+     * viewAction() Просмотр
+     * @access public
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function viewAction()
+    {
+        // получаю id записи из параметров URI
+        $id         =   (int)$this->params('id');
+        $item       =   $this->sm->get('user.Model')->getProfile($id);
+        if($item)
+        {
+            // Устанавливаю МЕТА и заголовок страницы
+            $title  =   sprintf($this->lng->translate('Users control ▶ %s' , 'admin'), $item->name);
+            $this->renderer->headTitle($title);
+        }
+        else 
+        {
+            $this->messenger->addErrorMessage($this->lng->translate('User not found', 'admin-messages'));
+            return $this->redirect()->toRoute('users');
+        }
+        return new ViewModel(
+                [
+                    'title'     =>  $item->name, // заголовок         
+                    'item'      =>  $item,  // вывод строк
+                ]
+        );        
+    }
+    
+    /**
+     * editAction() Редактирование
      * @access public
      * @return \Zend\View\Model\ViewModel
      */
     public function editAction()
     {
-        
         // POST обработчик
         $request    =   $this->getRequest();
-        $id         =   (int)$this->params('id');
-        $plugins    =   $this->sm->get('plugins.Service');
-        
         if($request->isPost())
         {
-            if($request->getPost()['readonly'] == 1) $this->messenger->addErrorMessage($this->lng->translate('This plugin is only for reading, the changes may lead to malfunction of the system', 'admin-messages'));
-            else
-            {
-                // Update values
-                $plugins->update((array)$request->getPost(), ['id' => $id]);
-                $this->messenger->addSuccessMessage($this->lng->translate('Plugin configuration\'s has been changed', 'admin-messages'));
-            }
+            $post   =   $request->getPost();
 
+            Debug::dump($post);
+            exit;
             // Возвращаю обратно 
-            return $this->redirect()->toUrl('/admin/plugins/edit/'.$id);
-        }        
-
-        // Получаю параметры плагина по id
-
-        $fetch  =   $plugins->fetch($id);
+            return $this->redirect()->refresh();
+        }         
         
-        if($fetch) 
+        // получаю id записи
+        $id         =   (int)$this->params('id');
+        $item       =   $this->sm->get('user.Model')->getProfile($id);
+        
+        if($item)
         {
             // Устанавливаю МЕТА и заголовок страницы
-            $title  =   sprintf($this->lng->translate('Plugins control ▶ %s' , 'admin'), $fetch->title);
+            $title  =   sprintf($this->lng->translate('Users control ▶ %s' , 'admin'), $item->name);
             $this->renderer->headTitle($title);
-            
-            if($fetch->readonly) $this->messenger->addErrorMessage($this->lng->translate('This plugin is only for reading, the changes may lead to malfunction of the system', 'admin-messages'));
-
-            // получаю параметры для фильтра
-            $filter     =   $this->sm->get('plugintypes.Model')->fetchAll();            
-            if(!$this->messenger->hasCurrentSuccessMessages())  $this->messenger->addInfoMessage($this->lng->translate('All fields must be required', 'admin-messages'));
-
-            return new ViewModel(
-                [
-                    'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
-                    'filter'        =>  $filter,
-                    'item'          =>  (isset($fetch)) ? $fetch : '',  // вывод строк
-                    'title'         =>  $title
-                ]
-            );            
         }
-        else
+        else 
         {
-            $this->messenger->addErrorMessage($this->lng->translate('Plugin not found', 'admin-messages'));
-            return $this->redirect()->toRoute('plugins');
+            $this->messenger->addErrorMessage($this->lng->translate('User not found', 'admin-messages'));
+            return $this->redirect()->toRoute('users');
         }
-    }
-    
-    /*
-     * addAction() Добавление 
-     * @access public
-     */
-    public function addAction()
-    {
-        
-        // POST обработчик
-        $request    =   $this->getRequest();
-        
-        if($request->isPost())
-        {
-            // Add values
-
-            $result = $this->sm->get('plugins.Service')->add((array)$request->getPost());
-            if($result) $this->messenger->addSuccessMessage($this->lng->translate('Plugin has been registered', 'admin-messages'));
-            else  $this->messenger->addErrorMessage($this->lng->translate('An error occurred while registering plugin', 'admin-messages'));
-            // Возвращаю обратно 
-            return $this->redirect()->toRoute('plugins');
-        }        
-        else $this->messenger->addInfoMessage($this->lng->translate('All fields must be required', 'admin-messages'));
-        // Устанавливаю МЕТА и заголовок страницы
-        $title  =   $this->lng->translate('Plugins control ▶ Register plugin' , 'admin');
-        $this->renderer->headTitle($title);
-
-        // получаю параметры для фильтра
-        $filter     =   $this->sm->get('plugintypes.Model')->fetchAll();            
-            
         return new ViewModel(
-            [
-                'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // данные об Админе
-                'filter'        =>  $filter,
-                'title'         =>  $title
-            ]
-        );            
+                [
+                    'title'     =>  $item->name, // заголовок         
+                    'item'      =>  $item,  // вывод строк
+                    'roles'     =>  $this->sm->get('roles.Model')->getRoles(),
+                ]
+        );         
     }
     
     /*
@@ -281,6 +243,28 @@ class UsersController extends Auth\AbstractAuthActionController
         else $this->messenger->addErrorMessage($this->lng->translate('Only an administrator can assign roles to users', 'admin-messages'));
         // Возвращаю обратно 
         return $this->redirect()->refresh();        
-    }     
-    
+    }  
+
+    /*
+     * roleAction() Установить роль
+     * @access public
+     * @return json
+     */
+    public function jsonAction()
+    {
+        $request    = $this->getRequest();
+        $response   =   [];
+
+        if($request->isXmlHttpRequest())
+        {   
+            // Получаю модель
+            $users      =   $this->sm->get('user.Model'); 
+
+            // Получаю данные таблицы пользователей
+            $post = (array)$request->getPost();
+            
+            if(!empty($post)) $response   =   $users->getLoginName($post);
+        }     
+        return new JsonModel($response);
+    }    
 }

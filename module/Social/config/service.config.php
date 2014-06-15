@@ -7,36 +7,36 @@
  * Validator
  */
 
-return array(
+return [
 
-    'aliases' => array(
+    'aliases' => [
         'Zend\Authentication\AuthenticationService' => 'auth.Helper',
-    ),
+    ],
     
     /* Одноразовые ключи. Singleton */
 
-    'shared'        =>  array(
+    'shared'        =>  [
         'factory.MessageFactory' => false
-    ),
-    'factories'     =>  array(
+    ],
+    'factories'     =>  [
 
         /* Коннект к бд */
 
         'Zend\Db\Adapter\Adapter' => function ($serviceManager) {
             $config = $serviceManager->get('Configuration');
             if(!isset($config['db'])) return false;
-            $adapter = new SQLProfiler\Db\Adapter\ProfilingAdapter(array(
-                'driver'    => 'pdo', // драйвер БД
-                'driver_options'    => array(
+            $adapter = new SQLProfiler\Db\Adapter\ProfilingAdapter([
+                'driver'    => $config['db']['driver'], // драйвер БД
+                'driver_options'    => [
                     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'UTF8'", // кодировка по умолчанию
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // режим отладки
                     PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,  // разрешить буферизацию и кэш
                     'buffer_results' => true
-                 ),
+                 ],
                  'dsn'       => 'mysql:dbname='.$config['db']['database'].';host='.$config['db']['hostname'].';port='.$config['db']['port'],
                  'username'  => $config['db']['username'],
                  'password'  => $config['db']['password'],
-             ));
+             ]);
              // Запускаю коннект через профилировщик модуль BjyProfiler
              $adapter->setProfiler(new SQLProfiler\Db\Profiler\Profiler);
              $adapter->injectProfilingStatementPrototype();
@@ -47,7 +47,6 @@ return array(
 
         'factory.SmtpTransport'         => new Social\Factory\SmtpTransportFactory(),   // конфигурация Smtp
         'factory.MessageFactory'        => new Social\Factory\MessageFactory(),         // базовая конфигурация Mail Sender
-        'Navigation'                    => new Zend\Navigation\Service\DefaultNavigationFactory(),
 
         /* Модели */
                 
@@ -155,12 +154,12 @@ return array(
             return new \Social\Validator\setPasswordFormEmailValidator($dbAdapter, $translator);
         },
 
-    ),
-    'invokables'    =>  array(
+    ],
+    'invokables'    =>  [
         'auth.Service'      => '\Social\Service\AuthService',       // сервис авторизации
         'mail.Service'      => '\Social\Service\MailService',       // сервис отправки почты
         'ImageMagic.Service' => '\Social\Service\ImageMagicService',  // сервис операций над изображениями Imagemagic
         'GD2.Service'       => '\Social\Service\GD2Service',  // сервис операций над изображениями GD2
         'auth.Helper'       => 'Zend\Authentication\AuthenticationService',        
-    ),
-);
+    ],
+];

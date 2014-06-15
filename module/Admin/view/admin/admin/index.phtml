@@ -1,48 +1,25 @@
-<section data-role="page" data-theme="a">
-    <header data-role="header" data-theme="a" data-position="fixed" class="ui-admin-header">
+<div data-role="content" data-theme="a">
+    <div class="ui-admin-body">
+        <div class="ui-hover-title">
+            <?php echo $this->navigation('navigation')->breadcrumbs()->setTranslatorTextDomain('admin')->setMinDepth(0)->setSeparator(' ▶ '); ?>
+        </div>
+        <!--<div class="ui-admin-top">
+        <?php //echo $this->socialPlugin('menu', 'admin-nav-menu'); // верхнее меню ?>
+        </div>-->
+        <!-- Вывод мессенджера -->
+        <?php echo $this->flashMessenger()->render('error', array('ui-error')); ?>
+        <?php echo $this->flashMessenger()->render('success', array('ui-success')); ?>
+        <!-- Вывод мессенджера -->	    
         <div class="ui-grid-a">
             <div class="ui-block-a">
-                <a href="#Language" title="<?php echo $this->translate('Choose a language', 'default');?>" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?php echo $this->getLang('code');?>.png" alt="<?php echo $this->getLang('code');?>" /></a>
-                <a href="#" id="login" title="Администратор" class="ui-hover-btn ui-admin-nav-btn" data-role="button" data-rel="dialog"><img src="/images/admin/admin.gif" alt="Администратор" />&nbsp;&nbsp;<span><?php echo $this->user->name?></span></a>                
+                <?php echo $this->socialPlugin('menu', 'admin-main-menu'); // главное меню админа ?>
             </div>
             <div class="ui-block-b">
-                <h1 class="ui-admin-logo">
-                    <a href="<?php echo $this->url('social', array('lang' => $this->getLang('code')), array('force_canonical' => true));?>"><img src="/images/mobile/logo.png" alt="Logo"></a>
-                </h1>              
-            </div>
-            <div class="ui-block-c" align="right">
-                <a href="#" class="ui-hover-btn ui-admin-nav-btn" data-role="button" onclick="return false;" id="clock" data-rel="dialog"></a>
-                <a href="<?php echo $this->url('logout');?>" title="<?php echo $this->translate('Logout', 'admin');?>" class="ui-hover-btn ui-admin-nav-btn" data-transition="pop" data-role="button"><img src="/images/admin/mini_logout.png" alt="<?php echo $this->translate('Logout', 'admin')?>" /></a>                
-            </div>
+                <?php echo $this->socialPlugin('menu', 'admin-info-menu'); // меню с информацией о системе?>
+            </div>                
         </div>
-    </header>
-    <div data-role="content" data-theme="a">
-        <div class="ui-admin-body">
-            <div class="ui-hover-title">
-                <?php echo $this->translate('Users Control', 'admin')?>
-            </div>
-            <!--<div class="ui-admin-top">
-                <?php //echo $this->socialPlugin('menu', 'admin-nav-menu'); // верхнее меню ?>
-            </div>-->
-             <!-- Вывод мессенджера -->
-                <?php echo $this->flashMessenger()->render('error', array('ui-error')); ?>
-                <?php echo $this->flashMessenger()->render('success', array('ui-success')); ?>
-            <!-- Вывод мессенджера -->	    
-            <div class="ui-grid-a">
-                <div class="ui-block-a">
-                    <?php echo $this->socialPlugin('menu', 'admin-main-menu'); // главное меню админа ?>
-                </div>
-                <div class="ui-block-b">
-                     <?php echo $this->socialPlugin('menu', 'admin-info-menu'); // меню с информацией о системе?>
-                </div>                
-            </div>
-            <!--<div class="ui-admin-bottom">
-                <?php //echo $this->socialPlugin('menu', 'admin-status-menu'); // панель состояния ?>                
-            </div>-->
-        </div>
+        <!--<div class="ui-admin-bottom">
+        <?php //echo $this->socialPlugin('menu', 'admin-status-menu'); // панель состояния ?>                
+        </div>-->
     </div>
-    <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
-        <h4>&copy; 2013  <a href="/"><?php echo $this->translate('Social Mobile', 'default')?></a> <?php echo $this->translate('powered by', 'default')?> <?php echo Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?php echo Zend\Version\Version::VERSION;?> <?php echo $this->translate('All rights reserved.', 'default')?></h4>
-    </footer>
-</section>
-<?php echo $this->socialPlugin('language'); // виджет выбора языка ?>
+</div>

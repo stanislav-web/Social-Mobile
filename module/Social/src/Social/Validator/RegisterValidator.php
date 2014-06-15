@@ -22,7 +22,7 @@ use Zend\ServiceManager\ServiceManagerAwareInterface;
  * @subpackage Social
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
  * @filesource /module/Social/src/Validator/RegisterValidator.php
@@ -158,7 +158,7 @@ class RegisterValidator implements InputFilterAwareInterface
                         'name'                  => 'StringLength', // валидатор
                         'options'   => array(
                             'encoding' => 'UTF-8',
-                            'max'      => 125,
+                            'max'      => 35,
                             'messages' => array(
                                 'stringLengthTooLong'   => $this->translator->translate("Your Login '%value%' is more than %max% characters long", 'errors'), // сообщение об ошибке
                             )

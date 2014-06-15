@@ -32,11 +32,12 @@ class AdminController extends Auth\AbstractAuthActionController
 
         // если уже авторизирован
         // Устанавливаю заголовок со страницы
+        $title  =   $this->lng->translate('Control Panel', 'admin');
         $this->renderer->headTitle($this->lng->translate('Control Panel', 'admin'));
             
         $view = new ViewModel(
             [
-                'user'	    =>  $this->user->getProfile($this->auth->getIdentity()), // Данные об Админе
+                'title'     =>  $title,
             ]
         );
         return $view;

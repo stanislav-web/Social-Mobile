@@ -60,7 +60,7 @@ class UserController extends Auth\AbstractAuthActionController
         $events = $this->zfService()->get('userEvents.Model');      // загружаю модель с событиями
         $menu   = $this->zfService()->get('menuItems.Service');     // загружаю модель текущего меню
         
-        $item = $menu->getItemByAlias('journal');
+        $item = $menu->getItemByRoute('journal');
 
         // Устанавливаю заголовок со страницы
         $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');

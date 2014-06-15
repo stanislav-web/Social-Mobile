@@ -42,11 +42,10 @@ return [
             'users' => [ // Управление пользователями
                 'type'          => 'Segment',
                 'options'       => [
-                    'route'         => '/admin[/:lang]/users[/page/:page][/order/:order]',
+                    'route'         => '/admin[/:lang]/users[/page/:page]',
                 'constraints'   => [
                     'lang'          => '(en|ru|ua)',
                     'page'          => '[0-9]+',
-                    'order'         =>  '[a-zA-Z0-9_-]*',
                 ],
                 'defaults' => [
 		    'controller'    => 'users.Controller',
@@ -59,7 +58,7 @@ return [
                 'may_terminate' => true, 
                 'child_routes' => [
                     
-                    'id' => [
+                    'edit' => [
                         'type'      => 'Segment',
                         'options'   => [
                             'route' => '/edit[/:id]',
@@ -67,23 +66,36 @@ return [
                                     'id' => '[0-9]+',
                                 ],
                                 'defaults' => [
-                                    'controller'    => 'plugins.Controller',
+                                    'controller'    => 'users.Controller',
                                     'action'        => 'edit',
                                 ]
                         ],
                     ],
-                    'add' => [
+                    'view' => [
                         'type'      => 'Segment',
                         'options'   => [
-                            'route' => '/add',
+                            'route' => '/view[/:id]',
                                 'constraints' => [
+                                    'id' => '[0-9]+',
                                 ],
                                 'defaults' => [
-                                    'controller'    => 'plugins.Controller',
-                                    'action'        => 'add',
+                                    'controller'    => 'users.Controller',
+                                    'action'        => 'view',
                                 ]
                         ],
                     ],                    
+                    'json' => [
+                        'type'      => 'Segment',
+                        'options'   => [
+                            'route' => '/json',
+                                'constraints' => [
+                                ],
+                                'defaults' => [
+                                    'controller'    => 'users.Controller',
+                                    'action'        => 'json',
+                                ]
+                        ],
+                    ],                     
                 ],  
             ],            
             
@@ -196,7 +208,7 @@ return [
             ],
         ],
     ],
-
+    
     /*
      * Параметры шаблонов и их публикации
      */
@@ -212,5 +224,11 @@ return [
         // Шаблоны
 
         'template_map' => include __DIR__  . '../../autoload_templatemap.php',
+        
+        // Json предусмотренно в этом модуле
+        
+        'strategies' => [
+            'ViewJsonStrategy',
+        ],        
     ],
 ];

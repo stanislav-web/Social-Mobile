@@ -18,10 +18,10 @@ return array(
     'Plugins control'                       =>  'Управление плагинами',
     'Plugins control ▶ %s'                  =>  'Управление плагинами ▶ %s',
     'Plugins control ▶ Register plugin'     =>  'Управление плагинами ▶ Регистрировать плагин',
-  
-    'Users Control'                         =>  'Управление пользователями',
-    'Users Control ▶ %s'                    =>  'Управление пользователями ▶ %s',
-    'Users Control ▶ Edit "%s"'             =>  'Управление пользователями ▶ Редактировать "%s"',
+    'Register plugin'                       =>  'Регистрировать плагин',
+    'Users control'                         =>  'Управление пользователями',
+    'Users control ▶ %s'                    =>  'Управление пользователями ▶ %s',
+    'Users control ▶ Edit "%s"'             =>  'Управление пользователями ▶ Редактировать "%s"',
     
     'Submissions control'       =>  'Управление рассылкой',
     'Submissions control ▶ %s'  =>  'Управление рассылкой ▶ %s',
@@ -41,7 +41,7 @@ return array(
     'Information'   =>  'Дополнительная информация',
     'Login'	    =>	'Логин',
     'Group'	    =>	'Группа',
-    
+    'Edit - '       =>  'Редактировать - ',
     'Register date'	=>	'Дата регистрации',
     'Last visit date'	=>	'Последний визит',
     'What to do with markup ?'	=> 'Что делать с отмеченными?',
@@ -70,4 +70,21 @@ return array(
     'Unban'     =>  'Разбан.',
     'Enable'    =>  'Актив.',
     'Disable'   =>  'Выкл.',
+    
+    'Please typing login here...'   =>  'Пожалуйста введите логин...',
+    'Please typing name...'         =>  'Введите имя...',
+    'Select status'                 =>  'Выберите статус',
+    'Select role'                   =>  'Выберите группу',
+    'Sorting by...'                 =>  'Сортировать по...',
+    'IDentifier'                    =>  'Идентификатор',
+    'Name'                          =>  'Имя',
+    'Birthday'                      =>  'День рождения',
+    'Role'                          =>  'Группа',
+    'Rating'                        =>  'Рейтинг',
+    'Register date'                 =>  'Дата регистрации',
+    'Last visit date'               =>  'Последний визит',
+    'Most visited'                  =>  'Самые посещаемые',
+    'Search'                        =>  'Поиск',
+    'Reset'                         =>  'Сбросить',
+    
 );

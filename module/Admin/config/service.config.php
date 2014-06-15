@@ -25,6 +25,8 @@ return [
             $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
             $table = new \Admin\Model\PlugintypesModel($dbAdapter);
             return $table;
-         },                 
+         },   
+                 
+        'navigation' => 'Zend\Navigation\Service\DefaultNavigationFactory',           
     ]
 ];

@@ -2,30 +2,30 @@
 /**
  * Конфигуратор модуля интегрируемых виджетов
  */
-return array(
+return [
 
     /*
      * Пути к языковым файлам
      */
-    'translator' => array(
+    'translator' => [
         'locale' => 'ru_RU', // по умолчанию
-        'translation_file_patterns' => array(
-            array(
+        'translation_file_patterns' => [
+            [
                 'type'     => 'PhpArray',
                 'base_dir' => __DIR__ . '/../language/plugins',
                 'pattern'  => '%s.inc',
                 'text_domain' => 'plugins'
-            ),
-        ),
-    ),
+            ],
+        ],
+    ],
 
     /*
      * Параметры шаблонов и их публикации
      */
-    'view_manager' => array(
+    'view_manager' => [
         
         // Шаблоны
 
         'template_map' => include __DIR__  . '../../autoload_templatemap.php',
-    ),
-);
+    ],
+];

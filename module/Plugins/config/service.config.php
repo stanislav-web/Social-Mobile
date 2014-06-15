@@ -4,9 +4,9 @@
  * Model
  */
 
-return array(
+return [
 
-    'factories'     =>  array(
+    'factories'     =>  [
 
         /* Сервисы */
 
@@ -63,13 +63,12 @@ return array(
             $table = new \Plugins\Model\FlashWallModel($dbAdapter);
             return $table;
         },
-    ),
+    ],
 
     // Для вызова плагинов через модели, контроллеры итп
-    'invokables'    =>  array(
+    'invokables'    =>  [
         'plugContent.Service'   =>  '\Plugins\Constructor\PluginsConstructor',  // сервис плагинов, для вызова из контроллеров
         'qrcode.Model'          =>  '\Plugins\Model\QRCodeModel',               // сервис вызова QR кода
         'header.Model'          =>  '\Plugins\Model\HeaderModel',               // сервис вызова HTML заголовка на страницы
-        'breadcrumbs.Model'     =>  '\Plugins\Model\BreadcrumbsModel',          // сервис вызова хлебных крошек
-    ),
-);
+    ],
+];

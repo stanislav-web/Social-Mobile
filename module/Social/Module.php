@@ -51,26 +51,25 @@ class Module
      */
     private function __setCacheStorage($sec)
     {
-        return \Zend\Cache\StorageFactory::factory(array(
-            'adapter' => array(
+        return \Zend\Cache\StorageFactory::factory([
+            'adapter' => [
             'name' => 'filesystem',
-            'options' => array(
+            'options' => [
                 'cache_dir' => __DIR__ . '/../../data/cache/translator/',
                 'ttl' => $sec
-            ),
-        ),
-        'plugins' => array(
-            array(
-                    'name' => 'serializer',
-                    'options' => array(
-                    )
-                ),
+            ],
+        ],
+        'plugins' => [
+            [
+                'name' => 'serializer',
+                    'options' => []
+            ],
             // Don't throw exceptions on cache errors
-                'exception_handler' => array(
+            'exception_handler' => [
                     'throw_exceptions' => false
-                ),
-            )
-        ));
+                ],
+            ]
+        ]);
     }
 
     /**
@@ -98,7 +97,7 @@ class Module
                 // Устанавливаю локаль и куки на 1 мес
                 $translator->setLocale($config['languages'][$shortLang]['locale']);
                 setcookie('lang', $shortLang, time()+2878400, '/', $e->getRequest()->getServer('HTTP_HOST'));
-                $e->getViewModel()->setVariables(array('lang' => $shortLang)); // устанавливаю в layout
+                $e->getViewModel()->setVariables(['lang' => $shortLang]); // устанавливаю в layout
             }
         }
         else // если не нашли в URL, читаем сначала из кук
@@ -107,17 +106,17 @@ class Module
             {
                 if(isset($config['languages'][$cookies['lang']]['locale'])) {
                     $translator->setLocale($config['languages'][$cookies['lang']]['locale']);
-                    $e->getViewModel()->setVariables(array('lang' => $cookies['lang'])); // устанавливаю в layout
+                    $e->getViewModel()->setVariables(['lang' => $cookies['lang']]); // устанавливаю в layout
                 }
                 else {
                     $translator->setLocale($config['languages'][$acceptLang]['locale']);
-                    $e->getViewModel()->setVariables(array('lang' => $acceptLang)); // устанавливаю в layout
+                    $e->getViewModel()->setVariables(['lang' => $acceptLang]); // устанавливаю в layout
                 }
             }
             else
             {
                 $translator->setLocale($config['languages'][$acceptLang]['locale']); // ставлю из браузера
-                $e->getViewModel()->setVariables(array('lang' => $acceptLang)); // устанавливаю в layout
+                $e->getViewModel()->setVariables(['lang' => $acceptLang]); // устанавливаю в layout
             }
         }
     }
@@ -184,19 +183,12 @@ class Module
         if($auth->hasIdentity() == true)
         {
             // Авторизирован
+            $user = $sm->get('user.Model');
             
-            if(in_array($e->getRouteMatch()->getMatchedRouteName(), [
-                'admin', 
-                'plugins', 
-                'plugins/edit', 
-                'plugins/add',
-                'users', 
-                'users/edit', 
-                'users/view',                
-                'distributions',
-                'distributions/provider',
-                ])) $e->getViewModel()->setTemplate('layout/admin');
-            else  $e->getViewModel()->setTemplate('layout/user');
+            if($user->checkRole($auth->getIdentity(), 4)) $e->getViewModel()->setTemplate('layout/admin');
+            else $e->getViewModel()->setTemplate('layout/user');
+
+            if(!$e->getRequest()->isXmlHttpRequest()) $e->getViewModel()->setVariable('user',  $user->getProfile($auth->getIdentity())); 
         }
         else
         {
@@ -234,19 +226,19 @@ class Module
      */
     public function getAutoloaderConfig()
     {
-        return array(
-            'Zend\Loader\ClassMapAutoloader'    =>  array(
+        return [
+            'Zend\Loader\ClassMapAutoloader'    =>  [
                 // подгружаю карту библиотек
                 __DIR__.'/autoload_classmap.php',
-            ),
+            ],
 
             // устанавливаю пространство имен для MVC директории с приложением
-            'Zend\Loader\StandardAutoloader'    =>  array(
-                'namespaces'=>array(
+            'Zend\Loader\StandardAutoloader'    =>  [
+                'namespaces'=>[
                     __NAMESPACE__=>__DIR__.'/src/'.__NAMESPACE__,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -281,9 +273,9 @@ class Module
             $sm->get('viewhelpermanager')->setFactory('getRoute', function($sm) use ($app) {
                 return new \Social\Helper\RouteHelper($app); // получаю текущий сегмент URL
             });            
-            $event->attach(MvcEvent::EVENT_ROUTE,       array($this, 'initLocale'));   // локаль
-            $event->attach(MvcEvent::EVENT_RENDER,      array($this, 'initOnline'));   // онлайн
-            $event->attach(MvcEvent::EVENT_DISPATCH,    array($this, 'initLayout'));   // смена шаблона
+            $event->attach(MvcEvent::EVENT_ROUTE,       [$this, 'initLocale']);   // локаль
+            $event->attach(MvcEvent::EVENT_RENDER,      [$this, 'initOnline']);   // онлайн
+            $event->attach(MvcEvent::EVENT_DISPATCH,    [$this, 'initLayout']);   // смена шаблона
             //$e->attach('dispatch', array($this, 'isMobile'), -100); // проверка на моб. тел.            
         }
     }

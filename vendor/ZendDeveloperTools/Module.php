@@ -3,7 +3,7 @@
  * Zend Developer Tools for Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/ZendDeveloperTools for the canonical source repository
- * @copyright Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -86,7 +86,7 @@ class Module implements
 
         $options = $sm->get('ZendDeveloperTools\Config');
 
-        if (!$options->isEnabled()) {
+        if (!$options->isToolbarEnabled()) {
             return;
         }
 
@@ -98,6 +98,10 @@ class Module implements
 
         if ($options->isStrict() && $report->hasErrors()) {
             throw new Exception\InvalidOptionException(implode(' ', $report->getErrors()));
+        }
+
+        if ($options->eventCollectionEnabled()) {
+            $sem->attachAggregate($sm->get('ZendDeveloperTools\EventLoggingListenerAggregate'));
         }
 
         $em->attachAggregate($sm->get('ZendDeveloperTools\ProfilerListener'));
@@ -159,6 +163,7 @@ class Module implements
                 'ZendDeveloperTools\ExceptionCollector' => 'ZendDeveloperTools\Collector\ExceptionCollector',
                 'ZendDeveloperTools\RouteCollector'     => 'ZendDeveloperTools\Collector\RouteCollector',
                 'ZendDeveloperTools\RequestCollector'   => 'ZendDeveloperTools\Collector\RequestCollector',
+                'ZendDeveloperTools\ConfigCollector'    => 'ZendDeveloperTools\Collector\ConfigCollector',
                 'ZendDeveloperTools\MailCollector'      => 'ZendDeveloperTools\Collector\MailCollector',
                 'ZendDeveloperTools\MemoryCollector'    => 'ZendDeveloperTools\Collector\MemoryCollector',
                 'ZendDeveloperTools\TimeCollector'      => 'ZendDeveloperTools\Collector\TimeCollector',
@@ -192,12 +197,22 @@ class Module implements
                 'ZendDeveloperTools\ProfilerListener' => function ($sm) {
                     return new Listener\ProfilerListener($sm, $sm->get('ZendDeveloperTools\Config'));
                 },
+                'ZendDeveloperTools\EventLoggingListenerAggregate' => function ($sm) {
+                    /* @var $config \ZendDeveloperTools\Options */
+                    $config = $sm->get('ZendDeveloperTools\Config');
+
+                    return new Listener\EventLoggingListenerAggregate(
+                        array_map(array($sm, 'get'), $config->getEventCollectors()),
+                        $config->getEventIdentifiers()
+                    );
+                },
                 'ZendDeveloperTools\DbCollector' => function ($sm) {
                     $p  = false;
                     $db = new Collector\DbCollector();
 
                     if ($sm->has('Zend\Db\Adapter\Adapter')) {
                         $adapter = $sm->get('Zend\Db\Adapter\Adapter');
+
                         if ($adapter instanceof ProfilingAdapter) {
                             $p = true;
                             $db->setProfiler($adapter->getProfiler());
@@ -208,7 +223,6 @@ class Module implements
                             $db->setProfiler($adapter->getProfiler());
                         }
                     }
-
                     return $db;
                 },
             ),

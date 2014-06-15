@@ -4,39 +4,39 @@
  * используемые  в ZendModuleManager для загрузки модулей
  * и объединения конфигураций (настройки подключения к БД, меню, ACL и др.)
  */
-return array(
+return [
     // Модули, которые используются . Объявляются для пространства имен
-    'modules' => array(
+    'modules' => [
         'Cronjob',              // Консоль для запуска планировщика Cron
-        'ZendDeveloperTools',   // Панель разработчика
         'SQLProfiler',          // Профайлер SQL запросов
+        'ZendDeveloperTools',   // Панель разработчика
         'ZFTool',               // Модуль диагностики
         'Decoda',               // Сервис BB кодов и эмотиконов
         'Social',               // Социальная сеть с управлением юзерами
         'Submissions',          // Сервис платежных систем
         'Locations',            // Модуль управления локациями (города, регионы, страны)
-        'SwebSocialAuth',       // Мой модуль авторизации в соц сетях
+        //'SwebSocialAuth',       // Мой модуль авторизации в соц сетях
         'Admin',                // Админ панель
         'Plugins',              // Плагины
-        'WebSockets',           // WebSockets сервер
-        'DBTranslations',       // Переводы для БД
+        //'WebSockets',           // WebSockets сервер
         'WebinoImageThumb',     // GD2 Thumbnailer
         'ZF2NetteDebug',        // Интегрируемый сервис отладки исключений и ошибок
-    ),
+    ],
 
     // параметры используемые для слушателя ModuleManager и текущего модуля (сайта)
-    'module_listener_options' => array(
-        'module_paths' => array(
+    'module_listener_options' => [
+        'module_paths' => [
             // Конфигурация провайдера ZF2 (не изменять)
             './module',
             './vendor',
-        ),
+        ],
 
         // Файлы конфигурации модулей (по умочанию будут найдены и загружены)
-        'config_glob_paths' => array(
+        'config_glob_paths' => [
             'config/autoload/{,*.}{global,local,service,helper}.php',
             './vendor/Submissions/config/providers/*.php',
-        ),
+            './module/Admin/config/navigation.config.php',
+        ],
 
         // кэширование всех настроек
         // 'config_cache_enabled' => true,
@@ -55,7 +55,7 @@ return array(
 
         // проверять ли зависимомть модулей?
         // 'check_dependencies' => true,
-    ),
+    ],
 
     // Использовать собственно созданный Сервис Менеджер? (нет конечно!
     //'service_listener_options' => array(
@@ -68,13 +68,14 @@ return array(
     // )
 
    // Инициализация Сервис Менеджера может быть и сдесь
-   'service_manager' => array(
-        'invokables' => array(
+    
+   'service_manager' => [
+        'invokables' => [
             'Zend\Session\SessionManager' => 'Zend\Session\SessionManager',
-        ),       
+        ],       
         'use_defaults' => true,
-         'factories' => array(
+         'factories' => [
             'translator' => 'Zend\Mvc\Service\TranslatorServiceFactory',
-        ),
-    ),
-);
+        ],
+    ],
+];

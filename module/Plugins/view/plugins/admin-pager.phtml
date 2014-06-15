@@ -10,7 +10,7 @@ if($parameterGet != "")  $parameterGet = "?".$parameterGet;
 ?>
 
 <?php if($this->pageCount): ?>
-    <link href="<?php echo $this->basePath().'/css/mobile/paginator.css'; ?>" media="screen" rel="stylesheet" type="text/css">
+    <link href="<?php echo $this->basePath().'/css/paginator.css'; ?>" media="screen" rel="stylesheet" type="text/css">
     <div class="ui-pagination">
 	<fieldset data-role="controlgroup" data-type="horizontal">
 	    <?php if(isset($this->previous)): // Предыдущая, первая ?>

@@ -11,7 +11,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * Сервис для выборки элементов меню для всего сайта
  * использовать сервис менеджер в модели
- * $sm->get('MenuItems.Model');
+ * $sm->get('menuItems.Service');
  * @package Zend Framework 2
  * @subpackage Social
  * @since PHP >=5.3.xx
@@ -90,7 +90,7 @@ class MenuItemsService implements ServiceLocatorAwareInterface
                     'title'         =>  'title_'.$this->getLocaleCode().'',
                     'description'   =>  'description_'.$this->getLocaleCode().'',
                     'icon',
-                    'alias',
+                    'route',
                 ])
                 ->order('order ASC');
         });
@@ -115,7 +115,7 @@ class MenuItemsService implements ServiceLocatorAwareInterface
                     'title' =>  'title_'.$this->getLocaleCode().'',
                     'description'   =>  'description_'.$this->getLocaleCode().'',
                     'icon',
-                    'alias',
+                    'route',
                 ])
                 ->where('`activation` = \'1\' AND `menu` = \''.$menu.'\' AND `children` IS NULL')
                 ->order('order ASC');
@@ -124,22 +124,22 @@ class MenuItemsService implements ServiceLocatorAwareInterface
     }
     
     /**
-     * getItemByAlias($menu) Достать пункт меню по алиасу
+     * getItemByRoute($route) Достать пункт меню по алиасу
      * @param алиас элемента
      * @access public
      * @return object Menu Item
      */
-    public function getItemByAlias($alias)
+    public function getItemByRoute($route)
     {
-        $resultSet = $this->tableGateway->select(function (Select $select) use($alias) {
+        $resultSet = $this->tableGateway->select(function (Select $select) use($route) {
             $select
                 ->columns([
                     'title' =>  'title_'.$this->getLocaleCode().'',
                     'description'   =>  'description_'.$this->getLocaleCode().'',
                     'icon',
-                    'alias',
+                    'route',
                 ])
-                ->where('`activation` = \'1\' AND `alias` = \''.$alias.'\'')
+                ->where('`activation` = \'1\' AND `route` = \''.$route.'\'')
                 ->order('order ASC')
                 ->limit(1);
         });

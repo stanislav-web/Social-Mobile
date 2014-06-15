@@ -261,13 +261,11 @@ class Unisender extends \ReflectionClass implements Aware\ProviderInterface {
             $to   = $from + $emails_per_iteration;
 
             if($to > $all) $to = $all;
-            echo '<pre>';
             $data = [
                 'field_names'  => $fields,
                 'data'         => array_slice($contacts, $from, $to - $from),
                 'double_optin' => 1,    // whether the recipient has agreed to subscribe for and confirmed whether your email-address. Valid for attempts to import addresses with status 'active'                
             ];
-            print_r($data);
             $res = $this->sendRequest('importContacts', $data); 
 	}
         
@@ -445,7 +443,7 @@ class Unisender extends \ReflectionClass implements Aware\ProviderInterface {
      * @see Aware\ProviderInterface
      * @return json data
      */
-    public function sendRequest($uri, array $data = null)
+    public function sendRequest($uri = null, array $data = null)
     {
         // Compile URL from pattern
 	$url = strtr($this->__config['api_url_pattern'].'?q=WWW', [

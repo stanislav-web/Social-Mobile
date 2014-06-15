@@ -218,6 +218,12 @@ return [
                 'pattern'  => '%s.inc',
                 'text_domain' => 'mails'
             ],
+            [
+                'type'     => 'PhpArray',
+                'base_dir' => __DIR__ . '/../language/timezones',
+                'pattern'  => '%s.inc',
+                'text_domain' => 'timezones'
+            ],            
         ],
     ],
 

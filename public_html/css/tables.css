@@ -35,7 +35,7 @@
 .ui-table tr.ui-odd {
     background-color: #333;
 }
-.ui-table td.ui-center {
+.ui-table td.ui-center, .ui-table th.ui-center {
     vertical-align: middle;
     text-align: center;
 }

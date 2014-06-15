@@ -747,3 +747,50 @@ only screen and (min-resolution: 240dpi) {
     outline-width: 1px;
     outline-style: auto;
 }
+.ui-w100 {
+    width: 100%;
+}
+.ui-w50 {
+    width: 50%;
+}
+.ui-w50l {
+    width: 50%;
+    float: left;
+}
+.ui-hide {
+    display: none;
+}
+
+.ui-left {
+    float: left;
+}
+.ui-right {
+    float: right;
+}
+.ui-inline {
+    display: inline !important;
+}
+nav.ui-navbar ul li:nth-child(n) {
+    margin-right: 0px !important;
+}
+.ui-autocomplete {
+    z-index: 1100 !important;
+    position: absolute !important;
+}
+.ui-autocomplete li {
+    opacity: 1 !important;
+    background: #c7cdef;
+}
+.ui-autocomplete li a {
+    color: #000 !important;
+    opacity: 1 !important;
+    font-weight: 700;
+}
+.ui-autocomplete li a:hover {
+    background: #555;
+}
+.ui-form-topover {
+    z-index: 1000;
+    position: relative;
+}
+

@@ -98,16 +98,6 @@ class OnlineModel extends AbstractTableGateway implements ServiceLocatorAwareInt
         return $this->_serviceLocator;
     }
         
-   /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->getServiceLocator();
-    }
-        
     /**
      * insertItem() Установка записи в бд
      * @param int $user_id ID пользователя
@@ -120,7 +110,7 @@ class OnlineModel extends AbstractTableGateway implements ServiceLocatorAwareInt
     {
         // Получаю входящие параметры
         
-        $request            = $this->zfService()->get('request');
+        $request            = $this->getServiceLocator()->get('request');
         $REMOTE_ADDR        = $request->getServer('REMOTE_ADDR');
         $REQUEST_URI        = $request->getServer('REQUEST_URI');   
         
@@ -209,7 +199,7 @@ class OnlineModel extends AbstractTableGateway implements ServiceLocatorAwareInt
     public function getAll($page, $perpage = 10) 
     {
         $online = array(); // массив с результатом
-        $this->_lng  = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
+        $this->_lng  = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
         $result = $this->select(function (Select $select) use ($page, $perpage) {
              $select
                     ->quantifier(new \Zend\Db\Sql\Expression('SQL_CALC_FOUND_ROWS'))

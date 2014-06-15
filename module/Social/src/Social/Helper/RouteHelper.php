@@ -75,17 +75,28 @@ class RouteHelper extends AbstractHelper {
     public function post($param = null)
     {
         $request = $this->sm->get('request');
-        if(!isset($param))
-        {
-            return $request->getPost();
-        }
+        if(!isset($param)) return $request->getPost();
         else
         {
-            if(!is_array($param))
-            {
-                return $request->getPost($param);
-            }
+            if(!is_array($param)) return $request->getPost($param);
             else return $request->getPost($param)->toArray();
         }
     }
+    
+    /**
+     * get() метод получает $_GET параметры
+     * @param mixed $param Ключ/Ключи масссива GET
+     * @access public
+     * @return string
+     */
+    public function get($param = null)
+    {
+        $request = $this->sm->get('request');
+        if(!isset($param)) return $request->getQuery();
+        else
+        {
+            if(!is_array($param)) return $request->getQuery($param);
+            else return $request->getQuery($param)->toArray();
+        }
+    }    
 }
