@@ -5,74 +5,105 @@
  * Записываются все контроллеры в процессе создания приложения
  * Устанавливается путь к приложению по умолчанию
  */
-return array(
+return [
      /**
       * Пространство имен для всех контроллеров модуля Locations
       */
-    'controllers' => array(
-        'invokables' => array(
+    'controllers' => [
+        'invokables' => [
             'locations.Controller'   => 'Locations\Controller\LocationsController',  // контроллер обслуживания локаций
-        ),
-    ),
+        ],
+    ],
     
     /**
      * Настройки маршрутизатора http
      */
-    'router' => array(
-        'routes' => array(
+    'router' => [
+        'routes' => [
            
-            'cities' => array( // Города
+            'locations' => [ // Управление пользователями
+                'type'          => 'Segment',
+                'options'       => [
+                    'route'         => '/locations[/:lang]',
+                'constraints'   => [
+                    'lang'          => '(en|ru|ua)',
+                ],
+                'defaults' => [
+		    'controller'    => 'locations.Controller',
+		    'action'    => 'index',
+		    'lang'      => 'ru',
+                    ],
+                ],
+                'may_terminate' => true, 
+                'child_routes' => [
+                    'json' => [
+                        'type'      => 'Segment',
+                        'options'   => [
+                            'route' => '/json',
+                            'constraints' => [
+                            ],
+                            'defaults' => [
+                                'controller'    => 'locations.Controller',
+                                'action'        => 'json',
+                            ]
+                        ],
+                    ],                     
+                ],  
+            ], 
+            
+            
+            'cities' => [ // Города
                 'type'    => 'Segment',
-                'options' => array(
+                'options' => [
                     'route'    => '[/:lang]/cities',
-                    'constraints'   => array(
+                    'constraints'   => [
                         'lang'          =>  '(en|ru|ua)',
-                    ),
-                    'defaults' => array(
+                    ],
+                    'defaults' => [
                         'controller'    => 'locations.Controller',
                         'action'        => 'index',
-                    ),
-                ),
+                    ],
+                ],
                 'may_terminate' => true,
-                'child_routes' => array(
-                    'short-city' => array(
+                'child_routes' => [
+                    'short-city' => [
                         'type'      => 'Segment',
-                        'options'   => array(
+                        'options'   => [
                             'route' => '/short[/:country][/:region][/:city][/]',
-                                'constraints' => array(
+                                'constraints' => [
                                     'country'	=> '[a-zA-Z]*',
                                     'region'	=> '[a-zA-Z]*',
                                     'city'	=> '[a-zA-Z0-9_-]{1,3}',
-                                ),
-                                'defaults' => array(
+                                ],
+                                'defaults' => [
                                     'controller'    => 'locations.Controller',
                                     'action'        => 'short',
-                                )
-                        ),
-                    ),
-                    'long-city' => array(
+                                ]
+                        ],
+                    ],
+                    'long-city' => [
                         'type'      => 'Segment',
-                        'options'   => array(
+                        'options'   => [
                             'route' => '/long[/:long][/]',
-                                'constraints' => array(
+                                'constraints' => [
                                     'long' => '[a-zA-Z0-9_-]*',
-                                ),
-                                'defaults' => array(
+                                ],
+                                'defaults' => [
                                     'controller'    => 'locations.Controller',
                                     'action'        => 'long',
-                                )
-                        ),
-                    ),
-                ),                
-            ),           
-        ),
-    ),
+                                ]
+                        ],
+                    ],
+                ],                
+            ],           
+        ],
+    ],
 
     /*
      * Параметры шаблонов и их публикации
      */
 
-    'view_manager' => array(
+    'view_manager' => [
         'display_not_found_reason' => true,
         'display_exceptions'       => true, // показывать ли исключения в 404
         // XHTML11, XHTML1_STRICT, XHTML1_TRANSITIONAL, XHTML1_FRAMESET, HTML4_STRICT, HTML4_STRICT, HTML4_LOOSE, HTML4_FRAMESET, HTML5, CUSTOM
@@ -84,5 +115,11 @@ return array(
         // Шаблоны
 
         'template_map' => include __DIR__  . '../../autoload_templatemap.php',
-    ),
-);
+        
+        // Json предусмотренно в этом модуле
+        
+        'strategies' => [
+            'ViewJsonStrategy',
+        ],           
+    ],
+];

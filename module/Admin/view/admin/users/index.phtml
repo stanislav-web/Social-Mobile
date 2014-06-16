@@ -110,8 +110,7 @@
                                     {
                                         list.result += '<li><a href="#" rel="'+name+'" onclick="put(this); return false;">'+entry[name]+'</a></li>';
                                     });
-                                    console.log(list.result);
-                                    list.suggestion.html(list.result).removeClass('ui-hide');
+x                                    list.suggestion.html(list.result).removeClass('ui-hide');
                                 }
                                 else list.suggestion.html('').addClass('ui-hide');
 
@@ -173,11 +172,11 @@
                                 <fieldset data-role="controlgroup" data-type="horizontal">
                                     <label for="select-<?php echo $item->id?>"><?php echo $item->id?></label>
                                     <input title="<?php echo $this->translate('Check this' , 'admin');?>" type="checkbox" name="select[]" id="select-<?php echo $item->id?>" data-mini="true" value="<?php echo $item->id?>">
-                                    <a data-role="button" title="<?php echo $this->translate('edit' , 'admin');?>" data-mini="true" href="/admin/users/edit/<?php echo $item->id?>"><?php echo $this->translate('edit' , 'admin');?></a>
+                                    <a data-role="button" title="<?php echo $this->translate('edit' , 'admin');?>" data-mini="true" href="/admin/<?php echo $this->getLang('code');?>/users/edit/<?php echo $item->id?>"><?php echo $this->translate('edit' , 'admin');?></a>
                                 </fieldset>
                             </td>
                             <td class="ui-center ui-left">
-                                <a href="/admin/users/view/<?php echo $item->id?>">
+                                <a href="/admin/<?php echo $this->getLang('code');?>/users/view/<?php echo $item->id?>">
                                     <span class="<?php if($item->gender == 2):?>ui-f<?php else:?>ui-m<?php endif;?>"></span> <?php echo $item->name?>
                                 </a> 
                             </td>

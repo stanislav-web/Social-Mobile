@@ -155,9 +155,12 @@ class UsersController extends Auth\AbstractAuthActionController
         }
         return new ViewModel(
                 [
-                    'title'     =>  $item->name, // заголовок         
-                    'item'      =>  $item,  // вывод строк
-                    'roles'     =>  $this->sm->get('roles.Model')->getRoles(),
+                    'title'         =>  $item->name, // заголовок         
+                    'item'          =>  $item,  // вывод строк
+                    'roles'         =>  $this->sm->get('roles.Model')->getRoles(),
+                    'countries'     =>  $this->sm->get('countries.Service')->getDBCountries(),
+                    'regions'       =>  $this->sm->get('regions.Service')->getDBRegions($item->country_id),
+                    'cities'        =>  $this->sm->get('cities.Service')->getDBCities($item->country_id, $item->region_id),
                 ]
         );         
     }
@@ -246,7 +249,7 @@ class UsersController extends Auth\AbstractAuthActionController
     }  
 
     /*
-     * roleAction() Установить роль
+     * jsonAction() Ajax action
      * @access public
      * @return json
      */

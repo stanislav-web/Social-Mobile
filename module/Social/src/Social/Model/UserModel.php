@@ -10,9 +10,6 @@ use Zend\Paginator\Paginator; // сам пагинатор
 use Zend\Paginator\Adapter\DbSelect;// адаптер пагинатора
 use Zend\Db\Metadata\Metadata;      // мета данные таблиц
 
-// Кэширование
-
-
 // подключаю интерфейсы ServiceLocator
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -388,6 +385,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
                     'login',
                     'role_id',
                     'state',
+                    'rating',
                     'date_registration',
                     'date_lastvisit',
                     'time_online',

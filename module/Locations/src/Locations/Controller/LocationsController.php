@@ -4,6 +4,7 @@ namespace Locations\Controller; // пространтво имен текуще�
 // объявляю зависимости от главных Zend ActionConroller , Zend ViewModel
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Zend\Debug\Debug;
 use SW\String\Translit;
 
@@ -20,23 +21,12 @@ use SW\String\Translit;
  */
 class LocationsController extends AbstractActionController
 {
-    
     /**
      * $_lng Свойство объекта Zend l18 translator
      * @access protected
      * @var type object
      */
     protected $_lng;
-    
-    /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->getServiceLocator();
-    }   
     
     /**
      * indexAction() Вывод всей карты городов с зарегистрированными пользователями
@@ -46,11 +36,11 @@ class LocationsController extends AbstractActionController
      */    
     public function indexAction()
     {
-	$this->_lng     = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
-	$renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
+	$this->_lng     = $this->getServiceLocator()->get('MvcTranslator'); // загружаю переводчик
+	$renderer       = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');
 	$renderer->headTitle($this->_lng->translate('Search for friends here on this Map!', 'default'));
 	// Добавляю скрипты сервисов Google
-	$viewrender = $this->zfService()->get('viewhelpermanager')->get('headScript');
+	$viewrender = $this->getServiceLocator()->get('viewhelpermanager')->get('headScript');
 	$viewrender->appendFile('http://maps.google.com/maps/api/js?sensor=false&libraries=places&language='.substr($this->_lng->getLocale(), 0,2));	
 	
         return new ViewModel();        
@@ -84,7 +74,7 @@ class LocationsController extends AbstractActionController
 	if(!$city) return $this->notFoundAction();
 	
 	// подключаю модель городов
-	$citiesModel = $this->zfService()->get('cities.Service');
+	$citiesModel = $this->getServiceLocator()->get('cities.Service');
 	
 	// опеределяю текущую локаль пользователя
 	$locale = $citiesModel->getLocaleCode();
@@ -94,8 +84,51 @@ class LocationsController extends AbstractActionController
 	
 	$res = $citiesModel->getDBCitiesByShort($country, $region, $city);
 	
-        return new ViewModel(array(
+        return new ViewModel([
 	    'cities'	=>  $res,
-	));        
+	]);        
     }    
+    
+    /*
+     * jsonAction() Ajax action
+     * @access public
+     * @return json
+     */
+    public function jsonAction()
+    {
+        $request    = $this->getRequest();
+        $response   =   [];
+
+        if($request->isXmlHttpRequest())
+        {   
+            // Проверяю метод передачи
+            if($request->isPost()) $requestData =   $request->getPost();
+            else $requestData =   $request->getQuery();
+
+            switch($requestData['request']) 
+            {
+                case 'country': // поиск в странах
+                    $response = $this->getServiceLocator()
+                        ->get('countries.Service');
+                break;
+
+                case 'region':  // поиск в регионах
+                    $response = $this->getServiceLocator()
+                        ->get('regions.Service')
+                        ->getDBRegions($requestData['country_id']);
+                break;
+            
+                case 'city':    // поиск в городах
+                    $response = $this->getServiceLocator()
+                        ->get('cities.Service')
+                        ->getDBCities(null, $requestData['region_id']);
+                break;
+                    
+                default: 
+                break;
+            }
+            // Получаю модель
+        }     
+        return new JsonModel($response);
+    }     
 }

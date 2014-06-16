@@ -29,26 +29,6 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
      * @var type object
      */
     protected $_serviceLocator;
-    
-    /**
-     * setServiceLocator(ServiceLocatorInterface $_serviceLocator) Метод реализующий интерфейс установки сервис локатора
-     * @access public
-     * @var object
-     */
-    public function setServiceLocator(ServiceLocatorInterface $_serviceLocator)
-    {
-        $this->_serviceLocator = $_serviceLocator;
-    }
-
-    /**
-     * getServiceLocator(ServiceLocatorInterface $_serviceLocator) Метод реализующий интерфейс загрузки сервис локатора
-     * @access public
-     * @var object
-     */
-    public function getServiceLocator()
-    {
-        return $this->_serviceLocator;
-    }
 
     /**
      * Таблица, к которой обращаюсь
@@ -63,6 +43,26 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
      * @var object $cache;
      */
     protected $cache = null;
+    
+    /**
+     * setServiceLocator(ServiceLocatorInterface $_serviceLocator) Интерфейс установки сервис локатора
+     * @access public
+     * @var object
+     */
+    public function setServiceLocator(ServiceLocatorInterface $_serviceLocator)
+    {
+        $this->_serviceLocator = $_serviceLocator;
+    }
+
+    /**
+     * getServiceLocator(ServiceLocatorInterface $_serviceLocator) Интерфейс загрузки сервис локатора
+     * @access public
+     * @var object
+     */
+    public function getServiceLocator()
+    {
+        return $this->_serviceLocator;
+    }
 
     /**
      * Конструктор адаптера БД + объект кэширования
@@ -83,11 +83,11 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
      * @access public
      * @return object Базы данных
      */
-    public function getDBCities($country_id, $region_id)
+    public function getDBCities($country_id = null, $region_id = null)
     {
         // Использую лямпду как передаваемый объект для выборки
-        if($country_id) $country = 'AND `country_id` = '.(int)$country_id;
-        if($region_id)  $region  = 'AND `region_id` = '.(int)$region_id;
+        $country = (isset($country_id)) ? 'AND `country_id` = '.(int)$country_id : '';
+        $region = (isset($region_id)) ? 'AND `region_id` = '.(int)$region_id : '';
         
         // Использую кэширование (подключаю адаптер)
         $this->cache = $this->getServiceLocator()->get('memcache.Service');
@@ -217,6 +217,7 @@ class CitiesService extends AbstractTableGateway implements ServiceLocatorAwareI
     {
         $locale = $this->getServiceLocator()->get('MvcTranslator');
         $locale = substr($locale->getLocale(), 0,2);
+        
         return $locale;
     } 
 }

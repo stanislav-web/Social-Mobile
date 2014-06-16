@@ -14,7 +14,7 @@
 if(window.localStorage)
 {
     // let's get started! Check if the Storage is available
-    console.log('Storage Init...');
+    //console.log('Storage Init...');
 
     var OBJECTS = $('[data-storage]'); // add this attribute for any input / textarea tags data-storage="KEY"
 

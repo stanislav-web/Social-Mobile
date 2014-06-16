@@ -28,9 +28,23 @@ class CountriesService extends AbstractTableGateway implements ServiceLocatorAwa
      * @var type object
      */
     protected $_serviceLocator;
-
+    
     /**
-     * setServiceLocator(ServiceLocatorInterface $_serviceLocator) Метод реализующий интерфейс установки сервис локатора
+     * Таблица, к которой обращаюсь
+     * @access protected
+     * @var string $table;
+     */
+    protected $table = 'zf_countries';
+    
+    /**
+     * Объект кэширования
+     * @access protected
+     * @var object $cache;
+     */
+    protected $cache = null;    
+    
+    /**
+     * setServiceLocator(ServiceLocatorInterface $_serviceLocator) Интерфейс установки сервис локатора
      * @access public
      * @var object
      */
@@ -40,7 +54,7 @@ class CountriesService extends AbstractTableGateway implements ServiceLocatorAwa
     }
 
     /**
-     * getServiceLocator(ServiceLocatorInterface $_serviceLocator) Метод реализующий интерфейс загрузки сервис локатора
+     * getServiceLocator(ServiceLocatorInterface $_serviceLocator) Интерфейс загрузки сервис локатора
      * @access public
      * @var object
      */
@@ -48,13 +62,6 @@ class CountriesService extends AbstractTableGateway implements ServiceLocatorAwa
     {
         return $this->_serviceLocator;
     }
-
-    /**
-     * Таблица, к которой обращаюсь
-     * @access protected
-     * @var string $table;
-     */
-    protected $table = 'zf_countries';
 
     /**
      * Конструктор адаптера БД
@@ -75,10 +82,17 @@ class CountriesService extends AbstractTableGateway implements ServiceLocatorAwa
      */
     public function getDBCountries()
     {
-        // Использую лямпду как передаваемый объект для выборки
-        $resultSet = $this->select(function (Select $select) {
-            $select
-                ->columns(array(
+        // Использую кэширование (подключаю адаптер)
+        $this->cache = $this->getServiceLocator()->get('memcache.Service');
+
+        // Проверяю ключ в кэше
+        $result = $this->cache->getItem('zf_countries-'.$this->getLocaleCode()); 
+        if(!$result)
+        {   
+            // Использую лямпду как передаваемый объект для выборки
+            $resultSet = $this->select(function (Select $select) {
+                $select
+                    ->columns(array(
                         'id'        =>  'country_id',
                         'code'      =>  'country_code',
                         'name'      =>  'country_'.$this->getLocaleCode().'',
@@ -87,9 +101,16 @@ class CountriesService extends AbstractTableGateway implements ServiceLocatorAwa
                 ->where('`activation` = \'1\'')
                 // сортировка по Алфавиту в зависимости от языка
                 ->order('country_'.$this->getLocaleCode().' ASC');
-        });
-        $resultSet = $resultSet->toArray();
-        return $resultSet;
+            });
+
+            // кэширую выборку
+            $resultSet->buffer();
+
+            $result = $resultSet->toArray();
+            $this->cache->setItem('zf_countries-'.$this->getLocaleCode(), $result);           
+        }        
+
+        return $result;
     }
 
     /**

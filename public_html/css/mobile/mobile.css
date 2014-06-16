@@ -762,7 +762,7 @@ only screen and (min-resolution: 240dpi) {
 }
 
 .ui-left {
-    float: left;
+    text-align: left;
 }
 .ui-right {
     float: right;

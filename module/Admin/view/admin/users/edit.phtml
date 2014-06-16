@@ -1,3 +1,4 @@
+<?php //Zend\Debug\Debug::dump($item); ?>
 <div data-role="content" data-theme="a">
     <div class="ui-items-body">
         <div class="ui-hover-title">
@@ -187,6 +188,14 @@
                             <td>
                                 <input type="text" name="alias" data-clear-btn="true" data-mini="true" value="<?php echo $this->escapeHTML($item->alias); ?>">
                             </td>
+                        </tr>  
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('Rating', 'admin'); ?>
+                            </td>
+                            <td>
+                                <input type="text" pattern="^\d+$" name="rating" data-clear-btn="true" data-mini="true" value="<?php echo $this->escapeHTML($item->rating); ?>">
+                            </td>
                         </tr>                         
                     </tbody>                      
                 </table>
@@ -195,7 +204,42 @@
             <fieldset id="location" class="inner-tabs boxshadow">
                 <table class="ui-table" data-theme="a" border="1">
                     <tbody>
-                     
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('Country', 'admin'); ?>
+                            </td>
+                            <td>
+                                <select name="country_id" data-mini="true" data-request="region" data-response="country" class="json">
+                                    <?php foreach($countries as $v): ?>
+                                        <option value="<?php echo $v['id']; ?>" <?php echo ($item->country_id == $v['id']) ? 'selected' : '' ?>><?php echo $v['name']; ?></option>
+                                    <?php endforeach; ?>                                  
+                                </select> 
+                            </td>
+                        </tr> 
+                        <tr class="ui-even">
+                            <td>
+                                <?php echo $this->translate('Region', 'admin'); ?>
+                            </td>
+                            <td>
+                                <select name="region_id" data-request="city" data-response="region" data-mini="true" class="json">
+                                    <?php foreach($regions as $v): ?>
+                                        <option value="<?php echo $v['id']; ?>" <?php echo ($item->region_id == $v['id']) ? 'selected' : '' ?>><?php echo $v['name']; ?></option>
+                                    <?php endforeach; ?>                                  
+                                </select> 
+                            </td>
+                        </tr>
+                        <tr class="ui-odd">
+                            <td>
+                                <?php echo $this->translate('City', 'admin'); ?>
+                            </td>
+                            <td>
+                                <select name="city_id" data-mini="true" data-response="city">
+                                    <?php foreach($cities as $v): ?>
+                                        <option value="<?php echo $v['city_id']; ?>" <?php echo ($item->city_id == $v['city_id']) ? 'selected' : '' ?>><?php echo $v['name']; ?></option>
+                                    <?php endforeach; ?>                                  
+                                </select> 
+                            </td>
+                        </tr>                        
                     </tbody>                      
                 </table>
             </fieldset>  
@@ -228,17 +272,37 @@ EOT
     );
 }
 ?>
-<?php $this->inlineScript()->appendScript(<<<EOT
+<script type="text/javascript">
 $(document).ready(function() {
+    
+    $('select.json').on('change', function(e) {
+        e.preventDefault();
+        
+        /**
+         * @var action params
+         * @type array
+         */
+        var query   =   {}; 
+        
+        // formed request params 
+        query['request']               =   $(this).data('request');
+        query[$(this).attr('name')]    =   $(this).val();
+        
+        // send request
+        Locations.request('/locations/json', query, 'POST');
+    });
+    
+    
     $('input[name=birthday]').mask('9999-99-99', {placeholder: ""});
-});
-EOT
-); ?>
+});    
+</script>
+
 <?php $this->headLink()->appendStylesheet($this->basePath().'/css/mobile/jquery.mobile.datebox.css');?>
 <?php $this->inlineScript()->appendFile($this->basePath().'/js/jquery.mousewheel.js', 'text/javascript');?>
 <?php $this->inlineScript()->appendFile($this->basePath().'/js/datebox/jqm-datebox.core.js', 'text/javascript');?>
 <?php $this->inlineScript()->appendFile($this->basePath().'/js/datebox/jqm-datebox.mode.datebox.js', 'text/javascript');?>
 <?php $this->inlineScript()->appendFile($this->basePath().'/js/languages/jqm-datebox-'.$this->getLang('code').'.js', 'text/javascript');?>
 <?php $this->inlineScript()->appendFile($this->basePath().'/js/jquery.maskedinput.js', 'text/javascript');?>
+<?php $this->inlineScript()->appendFile($this->basePath().'/js/locations.js', 'text/javascript');?>
 <?php echo $this->headLink();?>
 <?php echo $this->InlineScript();?>

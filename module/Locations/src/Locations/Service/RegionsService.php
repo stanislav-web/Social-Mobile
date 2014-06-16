@@ -30,7 +30,21 @@ class RegionsService extends AbstractTableGateway implements ServiceLocatorAware
     protected $_serviceLocator;
 
     /**
-     * setServiceLocator(ServiceLocatorInterface $_serviceLocator) Метод реализующий интерфейс установки сервис локатора
+     * Таблица, к которой обращаюсь
+     * @access protected
+     * @var string $table;
+     */
+    protected $table = 'zf_regions';
+    
+    /**
+     * Объект кэширования
+     * @access protected
+     * @var object $cache;
+     */
+    protected $cache = null;
+    
+    /**
+     * setServiceLocator(ServiceLocatorInterface $_serviceLocator) Интерфейс установки сервис локатора
      * @access public
      * @var object
      */
@@ -40,7 +54,7 @@ class RegionsService extends AbstractTableGateway implements ServiceLocatorAware
     }
 
     /**
-     * getServiceLocator(ServiceLocatorInterface $_serviceLocator) Метод реализующий интерфейс загрузки сервис локатора
+     * getServiceLocator(ServiceLocatorInterface $_serviceLocator) Интерфейс загрузки сервис локатора
      * @access public
      * @var object
      */
@@ -48,13 +62,6 @@ class RegionsService extends AbstractTableGateway implements ServiceLocatorAware
     {
         return $this->_serviceLocator;
     }
-
-    /**
-     * Таблица, к которой обращаюсь
-     * @access protected
-     * @var string $table;
-     */
-    protected $table = 'zf_regions';
 
     /**
      * Конструктор адаптера БД
@@ -76,20 +83,37 @@ class RegionsService extends AbstractTableGateway implements ServiceLocatorAware
      */
     public function getDBRegions($country_id = null)
     {
-        // Использую лямпду как передаваемый объект для выборки
-        if($country_id) $country_id = 'AND `country_id` = '.(int)$country_id;
-        $resultSet = $this->select(function (Select $select) use ($country_id) {
-            $select
-                ->columns(array(
+        $country = (isset($country_id)) ? 'AND `country_id` = '.(int)$country_id : '';
+        
+        // Использую кэширование (подключаю адаптер)
+        $this->cache = $this->getServiceLocator()->get('memcache.Service');
+        
+        // Проверяю ключ в кэше
+        $result = $this->cache->getItem('zf_regions_'.$this->getLocaleCode().'='.$country_id);    
+        
+        if(!$result)
+        {   
+            // Использую лямпду как передаваемый объект для выборки
+            
+            $resultSet = $this->select(function (Select $select) use ($country) {
+                $select
+                    ->columns(array(
                         'id'        =>  'region_id',
                         'code'      =>  'region_code',
                         'name'      =>  'region_'.$this->getLocaleCode().'',
-                ))
-                ->where('`activation` = \'1\' '.$country_id.'')
-                ->order('region_'.$this->getLocaleCode().' ASC');
-        });
-        $resultSet = $resultSet->toArray();
-        return $resultSet;
+                    ))
+                    ->where('`activation` = \'1\' '.$country.'')
+                    ->order('region_'.$this->getLocaleCode().' ASC');
+            });
+            
+            // кэширую выборку
+            $resultSet->buffer();
+    
+            $result = $resultSet->toArray();
+            
+            $this->cache->setItem('zf_regions_'.$this->getLocaleCode().'='.$country_id, $result);
+        }        
+        return $result;
     }
 
     /**
