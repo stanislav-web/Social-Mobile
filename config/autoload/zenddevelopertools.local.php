@@ -128,7 +128,7 @@ return array(
              * Expects: bool
              * Default: false
              */
-            'version_check' => true,
+            'version_check' => false,
 
             /**
              * Contains a list with all collector toolbar templates. The name  of the array key must be same as the name

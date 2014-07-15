@@ -56,12 +56,6 @@ return [
             return $table;
         },
                 
-        'userProfile.Model' => function($serviceManager) { // Модель пользователя
-            $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
-            $table = new \Social\Model\UserProfileModel($dbAdapter);
-            return $table;
-        },
-                
         'sign.Model' => function($serviceManager) { // Модель для сервисов авторизации итп
             $dbAdapter = $serviceManager->get('Zend\Db\Adapter\Adapter');
             $table = new \Social\Model\signModel($dbAdapter);

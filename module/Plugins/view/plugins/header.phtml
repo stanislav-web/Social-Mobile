@@ -22,7 +22,7 @@
     <?php else: ?>
         <header data-role="header" data-theme="a" data-position="fixed" class="header">
             <a href="#menu" data-icon="bars" class="ui-hover-btn" data-role="button"><?=$this->translate('Menu', 'default')?></a>
-            <h1 class="ui-logo"><a href="<?=$this->url('social');?>"><img src="/images/mobile/logo.png" alt="Logo"></a></h1>
+            <h1 class="ui-logo"><a href="/"><img src="/images/mobile/logo.png" alt="Logo"></a></h1>
             <a href="#Language" title="<?=$this->translate('Choose a language', 'default');?>" class="ui-hover-btn" data-role="button" data-rel="dialog"><img src="/images/flags/small/<?=$this->getLang('code');?>.png" alt="<?=$this->getLang('code');?>" /></a>
         </header>
     <?php endif;?>

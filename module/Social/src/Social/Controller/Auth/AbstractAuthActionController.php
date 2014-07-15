@@ -107,7 +107,6 @@ abstract class AbstractAuthActionController extends AbstractActionController
                     return $this->redirect()->toRoute('sign');
                 }     
             }
-            
         }, 100);
     }
 }

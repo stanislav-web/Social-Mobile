@@ -1,8 +1,9 @@
-<?php $format = new \SW\String\Format; ?>   
-<?php $dateReg  = $format->getFormatTime($user->date_registration, $user->timezone); // формат даты регистрации?>
-<?php $dateLast = $format->getFormatTime($user->date_lastvisit, $user->timezone);    // формат даты последнего визита ?>
+<?php 
+// setup current time formats
+$this->plugin("dateFormat")->setTimezone($user->timezone)->setLocale($this->getLang('code').'_'.  strtoupper($this->getLang('code')));
+?>   
 <section data-role="page" data-theme="a">
-    <?php echo $this->socialPlugin('header', $user); // заголовок jQuery Mobile ?>
+    <?php echo $this->socialPlugin('header', $user); // заголовок ?>
     <!-- Меню -->
     <div data-role="content" data-theme="a">
         <div class="ui-user-body">
@@ -14,7 +15,7 @@
                     <!-- Аватар -->
                     <div class="ui-avatar-wrap">
                         <?php if($user->photo):?>
-                        <img class="ui-img-list" src="/files/images/profile/<?=$user->id;?>/<?=$user->photo;?>" />
+                        <img class="ui-img-list" src="/files/images/profile/<?php echo $user->id;?>/<?php echo $user->photo;?>" />
                         <?php else: ?>
                             <?php if($user->gender == 1):?>
                                 <img class="ui-img-list" src="/images/mobile/user/no_avatar_m.png" />
@@ -28,14 +29,59 @@
                 </div>
                 <div class="ui-block-b">
                     <!-- Инфо -->
-                        <?=$this->translate('Register date', 'default')?> : <?php echo $dateReg['d'].' '.$this->translate($dateReg['m'], 'plugins').' '.$dateReg['y'];?><br>
-                        <?=$this->translate('My last visit', 'default')?> : <?php echo $dateLast['d'].' '.$this->translate($dateLast['m'], 'plugins').' '.$dateLast['y'].' '.$dateLast['h'].':'.$dateLast['i'];?><br>
-                        <?php if($user->time_online > 60):?><?=$this->translate('I stayed online', 'default')?> : <?php echo $this->setString('secondsformat', $user->time_online);?><?php endif;?>
+                        <?php echo$this->translate('Register date', 'default')?> : <?php echo $this->dateFormat(
+                                        new DateTime($user->date_registration),
+                                        IntlDateFormatter::MEDIUM,      // date
+                                        IntlDateFormatter::MEDIUM       // time
+                                    );?><br>
+                        <?php echo$this->translate('My last visit', 'default')?> : <?php echo $this->dateFormat(
+                                        new DateTime($user->date_lastvisit),
+                                        IntlDateFormatter::MEDIUM,      // date
+                                        IntlDateFormatter::MEDIUM       // time
+                                    );?><br>
+                        <?php if($user->time_online > 60):?><?php echo $this->translate('I stayed online', 'default')?> : <?php echo $this->setString('secondsformat', $user->time_online);?><?php endif;?>
                     <!-- Инфо -->
+
                 </div>                
                 <div class="ui-block-c ui-whats-up">
                     <!-- Форма установки статуса -->
                     <?php  echo $this->setForm('PersonalForm', $user);?>
+		    <script type="text/javascript">
+$(document).ready(function(){
+    //Open a WebSocket connection.
+    var wsUri = "ws://zf.local:9000/websocket/open/chat";   
+    websocket = new WebSocket(wsUri); 
+    
+    //Connected to server
+    websocket.onopen = function(ev) {
+        console.log('Connected to server ');
+    }
+    
+    //Connection close
+    websocket.onclose = function(ev) { 
+        console.log('Disconnected');
+    };
+    
+    //Message Receved
+    websocket.onmessage = function(ev) { 
+        console.log('Message '+ev.data);
+    };
+    
+    //Error
+    websocket.onerror = function(ev) { 
+        console.log('Error '+ev.data);
+    };
+    
+     //Send a Message
+    $('#ssssss').click(function(e){ 
+	e.preventDefault();
+        var mymessage = 'Test'; 
+        websocket.send('Hello every one! I go to do my best!');
+	websocket.onmessage(e);
+    });
+});
+		    </script>
+		    <a href="#" id="ssssss" data-role="button">Send</a>
                     <!-- Форма установки статуса -->
                 </div>
                 <div class="ui-block-a">
@@ -51,7 +97,9 @@
         </div>
     </div>
     <footer data-position="fixed" data-role="footer" class="ui-bar footer" data-theme="a">
-        <h4>&copy; 2013  <a href="/"><?=$this->translate('Social Mobile', 'default')?></a> <?=$this->translate('powered by', 'default')?> <?=Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?=Zend\Version\Version::VERSION;?> <?=$this->translate('All rights reserved.', 'default')?></h4>
+        <h4>&copy; 2013  <a href="/"><?php echo$this->translate('Social Mobile', 'default')?></a> <?php echo $this->translate('powered by', 'default')?> <?php echo Zend\Version\Version::VERSION_SERVICE_ZEND;?> <?php echo Zend\Version\Version::VERSION;?> <?php echo $this->translate('All rights reserved.', 'default')?></h4>
     </footer>
 </section>
+<?php $this->inlineScript()->appendFile($this->basePath().'/js/socket.js', 'text/javascript');?>
+<?php echo $this->InlineScript();?>
 <?php echo $this->socialPlugin('language'); // виджет выбора языка ?>

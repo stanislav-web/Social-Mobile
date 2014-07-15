@@ -40,6 +40,34 @@ return array(
     'Location'      =>  'Местоположение',
     'Information'   =>  'Дополнительная информация',
     'Login'	    =>	'Логин',
+    
+    'Displayed name'=>  'Отображаемое имя',
+    'Phone'         =>  'Телефон',
+    'Gender'        =>  'Пол',
+    'male'          =>  'мужской',
+    'female'        =>  'женский',
+    'Height / Weight'   =>  'Рост / Вес',
+    'Interests'     =>  'Интересы',
+    'About'         =>  'О себе',
+    'Timezone'      =>  'Часовой пояс',
+    'Alias'         =>  'Короткое имя (для URL)',
+    'Fill the contact email'    =>  'Заполните контактный email адрес',
+    'Fill the contact phone number' =>  'Заполните контактный номер телефона',
+    
+    'Accesibility'  =>  'Служебная информация',
+    'Personal data' =>  'Персональные данные',
+    'Settings'      =>  'Настройки пользователя',
+    'Password'      =>  'Пароль',
+    'Login must be required'    =>  'Укажите логин!',
+    'Leave this part blank if there is no need to change the password'  =>  'Оставте пустым, если нет необходимости смены',
+    'Retype password'   =>  'Подтвердите пароль',
+    'Country'       =>  'Страна',
+    'Region'        =>  'Регион',
+    'City'          =>  'Насленный пункт',
+    
+    
+    
+    
     'Group'	    =>	'Группа',
     'Edit - '       =>  'Редактировать - ',
     'Register date'	=>	'Дата регистрации',

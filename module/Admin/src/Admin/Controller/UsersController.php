@@ -6,7 +6,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\View\Model\JsonModel;
 use Zend\Debug\Debug;
-
+use Google\Client;
 /**
  * Контроллер управления пользователями, Административная панель
  * @package Zend Framework 2
@@ -34,7 +34,6 @@ class UsersController extends Auth\AbstractAuthActionController
      */
     public function indexAction()
     {
-        
         // POST обработчик
         $request    =   $this->getRequest();
         if($request->isPost())
@@ -100,6 +99,7 @@ class UsersController extends Auth\AbstractAuthActionController
         // получаю id записи из параметров URI
         $id         =   (int)$this->params('id');
         $item       =   $this->sm->get('user.Model')->getProfile($id);
+        
         if($item)
         {
             // Устанавливаю МЕТА и заголовок страницы
@@ -108,6 +108,7 @@ class UsersController extends Auth\AbstractAuthActionController
         }
         else 
         {
+            // пользователя не существует
             $this->messenger->addErrorMessage($this->lng->translate('User not found', 'admin-messages'));
             return $this->redirect()->toRoute('users');
         }

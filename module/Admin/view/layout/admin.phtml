@@ -13,20 +13,8 @@
                 ->appendName('author', 'Stanislav WEB');
         ?>
         <?php echo $this->headTitle()->setSeparator(' / ');?>
-        <?php echo $this
-                ->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico'))
-                ->appendStylesheet($this->basePath().'/css/mobile/jquery.mobile.css')
-                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
-                ->appendStylesheet($this->basePath().'/css/mobile/admin.css')
-                ->appendStylesheet($this->basePath().'/css/notifications.css');
-        ?>
-        <?php echo $this->headScript()
-                ->appendFile($this->basePath().'/js/jquery.min.js')
-                ->appendFile($this->basePath().'/js/languages/admin-'.$this->lang.'.js')
-                ->appendFile($this->basePath().'/js/mobile/init.js')
-                ->appendFile($this->basePath().'/js/admin.js')
-                ->appendFile($this->basePath().'/js/mobile/jquery.mobile.min.js')
-        ?>
+        <?php echo $this->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico')); ?>
+        <?php echo $this->headScript(); ?>
     </head>
     <body>
         <section data-role="page" data-theme="a" id="page">

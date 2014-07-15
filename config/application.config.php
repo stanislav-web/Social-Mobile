@@ -7,6 +7,7 @@
 return [
     // Модули, которые используются . Объявляются для пространства имен
     'modules' => [
+	'AssetsBundle',
         'Cronjob',              // Консоль для запуска планировщика Cron
         'SQLProfiler',          // Профайлер SQL запросов
         'ZendDeveloperTools',   // Панель разработчика
@@ -15,10 +16,11 @@ return [
         'Social',               // Социальная сеть с управлением юзерами
         'Submissions',          // Сервис платежных систем
         'Locations',            // Модуль управления локациями (города, регионы, страны)
+        //'Google',               // Google Services
         //'SwebSocialAuth',       // Мой модуль авторизации в соц сетях
         'Admin',                // Админ панель
         'Plugins',              // Плагины
-        //'WebSockets',           // WebSockets сервер
+        'WebSockets',           // WebSockets сервер
         'WebinoImageThumb',     // GD2 Thumbnailer
         'ZF2NetteDebug',        // Интегрируемый сервис отладки исключений и ошибок
     ],

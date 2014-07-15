@@ -1,6 +1,5 @@
-<?php $this->socialPlugin('statistics');// плагин сбора статистики ?>
 <?php echo $this->doctype();?>
-<html lang="<?php echo $this->lang;?>" xmlns:og="http://ogp.me/ns#">
+<html lang="en" xmlns:og="http://ogp.me/ns#">
     <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb#">
         <?php
             // Устанавливаю правильный заголовок страницы
@@ -13,6 +12,7 @@
                 ->setCharset('UTF-8')
                 ->appendName('keywords',        '')
                 ->appendName('description',     '')
+                ->appendHttpEquiv('X-UA-Compatible',        'IE=edge')
                 ->appendName('viewport',        'width=device-width, initial-scale=1, maximum-scale=1')
                 ->appendName('generator',       'Zend Framework '.Zend\Version\Version::VERSION)
                 ->appendName('author',          'Stanislav WEB')
@@ -26,20 +26,16 @@
                 ->setProperty('og:site_name',    $this->translate('Social Mobile', 'default'))
                 ->setProperty('og:description',  '');
         ?>
-        <?php echo $this
-                ->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico'))
-                ->appendStylesheet($this->basePath().'/css/mobile/mobile.css')
-                ->appendStylesheet($this->basePath().'/css/notifications.css');
-        ?>
-	
-        <?php echo $this->headScript()
-                ->appendFile($this->basePath().'/js/jquery.min.js')
-                ->appendFile($this->basePath().'/js/languages/'.$this->lang.'.js')
-                ->appendFile($this->basePath().'/js/mobile/init.js')
-                ->appendFile($this->basePath().'/js/mobile/jquery.mobile.min.js');
-        ?>
+        <?php echo $this->headLink(array('rel'=>'shortcut icon', 'href'=>$this->basePath().'/images/favicon.ico')); ?>
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+	<![endif]-->	
     </head>
     <body>    
         <?php echo $this->content;?>
+	<?php echo $this->headScript(); ?>
     </body>
 </html>

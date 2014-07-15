@@ -15,6 +15,7 @@ return [
             'users.Controller'          => 'Admin\Controller\UsersController',          // Контроллер управления пользователями
             'plugins.Controller'        => 'Admin\Controller\PluginsController',        // Контроллер управления плагинами
             'distributions.Controller'  => 'Admin\Controller\DistributionsController',  // Контроллер управления масштабными рассылками
+            'locations.Controller'	=> 'Admin\Controller\LocationsController',	// Контроллер управления локациями
         ],
     ],
 
@@ -145,6 +146,37 @@ return [
                 ],  
             ],      
 	    
+	    'locations' => [ // Управление локациями
+                'type'          => 'Segment',
+                'options'       => [
+                    'route'         => '/admin[/:lang]/locations[/page/:page]',
+                'constraints'   => [
+                    'lang'          => '(en|ru|ua)',
+                    'page'          => '[0-9]+',
+                ],
+                'defaults' => [
+		    'controller'    => 'locations.Controller',
+		    'action'    => 'index',
+		    'lang'      => 'ru',
+		    'page'      => '1',
+                    ],
+                ],
+                'may_terminate' => true, 
+                'child_routes' => [
+                    
+                    'compiler' => [
+                        'type'      => 'Segment',
+                        'options'   => [
+                            'route' => '/compiler',
+                                'defaults' => [
+                                    'controller'    => 'locations.Controller',
+                                    'action'        => 'compiler',
+                            ]
+                        ],
+                    ],
+                ],  
+            ],
+	    
             'distributions' => [ // Управление масштабными рассылками
                 'type'          => 'Segment',
                 'options'       => [
@@ -178,7 +210,6 @@ return [
                     ],
                 ],  
             ], 
-            
         ],
     ],
     

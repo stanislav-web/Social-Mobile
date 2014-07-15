@@ -45,5 +45,4 @@ return array(
             return $table;
         },
     ),
-       
 );

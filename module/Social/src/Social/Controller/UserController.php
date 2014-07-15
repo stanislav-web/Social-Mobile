@@ -21,53 +21,28 @@ use Social\Form; // Констуктор форм
 class UserController extends Auth\AbstractAuthActionController
 {
     
-    /**
-     * $_lng Свойство объекта Zend l18 translator
-     * @access protected
-     * @var type object
-     */
-    protected $_lng;
-    
-    /**
-     * $_authUser Авторизированый
-     * @access protected
-     * @var type object
-     */
-    protected $_authUser = null;
-    
-    /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->getServiceLocator();
-    }   
-    
-    
     public function journalAction()
     {
         // Проверка авторизации
-        $this->_authUser = $this->zfService()->get('authentification.Service');
+        $this->_authUser = $this->getServiceLocator()->get('authentification.Service');
         if($this->_authUser->hasIdentity() == false) return $this->redirect()->toUrl('/'); // главную сразу    
                 
         // аторизированный
             
-        $this->_sessionUser->auth = $this->zfService()->get('user.Model')->getUserProfileByLogin($this->_authUser->getIdentity()); // Записываю в сессию все о пользователе
+        $this->_sessionUser->auth = $this->getServiceLocator()->get('user.Model')->getUserProfileByLogin($this->_authUser->getIdentity()); // Записываю в сессию все о пользователе
         $this->_uid = $this->_sessionUser->auth->id; // UID Пользователя
-        $this->_lng  = $this->zfService()->get('MvcTranslator');    // загружаю переводчик
-        $events = $this->zfService()->get('userEvents.Model');      // загружаю модель с событиями
-        $menu   = $this->zfService()->get('menuItems.Service');     // загружаю модель текущего меню
+        $this->_lng  = $this->getServiceLocator()->get('MvcTranslator');    // загружаю переводчик
+        $events = $this->getServiceLocator()->get('userEvents.Model');      // загружаю модель с событиями
+        $menu   = $this->getServiceLocator()->get('menuItems.Service');     // загружаю модель текущего меню
         
         $item = $menu->getItemByRoute('journal');
 
         // Устанавливаю заголовок со страницы
-        $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
+        $renderer = $this->getServiceLocator()->get('Zend\View\Renderer\PhpRenderer');
         $renderer->headTitle($item->title);
         
         $eventsVars = array(
-                'journal'   =>  $this->zfService()->get('userEvents.Model')->getEvents($this->_uid, 1, 100),
+                'journal'   =>  $this->getServiceLocator()->get('userEvents.Model')->getEvents($this->_uid, 1, 100),
                 'title'     =>  $item->title,                   // Заголовок в меню
                 'user'      =>  $this->_sessionUser->auth,      // ВСЕ об авторизованом пользователе
             );
@@ -111,34 +86,27 @@ class UserController extends Auth\AbstractAuthActionController
      */
     public function profileAction()
     {
-        $this->_lng     = $this->zfService()->get('MvcTranslator'); // загружаю переводчик
-        $events         = $this->zfService()->get('userEvents.Model');    // загружаю модель с событиями
+        $events         = $this->getServiceLocator()->get('userEvents.Model');    // загружаю модель с событиями
             
         // Устанавливаю заголовок со страницы
-        $renderer = $this->zfService()->get('Zend\View\Renderer\PhpRenderer');
-        $userProfile = $this->user->getProfile($this->auth->getIdentity());
+        $renderer = $this->sm->get('Zend\View\Renderer\PhpRenderer');
+	$userFetch =  $this->user->getProfile($this->auth->getIdentity());
         
-        $renderer->headTitle($userProfile->name);
+        $renderer->headTitle($userFetch->name);
             
-        $userVars = [
-            
-                // переадаю пользователей
+	return new ViewModel([
                 'notices' =>  [ // новые уведомления
-                    'journal'   =>  $this->zfService()->get('userEvents.Model')->getEvents($userProfile->id, 1, 100),
-                    'mail'      =>  null, // $this->zfService()->get('userMail.Model')->getMails($this->_uid, 1, 100),
-                    'wall'      =>  null, // $this->zfService()->get('userWall.Model')->getWalls($this->_uid, 1, 100),
+                    'journal'   =>  null, //$this->getServiceLocator()->get('userEvents.Model')->getEvents($userProfile->id, 1, 100),
+                    'mail'      =>  null, // $this->getServiceLocator()->get('userMail.Model')->getMails($this->_uid, 1, 100),
+                    'wall'      =>  null, // $this->getServiceLocator()->get('userWall.Model')->getWalls($this->_uid, 1, 100),
                 ],
-                'user'          =>  $userProfile,      // ВСЕ об авторизованом пользователе
-                'personalForm'  =>  new Form\PersonalForm(),        // форма смены персонального статуса
-            ];
-
-            $viewModel = new ViewModel($userVars);
-            return $viewModel;            
+                'user'          =>  $userFetch,			// ВСЕ об авторизованом пользователе
+                'personalForm'  =>  new Form\PersonalForm(),    // форма смены персонального статуса	    
+	]);
     }    
     
     /**
      * personalAction() AJAX обрабочик для обновления статуса
-     * 
      * @access public
      * @return \Zend\View\Model\ViewModel
      */
@@ -148,32 +116,25 @@ class UserController extends Auth\AbstractAuthActionController
         $request    = $this->getRequest();     // Запрос
         if($request->isXmlHttpRequest() && $request->isPost()) //  пошла POST форма
         {
-            $personal = $request->getPost('personal');
+	    $post   = $request->getPost();
+	    
             // Обновляю статус
-            if($this->_authUser == null) $this->_authUser = $this->zfService()->get('authentification.Service');
-            $userId = $this->_authUser->getIdentity(); // ID пользователя
-            
-            $service = $this->zfService()->get('userProfile.Model');
-            $result = $service->updatePersonal($userId, $personal);
-            if($result == '1') 
+	    
+	    $result = $this->user->updateUsers(['personal'  =>	$post['personal']],
+		['id'	=>  $this->auth->getIdentity()]);
+	    
+            if($result) 
             {
                 // Публикую на стену, если был запрос
 
-                $share = $request->getPost('share');
-                if($share == '1')
+                if($post['share'])
                 { 
-                    $wall = $this->zfService()->get('flashWall.Model');
-                    $wall->set($personal, $userId);
+                    $wall = $this->sm->get('flashWall.Model');
+                    $wall->set($post['personal'], $this->auth->getIdentity());
                 }
-                return $this->redirect()->toRoute('profile'); // ставлю редирект
             }
-            else 
-            {
-                //@TODO Ош  ибка публикации
-            }
-            
         }
-        return false;
+        return $this->redirect()->toRoute('profile'); // ставлю редирект
     }    
     
     
@@ -184,9 +145,9 @@ class UserController extends Auth\AbstractAuthActionController
      * @return \Zend\View\Model\ViewModel
      */
     public function logoutAction() {
-        if(null === $this->_authUser) $this->_authUser = $this->zfService()->get('authentification.Service');
+        if(null === $this->_authUser) $this->_authUser = $this->getServiceLocator()->get('authentification.Service');
         
-        $this->zfService()->get('sign.Model')->getSessionStorage()->forgetMe(); // очищаю запоминание        
+        $this->getServiceLocator()->get('sign.Model')->getSessionStorage()->forgetMe(); // очищаю запоминание        
         $this->_authUser->clearIdentity(); // очищаю весь слой авторизции   
         return $this->redirect()->toUrl('/');
     }         

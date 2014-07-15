@@ -95,8 +95,10 @@ var Locations =  {
                     // check if existing error and show it
                     if(Locations.messages.length > 0)
                     {   
-                        var errlist    =   '';
-                        for(i=0; i<Locations.messages.length; i++) 
+                        var errlist    =   '',
+                            max;
+                    
+                        for(i = 0, max = Locations.messages.length; i < max; i++) 
                         {
                             errlist += '<li>'+Locations.messages[i]+'</li>';
                         };

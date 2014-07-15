@@ -127,7 +127,7 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
     /**
      * updateUsers(array $set, array $items) обновлене элементов
      * @param array $set массив с установленными знаениями
-     * @param  string|array|\Closure $items id плагина
+     * @param  string|array|\Closure $items id записи
      * @access public
      * @return boolean
      */
@@ -582,5 +582,5 @@ class UserModel extends  AbstractTableGateway implements ServiceLocatorAwareInte
         $select->limit($limit);
         $selectString = $sql->getSqlStringForSqlObject($select);
         return $this->adapter->query($selectString, $Adapter::QUERY_MODE_EXECUTE);
-    }    
+    }      
 }

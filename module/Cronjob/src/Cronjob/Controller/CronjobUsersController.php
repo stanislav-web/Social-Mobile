@@ -10,7 +10,7 @@ use Zend\Console\Request as ConsoleRequest;
  * @subpackage Cronjob
  * @since PHP >=5.3.xx
  * @version 2.15
- * @author Stanislav WEB | Lugansk <stanislav@uplab.ru>
+ * @author Stanislav WEB | Lugansk <stanisov@gmail.com>
  * @copyright Stanilav WEB
  * @license Zend Framework GUI licene
  * @filesource /module/Cronjob/src/Cronjob/Controller/CronjobUsersController.php
@@ -23,16 +23,6 @@ class CronjobUsersController extends AbstractActionController
      * @var object
      */    
     private $_log = null;
-    
-    /**
-     * zfService() Менеджер зарегистрированных сервисов ZF2
-     * @access public
-     * @return ServiceManager
-     */
-    public function zfService()
-    {
-        return $this->getServiceLocator();
-    } 
     
     /**
      * onlineAction() Обновление тех кто онлайн
@@ -49,13 +39,13 @@ class CronjobUsersController extends AbstractActionController
         $type       = $request->getParam('type', 'all');    // параметр для определения действия
         
         // подключаю необходимые модели
-        $online     = $this->zfService()->get('online.Model');
-        $user       = $this->zfService()->get('user.Model');
-        $profile    = $this->zfService()->get('userProfile.Model');        
+        //$online     = $this->getServiceLocator()->get('online.Model');
+        //$user       = $this->getServiceLocator()->get('user.Model');
+        //$profile    = $this->getServiceLocator()->get('userProfile.Model');        
         
         
         // Достаю модель для логировния планировщика
-        if($this->_log == null) $this->_log = $this->zfService()->get('cronjobLog.Model');
+        $this->_log = $this->getServiceLocator()->get('cronjobLog.Model');
         
         $this->_log->write(array(
             'message'   => 'Обновление времени в онлайн',

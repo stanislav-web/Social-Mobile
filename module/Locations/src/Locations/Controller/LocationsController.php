@@ -27,6 +27,8 @@ class LocationsController extends AbstractActionController
      * @var type object
      */
     protected $_lng;
+   
+    
     
     /**
      * indexAction() Вывод всей карты городов с зарегистрированными пользователями

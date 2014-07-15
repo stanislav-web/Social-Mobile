@@ -74,6 +74,6 @@ class Module
      */
     public function getViewHelperConfig()
     {
-        return array();
+        return include __DIR__.'/config/helper.config.php';
     }   
 }

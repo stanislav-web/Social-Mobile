@@ -161,7 +161,11 @@ class Module
             {       
                 // удачно записал, обновляю в пользователях статус онлайн и время на этого юзера
                 $user->setTimeOnline($userFetch);
-            }          
+            }  
+	    
+	    // плагин сбора статистики
+	    $sm->get('statistics.Model')->set();	    
+	    
         }
     }
 
@@ -184,7 +188,7 @@ class Module
         {
             // Авторизирован
             $user = $sm->get('user.Model');
-            
+
             if($user->checkRole($auth->getIdentity(), 4)) $e->getViewModel()->setTemplate('layout/admin');
             else $e->getViewModel()->setTemplate('layout/user');
 
@@ -265,11 +269,20 @@ class Module
         $sm = $app->getServiceManager();    // Сервис менеджер
         $event = $app->getEventManager();   // Менеджер событий
         $request = $e->getRequest();        // исходящий запрос
-        
+	
+	// Устанавливаю дополнительные HTTP заголовки
+	$response   = $e->getResponse();
+	
+	if($response instanceof \Zend\Http\Response) 
+	{ 
+            $headers = $response->getHeaders(); 
+            if($headers) $headers->addHeaderLine('X-Content-Type-Options', 'nosniff')
+				    ->addHeaderLine('X-Frame-Options', 'DENY'); 
+        } 
+
         // Загружаю события только для HTTP запросов
         
         if($request instanceof \Zend\Http\Request) {
-            
             $sm->get('viewhelpermanager')->setFactory('getRoute', function($sm) use ($app) {
                 return new \Social\Helper\RouteHelper($app); // получаю текущий сегмент URL
             });            
