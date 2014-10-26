@@ -23,26 +23,6 @@ use Zend\View\View;
  */
 class Module
 {
-
-    /**
-     * isMobile($e) метод подставляет базовый layout (шаблон)
-     * для отображения на мобильных устройствах
-     * @param object $e
-     * return object шаблон
-     */
-    public function isMobile($e)
-    {
-
-         $mobile = new \SW\Http\Header\MobileDetect(); // создаю объект
-         if($mobile->isMobile())
-         {
-            // для мобильных ус-тв устанавливаю мобильный каркас шаблона
-            $viewModel = $e->getViewModel()->setTemplate('layout/mobile');
-            return $viewModel;
-         }
-         else return false;
-    }
-
     /**
      * setCacheStorage($sec) возвращает параметры адаптера сессионного хранилища
      * @param int $sec секунды на сохранение
@@ -289,7 +269,6 @@ class Module
             $event->attach(MvcEvent::EVENT_ROUTE,       [$this, 'initLocale']);   // локаль
             $event->attach(MvcEvent::EVENT_RENDER,      [$this, 'initOnline']);   // онлайн
             $event->attach(MvcEvent::EVENT_DISPATCH,    [$this, 'initLayout']);   // смена шаблона
-            //$e->attach('dispatch', array($this, 'isMobile'), -100); // проверка на моб. тел.            
         }
     }
 }

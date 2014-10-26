@@ -1,10 +1,10 @@
 {
-  "backups_dir"  : "D:\\Projects\\zf.local\\backups",
-  "tmp_original_images_dir"  : "D:\\Projects\\zf.local\\public_html\\tmp\\images\\original",
-  "tmp_thumb_images_dir"  : "D:\\Projects\\zf.local\\public_html\\tmp\\images\\thumb",
-  "tmp_profile_images_dir"  : "D:\\Projects\\zf.local\\public_html\\tmp\\images\\profile",
-  "original_images_dir"  : "D:\\Projects\\zf.local\\public_html\\files\\images\\original",
-  "thumb_images_dir"  : "D:\\Projects\\zf.local\\public_html\\files\\images\\thumb",
-  "profile_images_dir"  : "D:\\Projects\\zf.local\\public_html\\files\\images\\profile",
-  "watermark_dir"  : "D:\\Projects\\zf.local\\public_html\\images\\mobile"
+  "backups_dir"  :              "/var/www/zf.local/backups",
+  "tmp_original_images_dir"  :  "/var/www/zf.local/public_html/tmp/images/original",
+  "tmp_thumb_images_dir"  :     "/var/www/zf.local/public_html/tmp/images/thumb",
+  "tmp_profile_images_dir"  :   "/var/www/zf.local/public_html/tmp/images/profile",
+  "original_images_dir"  :      "/var/www/zf.local/public_html/files/images/original",
+  "thumb_images_dir"  :         "/var/www/zf.local/public_html/files/images/thumb",
+  "profile_images_dir"  :       "/var/www/zf.local/public_html/files/images/profile",
+  "watermark_dir"  :            "/var/www/zf.local/public_html/files/images/"
 }
