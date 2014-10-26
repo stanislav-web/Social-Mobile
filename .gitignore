@@ -1,9 +1,9 @@
-INSTALL.txt
 LICENSE.txt
 README.txt
-nbproject
 backups
 logs
 /config/autoload/local.php
 /data/cache/
 /vendor/
+binds
+.idea/workspace.xml
